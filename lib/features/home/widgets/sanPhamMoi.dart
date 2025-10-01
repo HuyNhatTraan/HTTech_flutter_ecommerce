@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hehehehe/features/product/widgets/product_card.dart';
 
 class SanPhamMoi extends StatefulWidget {
-  const SanPhamMoi({super.key});
+  const SanPhamMoi({super.key,});
 
   @override
   State<SanPhamMoi> createState() => _SanPhamMoiState();
@@ -13,6 +13,7 @@ class _SanPhamMoiState extends State<SanPhamMoi> {
   @override
   void initState() {
     super.initState();
+    super.widget.key;
   }
 
   @override
@@ -32,7 +33,7 @@ class _SanPhamMoiState extends State<SanPhamMoi> {
             ),
           ),
         ),
-        ProductCard(route: '/products'),
+        ProductCard(key: ValueKey(super.widget.key),route: '/products'),
       ],
     );
   }

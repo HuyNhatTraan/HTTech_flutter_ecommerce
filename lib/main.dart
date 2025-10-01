@@ -126,21 +126,15 @@ class _HomePage extends State<HomePage> {
               ),
             ],
           ),
-          // body: IndexedStack(
-          //   index: value,
-          //   children: [
-          //     HomeScreen(),
-          //     CategoryScreen(),
-          //     ThongBao(),
-          //     AccountMain(),
-          //   ],
-          // ),
-          body: <Widget>[
-            HomeScreen(),
-            CategoryScreen(),
-            ThongBao(),
-            AccountMain(),
-          ][value],
+          body: IndexedStack(
+            index: value,
+            children: [
+              HomeScreen(),
+              CategoryScreen(),
+              ThongBao(),
+              AccountMain(),
+            ],
+          ),
           bottomNavigationBar: NavigationBar(
             backgroundColor: Colors.white,
             indicatorColor: Color(0xFFc6e7ff),
