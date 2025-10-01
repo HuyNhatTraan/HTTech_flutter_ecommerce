@@ -10,12 +10,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _reloadCount = 0;
+  int _reloadProductCart = 0;
+  int _reloadCategory = 1;
 
   Future<void> _reloadData() async {
     await Future.delayed(const Duration(milliseconds: 500)); // Delay refresh
     setState(() {
-      _reloadCount++; // Load lại sản phẩm
+      _reloadProductCart++; // Load lại sản phẩm
+      _reloadCategory++;
       print("Dữ liệu đã reload hehehe");
     });
   }
@@ -32,8 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               BannerSPMoi(),
-              DanhMucSanPhamWidget(),
-              SanPhamMoi(key: ValueKey(_reloadCount),),
+              DanhMucSanPhamWidget(key: ValueKey(_reloadCategory),),
+              SanPhamMoi(key: ValueKey(_reloadProductCart),),
             ],
           ),
         ),

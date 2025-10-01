@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:hehehehe/features/cart/screens/cartScreen.dart';
 import 'package:hehehehe/features/product/widgets/productCarousel.dart';

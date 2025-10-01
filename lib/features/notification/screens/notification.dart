@@ -14,6 +14,16 @@ class _ThongBaoState extends State<ThongBao> {
   List<dynamic> _products = [];
   bool _isLoading = true; // Thêm biến để theo dõi trạng thái tải
 
+  int reloadNotification = 0;
+
+  Future<void> _reloadData() async {
+    await Future.delayed(const Duration(milliseconds: 500)); // Delay refresh
+    setState(() {
+      reloadNotification++; // Load lại sản phẩm
+      print("Dữ liệu đã reload hehehe");
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -56,81 +66,89 @@ class _ThongBaoState extends State<ThongBao> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: ValueKey(reloadNotification),
         backgroundColor: Color(0xFFf6f6f6),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                  top: 20,
-                  bottom: 20,
-                ),
-                child: Text(
-                  "Thông báo",
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w900,
+        body: RefreshIndicator(
+          onRefresh: _reloadData,
+          color: Color(0xFF3c81c6),
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 10,
+                    right: 10,
+                    top: 20,
+                    bottom: 20,
                   ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsGeometry.all(10),
-                child: _isLoading // Sử dụng _isLoading thay vì _products.isEmpty cho CircularProgressIndicator
-                    ? const Center(child: CircularProgressIndicator())
-                    : _products.isEmpty // Sau khi tải xong, nếu không có sản phẩm thì hiển thị thông báo
-                    ? Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Text(
-                      "Không có thông báo nào.",
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                  child: Text(
+                    "Thông báo",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
-                ): GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, // số cột
-                      mainAxisExtent: 150
-                  ),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _products.length,
-                  itemBuilder: (context, index) {
-                    final product = _products[index];
-                    return Container(
-                      padding: EdgeInsets.all(5),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start, // Căn chỉnh nội dung của các cột từ trên xuống
-                        children: [
-                          Expanded(
-                            child: Stack(
-                              children: [
-                                Container(
-                                  height: 140,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(color: Colors.grey, width: 1),
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                        product['ImgThuongHieu'],
+                ),
+                Padding(
+                  padding: EdgeInsetsGeometry.all(10),
+                  child: _isLoading // Sử dụng _isLoading thay vì _products.isEmpty cho CircularProgressIndicator
+                      ? const Center(child: CircularProgressIndicator())
+                      : _products.isEmpty // Sau khi tải xong, nếu không có sản phẩm thì hiển thị thông báo
+                      ? Center(
+
+                      child: Container(
+                        height: 500,
+                        child: Text(
+                          "Không có thông báo nào.",
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                      ),
+
+                  ): GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, // số cột
+                        mainAxisExtent: 150
+                    ),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _products.length,
+                    itemBuilder: (context, index) {
+                      final product = _products[index];
+                      return Container(
+                        padding: EdgeInsets.all(5),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start, // Căn chỉnh nội dung của các cột từ trên xuống
+                          children: [
+                            Expanded(
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    height: 140,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: Colors.grey, width: 1),
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                          product['ImgThuongHieu'],
+                                        ),
+                                        //fit: BoxFit.cover,
                                       ),
-                                      //fit: BoxFit.cover,
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         )
     );

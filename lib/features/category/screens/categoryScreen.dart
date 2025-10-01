@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:animate_do/animate_do.dart';
 import 'package:hehehehe/features/category/widgets/danhMucSanPham.dart';
 import 'package:hehehehe/features/category/widgets/cacThuongHieuPP.dart';
 
@@ -24,21 +23,18 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFf6f6f6),
-      body: RefreshIndicator(
-        color: Color(0xFF3c81c6),
-        onRefresh: _reloadData,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              DanhMucSanPhamFullWidget(key: ValueKey(reloadCategoryCount)),
-              CacThuongHieuPP(key: ValueKey(reloadBrandCount)),
-            ],
-          ),
+    return RefreshIndicator(
+      color: Color(0xFF3c81c6),
+      onRefresh: _reloadData,
+      child: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            DanhMucSanPhamFullWidget(key: ValueKey(reloadCategoryCount)),
+            CacThuongHieuPP(key: ValueKey(reloadBrandCount)),
+          ],
         ),
-      )
+      ),
     );
   }
 }
