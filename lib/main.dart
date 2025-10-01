@@ -80,8 +80,21 @@ class _HomePage extends State<HomePage> {
                   print('Đã nhập' + value);
                   Navigator.push(
                     context,
-                    MaterialPageRoute<void>(
-                      builder: (context) => SearchScreen(searchQuery: value),
+                    PageRouteBuilder(
+                      opaque: true, // Giữ màn cũ hiển thị
+                      transitionDuration: const Duration(milliseconds: 300),
+                      pageBuilder: (context, animation, secondaryAnimation) {
+                        return SearchScreen(searchQuery: value);
+                      },
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        final tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                            .chain(CurveTween(curve: Curves.easeInOutSine));
+
+                        return SlideTransition(
+                          position: animation.drive(tween),
+                          child: child,
+                        );
+                      },
                     ),
                   );
                 },

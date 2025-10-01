@@ -110,18 +110,28 @@ class _ProductCardState extends State<ProductCard> {
               return Container(
                 padding: EdgeInsets.all(5),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment
-                      .start, // Căn chỉnh nội dung của các cột từ trên xuống
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductInfo(
-                                MaSanPham: product["MaSanPham"],
-                              ),
+                            PageRouteBuilder(
+                              opaque: true, // Giữ màn cũ hiển thị
+                              transitionDuration: const Duration(milliseconds: 300),
+                              pageBuilder: (context, animation, secondaryAnimation) {
+                                return ProductInfo(MaSanPham: product["MaSanPham"]);
+                              },
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                final tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                                    .chain(CurveTween(curve: Curves.easeInOutSine));
+
+                                return SlideTransition(
+                                  position: animation.drive(tween),
+                                  child: child,
+                                );
+                              },
                             ),
                           );
                           print('Đã ấn ' + product["MaSanPham"]);

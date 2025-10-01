@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
         color: Color(0xFF3c81c6),
         onRefresh: _reloadData,
         child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
               BannerSPMoi(),
