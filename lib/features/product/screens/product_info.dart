@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hehehehe/features/cart/screens/cartScreen.dart';
-import 'package:hehehehe/features/product/widgets/productCarousel.dart';
-import 'package:hehehehe/features/product/widgets/productDescription.dart';
+import 'package:hehehehe/features/cart/screens/cart_screen.dart';
+import 'package:hehehehe/features/product/widgets/product_carousel.dart';
+import 'package:hehehehe/features/product/widgets/product_description.dart';
 import 'package:hehehehe/features/search/search_screen.dart';
 import 'package:hehehehe/globals.dart';
 import 'package:http/http.dart' as http;
@@ -9,8 +9,8 @@ import 'dart:convert';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 
 class ProductInfo extends StatefulWidget {
-  final String MaSanPham;
-  const ProductInfo({super.key, required this.MaSanPham});
+  final String maSanPham;
+  const ProductInfo({super.key, required this.maSanPham});
 
   @override
   State<ProductInfo> createState() => _ProductInfoState();
@@ -33,7 +33,7 @@ class _ProductInfoState extends State<ProductInfo> {
     });
     try {
       String route = "/productInfo";
-      final url = Uri.parse(baseUri + route + "/" + widget.MaSanPham);
+      final url = Uri.parse(baseUri + route + "/" + widget.maSanPham);
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -129,7 +129,7 @@ class _ProductInfoState extends State<ProductInfo> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ProductCarousel(MaSanPham: widget.MaSanPham),
+            ProductCarousel(maSanPham: widget.maSanPham),
             Padding(
               padding: EdgeInsets.all(0),
               child: _isLoading
@@ -158,77 +158,75 @@ class _ProductInfoState extends State<ProductInfo> {
                                 .start, // Căn chỉnh nội dung của các cột từ trên xuống
                             children: [
                               Expanded(
-                                child: Container(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(15),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: Color(0xFFd7d7d7),
-                                            ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(15),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: Color(0xFFd7d7d7),
                                           ),
                                         ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  product["GiaSP"]
-                                                      .toString()
-                                                      .toVND(unit: 'đ'),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: const TextStyle(
-                                                    color: Color(0xFF3c81c6),
-                                                    fontSize: 26,
-                                                    fontWeight: FontWeight.w900,
-                                                  ),
-                                                ),
-                                                IconButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      isFavorite = !isFavorite;
-                                                    });
-                                                  },
-                                                  icon: Icon(
-                                                    isFavorite
-                                                        ? Icons
-                                                              .favorite_outlined
-                                                        : Icons
-                                                              .favorite_border_outlined,
-                                                    color: isFavorite
-                                                        ? Colors.red
-                                                        : Colors.black,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 5),
-                                            Text(
-                                              product["TenSanPham"],
-                                              maxLines: 3,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w900,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
                                       ),
-                                    ],
-                                  ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceBetween,
+                                            children: [
+                                              Text(
+                                                product["GiaSP"]
+                                                    .toString()
+                                                    .toVND(unit: 'đ'),
+                                                maxLines: 2,
+                                                overflow:
+                                                    TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  color: Color(0xFF3c81c6),
+                                                  fontSize: 26,
+                                                  fontWeight: FontWeight.w900,
+                                                ),
+                                              ),
+                                              IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    isFavorite = !isFavorite;
+                                                  });
+                                                },
+                                                icon: Icon(
+                                                  isFavorite
+                                                      ? Icons
+                                                            .favorite_outlined
+                                                      : Icons
+                                                            .favorite_border_outlined,
+                                                  color: isFavorite
+                                                      ? Colors.red
+                                                      : Colors.black,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 5),
+                                          Text(
+                                            product["TenSanPham"],
+                                            maxLines: 3,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w900,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -238,7 +236,7 @@ class _ProductInfoState extends State<ProductInfo> {
                     ),
             ),
             SizedBox(height: 10),
-            ProductDescription(MaSanPham: widget.MaSanPham),
+            ProductDescription(maSanPham: widget.maSanPham),
           ],
         ),
       ),

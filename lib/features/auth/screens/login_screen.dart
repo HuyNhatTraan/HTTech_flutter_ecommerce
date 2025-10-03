@@ -170,11 +170,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                 onTap: (){
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute<void>(
-                                      builder: (context) => const RegisterScreen(),
+                                    PageRouteBuilder(
+                                      opaque: true, // Giữ màn cũ hiển thị
+                                      transitionDuration: const Duration(milliseconds: 300),
+                                      pageBuilder: (context, animation, secondaryAnimation) {
+                                        return RegisterScreen();
+                                      },
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        final tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                                            .chain(CurveTween(curve: Curves.easeInOutSine));
+
+                                        return SlideTransition(
+                                          position: animation.drive(tween),
+                                          child: child,
+                                        );
+                                      },
                                     ),
                                   );
-
                                 },
                                 child: Text(
                                   ' Đăng ký ngay',

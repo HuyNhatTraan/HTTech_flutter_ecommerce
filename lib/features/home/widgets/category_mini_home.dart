@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hehehehe/globals.dart' as globals;
 import 'package:http/http.dart' as http;
-import 'package:hehehehe/features/category/screens/danhMucSanPhamProducts.dart';
+import 'package:hehehehe/features/category/screens/category_products.dart';
 import 'dart:convert';
 
 class DanhMucSanPhamWidget extends StatefulWidget {
@@ -109,7 +109,7 @@ class _DanhMucSanPhamWidgetState extends State<DanhMucSanPhamWidget> {
                         final product = _products[index];
                         return GestureDetector(
                           onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => DanhMucSanPhamProducts(MaDanhMuc: product["MaDanhMuc"], TenDanhMuc: product["TenDanhMuc"], BannerDanhMuc: product["BannerDanhMuc"])));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => DanhMucSanPhamProducts(maDanhMuc: product["MaDanhMuc"], tenDanhMuc: product["TenDanhMuc"], bannerDanhMuc: product["BannerDanhMuc"])));
                             print('Đã ấn vào danh mục ' + product["MaDanhMuc"]);
                           },
                           child: Container(

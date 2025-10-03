@@ -145,9 +145,21 @@ class _AccountMainState extends State<AccountMain> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute<void>(
-                              // Push qua bên chỗ đăng nhập
-                              builder: (context) => const LoginScreen(),
+                            PageRouteBuilder(
+                              opaque: true, // Giữ màn cũ hiển thị
+                              transitionDuration: const Duration(milliseconds: 300),
+                              pageBuilder: (context, animation, secondaryAnimation) {
+                                return LoginScreen();
+                              },
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                final tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                                    .chain(CurveTween(curve: Curves.easeInOutSine));
+
+                                return SlideTransition(
+                                  position: animation.drive(tween),
+                                  child: child,
+                                );
+                              },
                             ),
                           );
                         },

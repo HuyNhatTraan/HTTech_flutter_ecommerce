@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hehehehe/features/category/screens/danhMucSanPhamBrand.dart';
+import 'package:hehehehe/features/category/screens/category_brands_screen.dart';
 import 'package:hehehehe/globals.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
