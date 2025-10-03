@@ -3,15 +3,15 @@ import 'package:hehehehe/globals.dart';
 import 'package:hehehehe/features/product/widgets/product_card.dart';
 
 class DanhMucSanPhamProducts extends StatefulWidget {
-  final String MaDanhMuc;
-  final String TenDanhMuc;
-  final String BannerDanhMuc;
+  final String maDanhMuc;
+  final String tenDanhMuc;
+  final String bannerDanhMuc;
 
   const DanhMucSanPhamProducts({
     super.key,
-    required this.MaDanhMuc,
-    required this.TenDanhMuc,
-    required this.BannerDanhMuc,
+    required this.maDanhMuc,
+    required this.tenDanhMuc,
+    required this.bannerDanhMuc,
   });
 
   @override
@@ -27,7 +27,7 @@ class _DanhMucSanPhamProductsState extends State<DanhMucSanPhamProducts> {
         surfaceTintColor: Colors.transparent, // tắt cái overlay tím
         elevation: 4,
         title: Text(
-          widget.TenDanhMuc,
+          widget.tenDanhMuc,
           style: TextStyle(
             color: Colors.black,
             fontSize: 20,
@@ -40,7 +40,7 @@ class _DanhMucSanPhamProductsState extends State<DanhMucSanPhamProducts> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image(
-              image: NetworkImage(baseUri + '/' + widget.BannerDanhMuc),
+              image: NetworkImage(baseUri + '/' + widget.bannerDanhMuc),
               height: 200,
               fit: BoxFit.cover,
               width: double.infinity,
@@ -48,11 +48,11 @@ class _DanhMucSanPhamProductsState extends State<DanhMucSanPhamProducts> {
             Padding(
               padding: EdgeInsets.all(15),
               child: Text(
-                'Danh mục ' + widget.TenDanhMuc,
+                'Danh mục ' + widget.tenDanhMuc,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
-            ProductCard(route: '/categoryProduct', MaDanhMuc: widget.MaDanhMuc),
+            ProductCard(route: '/categoryProduct', maDanhMuc: widget.maDanhMuc),
             // Padding(
             //   padding: EdgeInsetsGeometry.all(10),
             //   child: _isLoading

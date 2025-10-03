@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hehehehe/features/account/screens/lichSuDonHang.dart';
-import 'package:hehehehe/features/account/screens/danhSachDiaChi.dart';
+import 'package:hehehehe/features/account/screens/account_order_history.dart';
+import 'package:hehehehe/features/account/screens/account_address.dart';
 
 class Tools extends StatefulWidget {
   const Tools({super.key});

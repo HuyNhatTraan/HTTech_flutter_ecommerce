@@ -3,7 +3,7 @@ import 'package:hehehehe/globals.dart';
 import 'package:hehehehe/features/product/widgets/product_card.dart';
 
 class DanhMucSPBrand extends StatefulWidget {
-  DanhMucSPBrand({
+  const DanhMucSPBrand({
     super.key,
     required this.maThuongHieu,
     required this.bannerThuongHieu,
@@ -52,7 +52,7 @@ class _DanhMucSPBrandState extends State<DanhMucSPBrand> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-            ProductCard(route: '/brands', MaThuongHieu: widget.maThuongHieu),
+            ProductCard(route: '/brands', maThuongHieu: widget.maThuongHieu),
           ],
         ),
       ),

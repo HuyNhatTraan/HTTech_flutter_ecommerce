@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ProductCarousel extends StatefulWidget {
-  final String MaSanPham;
-  const ProductCarousel({super.key, required this.MaSanPham});
+  final String maSanPham;
+  const ProductCarousel({super.key, required this.maSanPham});
 
   @override
   State<ProductCarousel> createState() => _ProductCarouselState();
@@ -15,8 +15,6 @@ class ProductCarousel extends StatefulWidget {
 class _ProductCarouselState extends State<ProductCarousel> {
   List<dynamic> list = [];
 
-  bool _isLoading = true; // Thêm biến để theo dõi trạng thái tải
-
   @override
   void initState() {
     super.initState();
@@ -24,12 +22,9 @@ class _ProductCarouselState extends State<ProductCarousel> {
   }
 
   Future<void> fetchProductsImages() async {
-    setState(() {
-      _isLoading = true; // Bắt đầu tải
-    });
     try {
       String route = "/productCarousel";
-      final url = Uri.parse(baseUri + route + "/" + widget.MaSanPham);
+      final url = Uri.parse(baseUri + route + "/" + widget.maSanPham);
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -37,26 +32,15 @@ class _ProductCarouselState extends State<ProductCarousel> {
           // Kiểm tra xem widget còn trong cây widget không
           setState(() {
             list = json.decode(response.body);
-
-            _isLoading = false; // Tải xong
           });
         }
       } else {
-        if (mounted) {
-          setState(() {
-            _isLoading = false; // Tải lỗi
-          });
-        }
         throw Exception(
           "Failed to load products, status code: ${response.statusCode}",
         );
       }
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false; // Tải lỗi
-        });
-      }
+      print(e);
     }
   }
 
@@ -86,7 +70,7 @@ class _ProductCarouselState extends State<ProductCarousel> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 image: DecorationImage(
-                  image: NetworkImage(baseUri + '/' + item['ImgUrl']!),fit: BoxFit.fitHeight
+                  image: NetworkImage("$baseUri/${item["ImgUrl"]}"),fit: BoxFit.fitHeight
                 ),
               ),
             );

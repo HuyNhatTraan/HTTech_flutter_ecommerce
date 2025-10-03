@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hehehehe/features/auth/screens/loginScreen.dart';
+import 'package:hehehehe/features/auth/screens/login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -136,7 +136,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             width: double.infinity,
                             child: ElevatedButton(
                               style: ButtonStyle(
-                                shape: MaterialStateProperty.all(
+                                shape: WidgetStateProperty.all(
                                   RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(
                                       10,
@@ -215,9 +215,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           SizedBox(height: 10),
                           // Đăng nhập với GG
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  elevation: 0, // chỉnh độ cao shadow
+                                  backgroundColor: Color(0xFFd4f6ff),
+                                  content: const Text(
+                                    'Tính năng này đang được xây dựng thử lại sau hen',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                  duration: const Duration(seconds: 2),
+                                  width: 320.0, // Width of the SnackBar.
+                                  padding: const EdgeInsets.all(20),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    side: BorderSide(
+                                      color: Color(0xFF706e6e),
+                                      width: 0.3,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                             style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
+                              shape: WidgetStateProperty.all(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                     10,
@@ -249,11 +274,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                           SizedBox(height: 10),
-                          // Đăng nhập với GG
+                          // Đăng nhập với FB
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  elevation: 0, // chỉnh độ cao shadow
+                                  backgroundColor: Color(0xFFd4f6ff),
+                                  content: const Text(
+                                    'Tính năng này đang được xây dựng thử lại sau hen',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                  duration: const Duration(seconds: 2),
+                                  width: 320.0, // Width of the SnackBar.
+                                  padding: const EdgeInsets.all(20),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    side: BorderSide(
+                                      color: Color(0xFF706e6e),
+                                      width: 0.3,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                             style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
+                              shape: WidgetStateProperty.all(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                     10,

@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ProductDescription extends StatefulWidget {
-  final String MaSanPham;
-  const ProductDescription({super.key, required this.MaSanPham});
+  final String maSanPham;
+  const ProductDescription({super.key, required this.maSanPham});
 
   @override
   State<ProductDescription> createState() => _ProductDescriptionState();
@@ -27,7 +27,7 @@ class _ProductDescriptionState extends State<ProductDescription> {
     });
     try {
       String route = "/productDescription";
-      final url = Uri.parse(baseUri + route + '/' + widget.MaSanPham);
+      final url = Uri.parse(baseUri + route + '/' + widget.maSanPham);
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -74,7 +74,7 @@ class _ProductDescriptionState extends State<ProductDescription> {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
-          Text(widget.MaSanPham),
+          Text(widget.maSanPham),
           Padding(
             padding: EdgeInsetsGeometry.all(0),
             child: _isLoading // Sử dụng _isLoading thay vì _products.isEmpty cho CircularProgressIndicator

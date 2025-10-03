@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hehehehe/features/home/widgets/danhMucSanPham.dart';
-import 'package:hehehehe/features/home/widgets/sanPhamMoi.dart';
-import 'package:hehehehe/features/home/widgets/bannerSPMoi.dart';
+import 'package:hehehehe/features/home/widgets/category_mini_home.dart';
+import 'package:hehehehe/features/home/widgets/new_products.dart';
+import 'package:hehehehe/features/home/widgets/banner_new_products_home.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

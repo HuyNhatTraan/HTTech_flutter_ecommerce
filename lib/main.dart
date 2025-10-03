@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'globals.dart' as globals;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hehehehe/features/home/screens/homeScreen.dart';
-import 'package:hehehehe/features/category/screens/categoryScreen.dart';
+import 'package:hehehehe/features/home/screens/home_screen.dart';
+import 'package:hehehehe/features/category/screens/category_screen.dart';
 import 'package:hehehehe/features/notification/screens/notification.dart';
-import 'package:hehehehe/features/account/screens/accountMain.dart';
-import 'package:hehehehe/features/cart/screens/cartScreen.dart';
+import 'package:hehehehe/features/account/screens/account_main.dart';
+import 'package:hehehehe/features/cart/screens/cart_screen.dart';
 import 'package:hehehehe/features/search/search_screen.dart';
 
 

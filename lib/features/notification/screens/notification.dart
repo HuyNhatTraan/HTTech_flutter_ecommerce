@@ -99,7 +99,7 @@ class _ThongBaoState extends State<ThongBao> {
                       : _products.isEmpty // Sau khi tải xong, nếu không có sản phẩm thì hiển thị thông báo
                       ? Center(
 
-                      child: Container(
+                      child: SizedBox(
                         height: 500,
                         child: Text(
                           "Không có thông báo nào.",

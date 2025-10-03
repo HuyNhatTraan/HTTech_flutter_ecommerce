@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hehehehe/globals.dart' as globals;
 import 'package:hehehehe/features/account/widgets/tools.dart';
-import 'package:hehehehe/features/auth/screens/loginScreen.dart';
+import 'package:hehehehe/features/auth/screens/login_screen.dart';
+
 class AccountMain extends StatefulWidget {
   const AccountMain({super.key});
 
@@ -47,7 +48,7 @@ class _AccountMainState extends State<AccountMain> {
                           ),
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(
-                            Colors.black.withOpacity(0.2),
+                            Colors.black.withValues(alpha: 0.1),
                             BlendMode.darken,
                           ),
                         ),

@@ -3,16 +3,16 @@ import 'package:hehehehe/globals.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
-import 'package:hehehehe/features/product/screens/productInfo.dart';
+import 'package:hehehehe/features/product/screens/product_info.dart';
 import 'package:animate_do/animate_do.dart';
 
 class ProductCard extends StatefulWidget {
   final String route;
-  final String? MaDanhMuc;
-  final String? MaThuongHieu;
-  final String? TenSanPham;
+  final String? maDanhMuc;
+  final String? maThuongHieu;
+  final String? tenSanPham;
 
-  const ProductCard({super.key, required this.route, this.MaDanhMuc, this.MaThuongHieu, this.TenSanPham});
+  const ProductCard({super.key, required this.route, this.maDanhMuc, this.maThuongHieu, this.tenSanPham});
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -26,23 +26,23 @@ class _ProductCardState extends State<ProductCard> {
   @override
   void initState() {
     super.initState();
-    fetchProducts(widget.route, widget.MaDanhMuc, widget.MaThuongHieu, widget.TenSanPham);
+    fetchProducts(widget.route, widget.maDanhMuc, widget.maThuongHieu, widget.tenSanPham);
   }
 
-  Future<void> fetchProducts(String route, String? MaDanhMuc, String? MaThuongHieu, String? TenSanPham) async {
+  Future<void> fetchProducts(String route, String? maDanhMuc, String? maThuongHieu, String? tenSanPham) async {
     setState(() {
       _isLoading = true; // Bắt đầu tải
     });
     try {
       Uri url;
-      if (MaDanhMuc != null) {
-        final urlCustom = Uri.parse(globals.baseUri + route + '/' + MaDanhMuc);
+      if (maDanhMuc != null) {
+        final urlCustom = Uri.parse(globals.baseUri + route + '/' + maDanhMuc);
         url = urlCustom;
-      } else if (MaThuongHieu != null) {
-        final urlCustom = Uri.parse(globals.baseUri + route + '/' + MaThuongHieu);
+      } else if (maThuongHieu != null) {
+        final urlCustom = Uri.parse(globals.baseUri + route + '/' + maThuongHieu);
         url = urlCustom;
-      } else if (TenSanPham != null) {
-        final urlCustom = Uri.parse(globals.baseUri + route + '/' + TenSanPham);
+      } else if (tenSanPham != null) {
+        final urlCustom = Uri.parse(globals.baseUri + route + '/' + tenSanPham);
         url = urlCustom;
       } else {
         final urlCustom = Uri.parse(globals.baseUri + route);
@@ -121,7 +121,7 @@ class _ProductCardState extends State<ProductCard> {
                               opaque: true, // Giữ màn cũ hiển thị
                               transitionDuration: const Duration(milliseconds: 300),
                               pageBuilder: (context, animation, secondaryAnimation) {
-                                return ProductInfo(MaSanPham: product["MaSanPham"]);
+                                return ProductInfo(maSanPham: product["MaSanPham"]);
                               },
                               transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                 final tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)

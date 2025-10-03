@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hehehehe/features/auth/screens/registerScreen.dart';
+import 'package:hehehehe/features/auth/screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,9 +20,10 @@ class _LoginScreenState extends State<LoginScreen> {
           },
           icon: Icon(Icons.keyboard_backspace_outlined),
         ),
-        title: const Text('Login', style: TextStyle(
-          fontWeight: FontWeight.bold,
-        ),),
+        title: const Text(
+          'Login',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
           GestureDetector(
             onTap: () {
@@ -135,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: double.infinity,
                             child: ElevatedButton(
                               style: ButtonStyle(
-                                shape: MaterialStateProperty.all(
+                                shape: WidgetStateProperty.all(
                                   RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(
                                       10,
@@ -167,24 +168,44 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               Text('Bạn chưa có tài khoản?'),
                               GestureDetector(
-                                onTap: (){
+                                onTap: () {
                                   Navigator.push(
                                     context,
                                     PageRouteBuilder(
                                       opaque: true, // Giữ màn cũ hiển thị
-                                      transitionDuration: const Duration(milliseconds: 300),
-                                      pageBuilder: (context, animation, secondaryAnimation) {
-                                        return RegisterScreen();
-                                      },
-                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                        final tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
-                                            .chain(CurveTween(curve: Curves.easeInOutSine));
+                                      transitionDuration: const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      pageBuilder:
+                                          (
+                                            context,
+                                            animation,
+                                            secondaryAnimation,
+                                          ) {
+                                            return RegisterScreen();
+                                          },
+                                      transitionsBuilder:
+                                          (
+                                            context,
+                                            animation,
+                                            secondaryAnimation,
+                                            child,
+                                          ) {
+                                            final tween =
+                                                Tween(
+                                                  begin: const Offset(1.0, 0.0),
+                                                  end: Offset.zero,
+                                                ).chain(
+                                                  CurveTween(
+                                                    curve: Curves.easeInOutSine,
+                                                  ),
+                                                );
 
-                                        return SlideTransition(
-                                          position: animation.drive(tween),
-                                          child: child,
-                                        );
-                                      },
+                                            return SlideTransition(
+                                              position: animation.drive(tween),
+                                              child: child,
+                                            );
+                                          },
                                     ),
                                   );
                                 },
@@ -202,7 +223,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           Row(
                             children: [
                               Expanded(
-                                child: Divider(thickness: 1, color: Colors.grey),
+                                child: Divider(
+                                  thickness: 1,
+                                  color: Colors.grey,
+                                ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -214,16 +238,44 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               Expanded(
-                                child: Divider(thickness: 1, color: Colors.grey),
+                                child: Divider(
+                                  thickness: 1,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ],
                           ),
                           SizedBox(height: 10),
                           // Đăng nhập với GG
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  elevation: 0, // chỉnh độ cao shadow
+                                  backgroundColor: Color(0xFFd4f6ff),
+                                  content: const Text(
+                                    'Tính năng này đang được xây dựng thử lại sau hen',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                  duration: const Duration(seconds: 2),
+                                  width: 320.0, // Width of the SnackBar.
+                                  padding: const EdgeInsets.all(20),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    side: BorderSide(
+                                      color: Color(0xFF706e6e),
+                                      width: 0.3,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                             style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
+                              shape: WidgetStateProperty.all(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                     10,
@@ -257,9 +309,34 @@ class _LoginScreenState extends State<LoginScreen> {
                           SizedBox(height: 10),
                           // Đăng nhập với GG
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  elevation: 0, // chỉnh độ cao shadow
+                                  backgroundColor: Color(0xFFd4f6ff),
+                                  content: const Text(
+                                    'Tính năng này đang được xây dựng thử lại sau hen',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                  duration: const Duration(seconds: 2),
+                                  width: 320.0, // Width of the SnackBar.
+                                  padding: const EdgeInsets.all(20),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    side: BorderSide(
+                                      color: Color(0xFF706e6e),
+                                      width: 0.3,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                             style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
+                              shape: WidgetStateProperty.all(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                     10,
@@ -299,7 +376,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-      )
+      ),
     );
   }
 }

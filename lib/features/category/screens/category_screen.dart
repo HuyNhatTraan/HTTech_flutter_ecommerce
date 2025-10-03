@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hehehehe/features/category/widgets/danhMucSanPham.dart';
-import 'package:hehehehe/features/category/widgets/cacThuongHieuPP.dart';
+import 'package:hehehehe/features/category/widgets/category_products_widget.dart';
+import 'package:hehehehe/features/category/widgets/category_brand_widget.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
