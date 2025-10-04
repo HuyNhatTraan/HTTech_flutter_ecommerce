@@ -82,7 +82,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ),
                       Text(
-                        "' " + _currentQuery + " '",
+                        "' $_currentQuery' ",
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

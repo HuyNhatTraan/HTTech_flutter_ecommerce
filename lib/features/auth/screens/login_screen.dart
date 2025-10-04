@@ -9,6 +9,17 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  bool _obscureText = true;
+
+  String layText(){
+    String email =  emailController.text;
+    String password =  passwordController.text;
+    return email + password;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 Expanded(
                                   child: TextField(
+                                    controller: emailController,
                                     decoration: InputDecoration(
                                       hintText: 'Nhập Email của bạn',
                                       border: InputBorder.none,
@@ -113,16 +125,32 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center, // cho icon và textfield thẳng hàng
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsGeometry.only(right: 10),
+                                  padding: const EdgeInsets.only(right: 10),
                                   child: Icon(Icons.lock_outlined),
                                 ),
                                 Expanded(
                                   child: TextField(
+                                    obscureText: _obscureText,
+                                    controller: passwordController,
                                     decoration: InputDecoration(
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          _obscureText ? Icons.visibility_off : Icons.visibility,
+                                          size: 18, // chỉnh size nhỏ cho cân
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _obscureText = !_obscureText;
+                                          });
+                                        },
+                                      ),
                                       hintText: 'Nhập mật khẩu của bạn',
                                       border: InputBorder.none,
+                                      isDense: true, // giúp textfield gọn lại
+                                      contentPadding: EdgeInsets.symmetric(vertical: 12), // căn giữa text
                                     ),
                                   ),
                                 ),
@@ -148,7 +176,32 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    elevation: 0, // chỉnh độ cao shadow
+                                    backgroundColor: Color(0xFFd4f6ff),
+                                    content: Text(
+                                      'Đã nhập: ' + layText(),
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    duration: const Duration(seconds: 2),
+                                    width: 320.0, // Width of the SnackBar.
+                                    padding: const EdgeInsets.all(20),
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                      side: BorderSide(
+                                        color: Color(0xFF706e6e),
+                                        width: 0.3,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
                               child: Padding(
                                 padding: EdgeInsets.all(10),
                                 child: Text(

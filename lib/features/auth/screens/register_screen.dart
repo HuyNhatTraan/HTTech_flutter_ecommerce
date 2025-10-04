@@ -9,6 +9,8 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  bool _obscureText = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,16 +115,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center, // cho icon và textfield thẳng hàng
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsGeometry.only(right: 10),
+                                  padding: const EdgeInsets.only(right: 10),
                                   child: Icon(Icons.lock_outlined),
                                 ),
                                 Expanded(
                                   child: TextField(
+                                    obscureText: _obscureText,
+                                    //controller: passwordController,
                                     decoration: InputDecoration(
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          _obscureText ? Icons.visibility_off : Icons.visibility,
+                                          size: 18, // chỉnh size nhỏ cho cân
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _obscureText = !_obscureText;
+                                          });
+                                        },
+                                      ),
                                       hintText: 'Nhập mật khẩu của bạn',
                                       border: InputBorder.none,
+                                      isDense: true, // giúp textfield gọn lại
+                                      contentPadding: EdgeInsets.symmetric(vertical: 12), // căn giữa text
                                     ),
                                   ),
                                 ),

@@ -151,6 +151,14 @@ class _ProductInfoState extends State<ProductInfo> {
                       itemCount: _products.length,
                       itemBuilder: (context, index) {
                         final product = _products[index];
+                        final double giaBase = double.parse(
+                          product["GiaBaseSP"].toString(),
+                        );
+                        final double giaSP = double.parse(
+                          product["GiaSP"].toString(),
+                        );
+
+                        final int giamGia = (giaBase - giaSP).round();
                         return Container(
                           padding: EdgeInsets.all(0),
                           child: Row(
@@ -159,11 +167,15 @@ class _ProductInfoState extends State<ProductInfo> {
                             children: [
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      padding: EdgeInsets.all(15),
+                                      padding: EdgeInsets.only(
+                                        top: 0,
+                                        left: 15,
+                                        right: 15,
+                                        bottom: 20,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         border: Border(
@@ -178,21 +190,40 @@ class _ProductInfoState extends State<ProductInfo> {
                                         children: [
                                           Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .spaceBetween,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
-                                                product["GiaSP"]
-                                                    .toString()
-                                                    .toVND(unit: 'đ'),
-                                                maxLines: 2,
-                                                overflow:
-                                                    TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  color: Color(0xFF3c81c6),
-                                                  fontSize: 26,
-                                                  fontWeight: FontWeight.w900,
-                                                ),
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.baseline,
+                                                textBaseline:
+                                                    TextBaseline.alphabetic,
+                                                spacing: 5,
+                                                children: [
+                                                  Text(
+                                                    product["GiaSP"]
+                                                        .toString()
+                                                        .toVND(unit: 'đ'),
+                                                    style: const TextStyle(
+                                                      color: Color(0xFF3c81c6),
+                                                      fontSize: 24,
+                                                      fontWeight:
+                                                          FontWeight.w900,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    product["GiaBaseSP"]
+                                                        .toString()
+                                                        .toVND(unit: 'đ'),
+                                                    style: const TextStyle(
+                                                      color: Color(0xFF706e6e),
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w900,
+                                                      decoration: TextDecoration
+                                                          .lineThrough,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                               IconButton(
                                                 onPressed: () {
@@ -202,8 +233,7 @@ class _ProductInfoState extends State<ProductInfo> {
                                                 },
                                                 icon: Icon(
                                                   isFavorite
-                                                      ? Icons
-                                                            .favorite_outlined
+                                                      ? Icons.favorite_outlined
                                                       : Icons
                                                             .favorite_border_outlined,
                                                   color: isFavorite
@@ -212,6 +242,36 @@ class _ProductInfoState extends State<ProductInfo> {
                                                 ),
                                               ),
                                             ],
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.all(5),
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFFd4f6ff),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: Border.all(
+                                                color: Color(0xFF3c81c6),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              spacing: 3,
+                                              children: [
+                                                Icon(
+                                                  Icons.arrow_downward_outlined,
+                                                  color: Color(0xFF3c81c6),
+                                                  size: 18,
+                                                ),
+                                                Text(
+                                                  'Giảm ' + giamGia.toVND(),
+                                                  style: TextStyle(
+                                                    color: Color(0xFF3c81c6),
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                           SizedBox(height: 5),
                                           Text(
@@ -246,37 +306,106 @@ class _ProductInfoState extends State<ProductInfo> {
         child: Row(
           children: [
             Expanded(
-              child: Container(
-                padding: EdgeInsets.all(0),
-                decoration: BoxDecoration(color: Color(0xFFc6e7ff)),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add_shopping_cart_outlined, color: Color(0xFF3c81c6)),
-                      Text('Thêm vào giỏ hàng', textAlign: TextAlign.center, style: TextStyle(color: Color(0xFF3c81c6), fontWeight: FontWeight.bold),),
-                    ],
+              child: GestureDetector(
+                onTap: (){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      elevation: 0, // chỉnh độ cao shadow
+                      backgroundColor: Color(0xFFd4f6ff),
+                      content: const Text(
+                        'Tính năng này đang được xây dựng thử lại sau hen',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      duration: const Duration(seconds: 2),
+                      width: 320.0, // Width of the SnackBar.
+                      padding: const EdgeInsets.all(20),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        side: BorderSide(
+                          color: Color(0xFF706e6e),
+                          width: 0.3,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.all(0),
+                  decoration: BoxDecoration(color: Color(0xFFc6e7ff)),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.add_shopping_cart_outlined,
+                          color: Color(0xFF3c81c6),
+                        ),
+                        Text(
+                          'Thêm vào giỏ hàng',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFF3c81c6),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
             Expanded(
-              child: Container(
-                padding: EdgeInsets.all(0),
-                decoration: BoxDecoration(color: Color(0xFF3c81c6)),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(Icons.check_outlined, color: Colors.white),
-                      Text(
-                        'Mua ngay',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              child: GestureDetector(
+                onTap: (){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      elevation: 0, // chỉnh độ cao shadow
+                      backgroundColor: Color(0xFFd4f6ff),
+                      content: const Text(
+                        'Tính năng này đang được xây dựng thử lại sau hen',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
-                    ],
+                      duration: const Duration(seconds: 2),
+                      width: 320.0, // Width of the SnackBar.
+                      padding: const EdgeInsets.all(20),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        side: BorderSide(
+                          color: Color(0xFF706e6e),
+                          width: 0.3,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.all(0),
+                  decoration: BoxDecoration(color: Color(0xFF3c81c6)),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(Icons.check_outlined, color: Colors.white),
+                        Text(
+                          'Mua ngay',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

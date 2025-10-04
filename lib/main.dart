@@ -130,8 +130,7 @@ class _HomePage extends State<HomePage> {
                       MaterialPageRoute<void>(
                         builder: (context) => const CartScreen(),
                       ),
-                    );
-                    print("Đi tới giỏ hàng");
+                    );                
                   },
                 ),
               ),
