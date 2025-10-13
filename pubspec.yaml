@@ -36,13 +36,17 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_native_splash: ^2.4.6
-  google_fonts: ^6.3.1
+  google_fonts: ^6.3.2
   flutter_launcher_icons: ^0.14.4
   rename_app: ^1.6.5
   http: ^1.5.0
   carousel_slider: ^5.1.1
   animate_do: ^4.2.0
   flutter_format_money_vietnam: ^0.0.2
+  firebase_core: ^4.1.1
+  firebase_auth: ^6.1.0
+  fluttertoast: ^9.0.0
+  cloud_firestore: ^6.0.2
 
 dev_dependencies:
   flutter_test:

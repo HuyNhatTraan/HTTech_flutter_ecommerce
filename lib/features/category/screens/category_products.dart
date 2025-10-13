@@ -46,7 +46,7 @@ class _DanhMucSanPhamProductsState extends State<DanhMucSanPhamProducts> {
               width: double.infinity,
             ),
             Padding(
-              padding: EdgeInsets.all(15),
+              padding: EdgeInsets.only(top: 15, left: 15, right: 15),
               child: Text(
                 'Danh mục ' + widget.tenDanhMuc,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),

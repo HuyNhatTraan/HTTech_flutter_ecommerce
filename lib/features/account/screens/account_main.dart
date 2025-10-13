@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hehehehe/globals.dart' as globals;
 import 'package:hehehehe/features/account/widgets/tools.dart';
 import 'package:hehehehe/features/auth/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hehehehe/features/account/widgets/account_info_banner.dart';
+
 
 class AccountMain extends StatefulWidget {
   const AccountMain({super.key});
@@ -11,6 +14,26 @@ class AccountMain extends StatefulWidget {
 }
 
 class _AccountMainState extends State<AccountMain> {
+
+  void initState() {
+    super.initState();
+    checkCurrentUser();
+  }
+
+  void checkCurrentUser() {
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // Người dùng đã đăng nhập
+      print('Người dùng đã đăng nhập!');
+      print('User ID: ${user.uid}');
+      print('Email: ${user.email}');
+    } else {
+      // Người dùng chưa đăng nhập
+      print('Không có người dùng nào đang đăng nhập.');
+    }
+  }
+
   int _reloadAccount = 0;
 
   Future<void> _reloadData() async {
@@ -77,94 +100,67 @@ class _AccountMainState extends State<AccountMain> {
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Tên user
-                                    Padding(
-                                      padding: EdgeInsets.all(10),
-                                      child: Text(
-                                        'HuyNhatTran',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w900,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.all(10),
-                                      child: Text(
-                                        'Email: Huy1104*****@gmail.com',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 10),
-                                      child: Text(
-                                        'Hạng thành viên: Diamond hẹ hẹ hẹ',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                StreamBuilder<User?>(
+                                  stream: FirebaseAuth.instance.authStateChanges(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return Center(child: CircularProgressIndicator());
+                                    }
+                                    if (!snapshot.hasData || snapshot.data == null) {
+                                      return Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          // Tên user
+                                          Padding(
+                                            padding: EdgeInsets.all(10),
+                                            child: Text(
+                                              'Bạn chưa đăng nhập',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w900,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 10),
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  PageRouteBuilder(
+                                                    opaque: true, // Giữ màn cũ hiển thị
+                                                    transitionDuration: const Duration(milliseconds: 300),
+                                                    pageBuilder: (context, animation, secondaryAnimation) {
+                                                      return LoginScreen();
+                                                    },
+                                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                                      final tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                                                          .chain(CurveTween(curve: Curves.easeInOutSine));
+
+                                                      return SlideTransition(
+                                                        position: animation.drive(tween),
+                                                        child: child,
+                                                      );
+                                                    },
+                                                  ),
+                                                );
+                                              },
+                                              child: Text('Đăng nhập ngay'),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }
+
+                                    final user = snapshot.data!;
+                                    return AccountInfoBanner(user: user);
+                                  }
                                 ),
                               ],
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Làm chỗ test UI đăng nhập và đăng ký
-              Padding(
-                padding: const EdgeInsets.all(15),
-                child: Text(
-                  "Test đăng nhập và đăng ký",
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(15),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              opaque: true, // Giữ màn cũ hiển thị
-                              transitionDuration: const Duration(milliseconds: 300),
-                              pageBuilder: (context, animation, secondaryAnimation) {
-                                return LoginScreen();
-                              },
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                final tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
-                                    .chain(CurveTween(curve: Curves.easeInOutSine));
-
-                                return SlideTransition(
-                                  position: animation.drive(tween),
-                                  child: child,
-                                );
-                              },
-                            ),
-                          );
-                        },
-                        child: Text('Đăng nhập ngay'),
                       ),
                     ),
                   ],

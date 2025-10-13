@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hehehehe/features/auth/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hehehehe/features/auth/services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -10,6 +13,28 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   bool _obscureText = true;
+
+  bool isEmailValid(String email) {
+    final emailRegExp = RegExp(
+      r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+    );
+
+    // Dùng phương thức .hasMatch() để kiểm tra xem email có khớp khuôn không
+    return emailRegExp.hasMatch(email);
+  }
+
+// --- Ví dụ sử dụng ---
+  void main() {
+    print(isEmailValid("test@gmail.com")); // Sẽ in ra: true
+    print(isEmailValid("testgmail.com"));  // Sẽ in ra: false
+  }
+
+  String _emailErrorText = ' ';
+  String? _passwordErrorText;
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +109,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                                 Expanded(
                                   child: TextField(
+                                    onChanged: (text) {
+                                      setState(() {
+                                        if (isEmailValid(text)) {
+                                          _emailErrorText = ' ';
+                                        } else {
+                                          _emailErrorText = 'Email không hợp lệ';
+                                        }
+                                      });
+                                    },
+                                    controller: emailController,
                                     decoration: InputDecoration(
                                       hintText: 'Nhập Email của bạn',
                                       border: InputBorder.none,
@@ -94,6 +129,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ],
                             ),
                           ),
+                          Text(_emailErrorText.toString(), style: TextStyle(color: Colors.red, fontSize: 12),),
                           SizedBox(height: 10),
                           Text(
                             'Password',
@@ -123,6 +159,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                                 Expanded(
                                   child: TextField(
+                                    controller: passwordController,
                                     obscureText: _obscureText,
                                     //controller: passwordController,
                                     decoration: InputDecoration(
@@ -166,7 +203,58 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                 ),
                               ),
-                              onPressed: () {},
+                              onPressed: () async {
+                                print('Đã ấn');
+                                if (emailController.text.trim().isEmpty || passwordController.text.trim().isEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg: "Vui lòng nhập đầy đủ thông tin",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Color(0xFF3a81c4),
+                                      textColor: Colors.white,
+                                      fontSize: 16.0
+                                  );
+                                  return;
+                                }
+                                try {
+                                  UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                                    email: emailController.text.trim(),
+                                    password: passwordController.text.trim(),
+                                  );
+
+                                  String uid = userCredential.user!.uid;
+                                  AuthServices authServices = AuthServices();
+                                  authServices.registerUsers(uid, emailController.text.trim());
+
+                                  Fluttertoast.showToast(
+                                      msg: "Đăng ký thành công",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Color(0xFF3a81c4),
+                                      textColor: Colors.white,
+                                      fontSize: 16.0
+                                  );
+
+                                  Navigator.pop(context);
+
+                                } on FirebaseAuthException catch (e) {
+                                  if (e.code == 'email-already-in-use') {
+                                    Fluttertoast.showToast(
+                                        msg: "Email này đã được dùng",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Color(0xFF3a81c4),
+                                        textColor: Colors.white,
+                                        fontSize: 16.0
+                                    );
+                                  }
+                                } catch (e) {
+                                  print(e);
+                                }
+                              },
                               child: Padding(
                                 padding: EdgeInsets.all(10),
                                 child: Text(

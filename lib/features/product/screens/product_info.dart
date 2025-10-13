@@ -3,8 +3,10 @@ import 'package:hehehehe/features/cart/screens/cart_screen.dart';
 import 'package:hehehehe/features/product/widgets/product_carousel.dart';
 import 'package:hehehehe/features/product/widgets/product_description.dart';
 import 'package:hehehehe/features/search/search_screen.dart';
+import 'package:hehehehe/features/product/widgets/product_card.dart';
 import 'package:hehehehe/globals.dart';
 import 'package:http/http.dart' as http;
+import 'package:hehehehe/features/product/widgets/product_variants.dart';
 import 'dart:convert';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 
@@ -297,6 +299,11 @@ class _ProductInfoState extends State<ProductInfo> {
             ),
             SizedBox(height: 10),
             ProductDescription(maSanPham: widget.maSanPham),
+            const SizedBox(height: 40),
+            const Center(
+              child: Text('---------- Có thể bạn sẽ thích ----------'),
+            ),
+            ProductCard(route: '/products'),
           ],
         ),
       ),
@@ -307,30 +314,59 @@ class _ProductInfoState extends State<ProductInfo> {
           children: [
             Expanded(
               child: GestureDetector(
-                onTap: (){
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      elevation: 0, // chỉnh độ cao shadow
-                      backgroundColor: Color(0xFFd4f6ff),
-                      content: const Text(
-                        'Tính năng này đang được xây dựng thử lại sau hen',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w800,
+                onTap: () {
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   SnackBar(
+                  //     elevation: 0, // chỉnh độ cao shadow
+                  //     backgroundColor: Color(0xFFd4f6ff),
+                  //     content: const Text(
+                  //       'Tính năng này đang được xây dựng thử lại sau hen',
+                  //       style: TextStyle(
+                  //         color: Colors.black,
+                  //         fontWeight: FontWeight.w800,
+                  //       ),
+                  //     ),
+                  //     duration: const Duration(seconds: 2),
+                  //     width: 320.0, // Width of the SnackBar.
+                  //     padding: const EdgeInsets.all(20),
+                  //     behavior: SnackBarBehavior.floating,
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(30.0),
+                  //       side: BorderSide(
+                  //         color: Color(0xFF706e6e),
+                  //         width: 0.3,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // );
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return SingleChildScrollView(
+                        child: Container(
+                          padding: EdgeInsets.all(0),
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 8),
+                              Center(
+                                child: Icon(
+                                  Icons.more_horiz_outlined,
+                                  size: 30,
+                                ),
+                              ),
+                              ProductVariants(
+                                route: "/productVariants",
+                                maSanPham: widget.maSanPham,
+                                tenSanPham: _products[0]["TenSanPham"],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      duration: const Duration(seconds: 2),
-                      width: 320.0, // Width of the SnackBar.
-                      padding: const EdgeInsets.all(20),
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                        side: BorderSide(
-                          color: Color(0xFF706e6e),
-                          width: 0.3,
-                        ),
-                      ),
-                    ),
+                      );
+                    },
                   );
                 },
                 child: Container(
@@ -361,7 +397,7 @@ class _ProductInfoState extends State<ProductInfo> {
             ),
             Expanded(
               child: GestureDetector(
-                onTap: (){
+                onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       elevation: 0, // chỉnh độ cao shadow
@@ -379,10 +415,7 @@ class _ProductInfoState extends State<ProductInfo> {
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
-                        side: BorderSide(
-                          color: Color(0xFF706e6e),
-                          width: 0.3,
-                        ),
+                        side: BorderSide(color: Color(0xFF706e6e), width: 0.3),
                       ),
                     ),
                   );

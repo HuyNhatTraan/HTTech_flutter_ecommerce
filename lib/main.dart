@@ -8,11 +8,16 @@ import 'package:hehehehe/features/notification/screens/notification.dart';
 import 'package:hehehehe/features/account/screens/account_main.dart';
 import 'package:hehehehe/features/cart/screens/cart_screen.dart';
 import 'package:hehehehe/features/search/search_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 
-void main() {
+void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -48,7 +53,6 @@ class _HomePage extends State<HomePage> {
 
   void initialization() async {
     await Future.delayed(const Duration(milliseconds: 30));
-    // print('ready in 0.5s...');
     FlutterNativeSplash.remove();
   }
 
@@ -127,10 +131,17 @@ class _HomePage extends State<HomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute<void>(
-                        builder: (context) => const CartScreen(),
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 300),
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const CartScreen(),
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                              .chain(CurveTween(curve: Curves.easeInOutSine));
+                          return SlideTransition(position: animation.drive(tween), child: child);
+                        },
                       ),
-                    );                
+                    );
                   },
                 ),
               ),

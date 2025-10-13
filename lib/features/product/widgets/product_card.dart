@@ -25,251 +25,150 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<ProductCard> {
-  // dynamic = kiểu dữ liệu có thể là bất kỳ thứ gì (int, String, Map, List...).
   List<dynamic> _products = [];
-  bool _isLoading = false; // Thêm biến để theo dõi trạng thái tải
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    fetchProducts(
-      widget.route,
-      widget.maDanhMuc,
-      widget.maThuongHieu,
-      widget.tenSanPham,
-    );
+    fetchProducts(widget.route, widget.maDanhMuc, widget.maThuongHieu, widget.tenSanPham);
   }
 
-  Future<void> fetchProducts(
-    String route,
-    String? maDanhMuc,
-    String? maThuongHieu,
-    String? tenSanPham,
-  ) async {
-    setState(() {
-      _isLoading = true; // Bắt đầu tải
-    });
+  Future<void> fetchProducts(String route, String? maDanhMuc, String? maThuongHieu, String? tenSanPham) async {
+    setState(() => _isLoading = true);
+
+    Uri url;
+    if (maDanhMuc != null) {
+      final urlCustom = Uri.parse(globals.baseUri + route + '/' + maDanhMuc);
+      url = urlCustom;
+    } else if (maThuongHieu != null) {
+      final urlCustom = Uri.parse(globals.baseUri + route + '/' + maThuongHieu);
+      url = urlCustom;
+    } else if (tenSanPham != null) {
+      final urlCustom = Uri.parse(globals.baseUri + route + '/' + tenSanPham);
+      url = urlCustom;
+    } else {
+      final urlCustom = Uri.parse(globals.baseUri + route);
+      url = urlCustom;
+    }
+
     try {
-      Uri url;
-      if (maDanhMuc != null) {
-        final urlCustom = Uri.parse(globals.baseUri + route + '/' + maDanhMuc);
-        url = urlCustom;
-      } else if (maThuongHieu != null) {
-        final urlCustom = Uri.parse(
-          globals.baseUri + route + '/' + maThuongHieu,
-        );
-        url = urlCustom;
-      } else if (tenSanPham != null) {
-        final urlCustom = Uri.parse(globals.baseUri + route + '/' + tenSanPham);
-        url = urlCustom;
-      } else {
-        final urlCustom = Uri.parse(globals.baseUri + route);
-        url = urlCustom;
-      }
-
       final response = await http.get(url);
-
       if (response.statusCode == 200) {
         setState(() {
           _products = json.decode(response.body);
-          _isLoading = false; // Tải xong
         });
-      } else {
-        setState(() {
-          _isLoading = false; // Tải lỗi
-        });
-        throw Exception(
-          "Failed to load products, status code: ${response.statusCode}",
-        );
       }
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false; // Tải lỗi
-        });
-      }
+      debugPrint("Lỗi tải sản phẩm: $e");
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsetsGeometry.all(10),
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _products
-                    .isEmpty // Nếu không rỗng thì hiển thị sản phẩm mới
-              ? Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Text(
-                      "Không tìm thấy sản phẩm nào.",
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  ),
-                )
-              : GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // số cột
-                    mainAxisExtent: 310,
-                  ),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _products.length,
-                  itemBuilder: (context, index) {
-                    final product = _products[index];
-                    return Container(
-                      padding: EdgeInsets.all(5),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    opaque: true, // Giữ màn cũ hiển thị
-                                    transitionDuration: const Duration(
-                                      milliseconds: 300,
-                                    ),
-                                    pageBuilder:
-                                        (
-                                          context,
-                                          animation,
-                                          secondaryAnimation,
-                                        ) {
-                                          return ProductInfo(
-                                            maSanPham: product["MaSanPham"],
-                                          );
-                                        },
-                                    transitionsBuilder:
-                                        (
-                                          context,
-                                          animation,
-                                          secondaryAnimation,
-                                          child,
-                                        ) {
-                                          final tween =
-                                              Tween(
-                                                begin: const Offset(1.0, 0.0),
-                                                end: Offset.zero,
-                                              ).chain(
-                                                CurveTween(
-                                                  curve: Curves.easeInOutSine,
-                                                ),
-                                              );
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-                                          return SlideTransition(
-                                            position: animation.drive(tween),
-                                            child: child,
-                                          );
-                                        },
-                                  ),
-                                );
-                                print('Đã ấn ' + product["MaSanPham"]);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1,
-                                  ),
-                                  color: Colors.white,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Ảnh sản phẩm
-                                    Container(
-                                      height: 180,
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(10),
-                                        ),
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                            globals.baseUri +
-                                                '/' +
-                                                product["HinhAnhDaiDienSP"],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            product["TenSanPham"],
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 6),
-                                          // Giá
-                                          Row(
-                                            children: [
-                                              Text(
-                                                product["GiaSP"]
-                                                    .toString()
-                                                    .toVND(unit: 'đ'),
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.blue,
-                                                ),
-                                              ),
-                                              SizedBox(width: 6),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-
-                                          // Rating + đã bán
-                                          Row(
-                                            children: const [
-                                              Icon(
-                                                Icons.star,
-                                                color: Colors.amber,
-                                                size: 16,
-                                              ),
-                                              SizedBox(width: 4),
-                                              Text("4.9"),
-                                              SizedBox(width: 8),
-                                              Text(
-                                                "Đã bán 500 cái",
-                                                style: TextStyle(fontSize: 12),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ).fadeInUp(
-                      from: 100,
-                      duration: Duration(milliseconds: 400),
-                    );
-                  },
-                ),
+    if (_products.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Text("Không tìm thấy sản phẩm nào.",
+              style: TextStyle(fontSize: 16, color: Colors.grey)),
         ),
-      ],
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisExtent: 310,
+        ),
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: _products.length,
+        itemBuilder: (context, index) {
+          final product = _products[index];
+          return _buildProductCard(product);
+        },
+      ),
+    );
+  }
+
+  Widget _buildProductCard(dynamic product) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 300),
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                ProductInfo(maSanPham: product["MaSanPham"]),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                  .chain(CurveTween(curve: Curves.easeInOutSine));
+              return SlideTransition(position: animation.drive(tween), child: child);
+            },
+          ),
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Ảnh
+            Container(
+              height: 180,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                image: DecorationImage(
+                  image: NetworkImage("${globals.baseUri}/${product["HinhAnhDaiDienSP"]}"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            // Thông tin
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(product["TenSanPham"],
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 6),
+                  Text(product["GiaSP"].toString().toVND(unit: 'đ'),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
+                  const SizedBox(height: 8),
+                  const Row(
+                    children: [
+                      Icon(Icons.star, color: Colors.amber, size: 16),
+                      SizedBox(width: 4),
+                      Text("4.9"),
+                      SizedBox(width: 8),
+                      Text("Đã bán 500 cái", style: TextStyle(fontSize: 12)),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ).fadeInUp(from: 100, duration: const Duration(milliseconds: 400)),
     );
   }
 }
