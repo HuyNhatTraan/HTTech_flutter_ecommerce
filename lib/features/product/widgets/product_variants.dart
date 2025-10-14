@@ -77,6 +77,7 @@ class _ProductVariantsState extends State<ProductVariants> {
   int _currentTempPrices = 0;
   String _selectedVariant= '';
   String _selectedVariantImgUrl= '';
+  String _selectedThuocTinhSP= '';
   String _tenSP = '';
 
   final User? user = FirebaseAuth.instance.currentUser;
@@ -136,6 +137,7 @@ class _ProductVariantsState extends State<ProductVariants> {
                               _currentTempPrices = int.parse(product["GiaSP"]);
                               _selectedVariant = product["MaVarientSanPham"].toString();
                               _selectedVariantImgUrl = product["HinhAnhVariant"].toString();
+                              _selectedThuocTinhSP = product["ThuocTinhSP"].toString();
                             });
                             print('Đã chọn sản phẩm: ${product["MaVarientSanPham"]}' + _selectedVariant);
                           },
@@ -219,16 +221,17 @@ class _ProductVariantsState extends State<ProductVariants> {
                         : () {
                       if (user != null) {
                         AuthServices authServices = AuthServices();
-                        authServices.addCart(user!.uid, widget.maSanPham, widget.tenSanPham, _currentTempPrices.toString(), _selectedVariant, _selectedVariantImgUrl, _currentQuantities);
+                        authServices.addCart(user!.uid, widget.maSanPham, widget.tenSanPham, _currentTempPrices.toString(), _selectedVariant, _selectedVariantImgUrl, _currentQuantities, _selectedThuocTinhSP);
                         Fluttertoast.showToast(
                             msg: "Thêm thành công",
                             toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
+                            gravity: ToastGravity.CENTER,
                             timeInSecForIosWeb: 1,
                             backgroundColor: Color(0xFF3a81c4),
                             textColor: Colors.white,
                             fontSize: 16.0
                         );
+                        Navigator.pop(context);
                       } else {
                         Navigator.push(
                           context,

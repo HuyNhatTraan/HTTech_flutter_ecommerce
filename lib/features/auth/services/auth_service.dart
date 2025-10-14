@@ -17,33 +17,68 @@ class AuthServices {
     return snapshot.docs.map((doc) => doc.data()).toList();
   }
 
-  // Thêm giỏ hàng
-  Future addCart(String uid, String MaSP, String TenSP, String GiaSP, String MaVarientSanPham, String HinhAnhVariant, int SoLuong) async {
+  // Lấy thông tin users
+  Future<Map<String, dynamic>?> getUser(String uid) async {
+    final snapshot =
+    await FirebaseFirestore.instance.collection("users").doc(uid).get();
+
+    return snapshot.data();
+  }
+
+
+  // Xoá sản phẩm trong giỏ hàng
+  Future removeCartItems(String uid, String maVarientSanPham) async {
     await FirebaseFirestore.instance
         .collection("cart")
         .doc(uid)
         .collection("SanPham")
-        .doc(MaVarientSanPham)
+        .doc(maVarientSanPham.toString())
+        .delete(); // <- chỉ cần dòng này là đủ
+  }
+
+  // Tăng, giảm số lượng sản phẩm trong giỏ hàng
+  Future updateCartQuantities(String uid, String maVarientSanPham, int num) async {
+    await FirebaseFirestore.instance
+        .collection("cart")
+        .doc(uid)
+        .collection("SanPham")
+        .doc(maVarientSanPham.toString())
         .set({
-      "MaSP" : MaSP,
-      "TenSP" : TenSP,
-      "GiaSP": GiaSP,
-      "MaVarientSanPham": MaVarientSanPham,
-      "HinhAnhVariant": HinhAnhVariant,
-      "SoLuong": FieldValue.increment(SoLuong),
+      "MaVarientSanPham": maVarientSanPham,
+      "SoLuong": FieldValue.increment(num),
       "NgayThem": FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
 
+  // Thêm giỏ hàng
+  Future addCart(String uid, String maSP, String tenSP, String giaSP, String maVarientSanPham, String hinhAnhVariant, int soLuong, String thuocTinhSP) async {
+    await FirebaseFirestore.instance
+        .collection("cart")
+        .doc(uid)
+        .collection("SanPham")
+        .doc(maVarientSanPham.toString())
+        .set({
+      "MaSP" : maSP,
+      "TenSP" : tenSP,
+      "GiaSP": giaSP,
+      "MaVarientSanPham": maVarientSanPham,
+      "HinhAnhVariant": hinhAnhVariant,
+      "SoLuong": FieldValue.increment(soLuong),
+      "NgayThem": FieldValue.serverTimestamp(),
+      "ThuocTinhSP": thuocTinhSP
+    }, SetOptions(merge: true));
+  }
+
   // Đăng ký và lưu thẳng vào Firestore via Firebase
-  Future<void> registerUsers(String uid, String email) async {
+  Future<void> registerUsers(String uid, String email, String name) async {
     db.collection("users").doc(uid).set({
-      "email": email,
+      "name": name.toString(),
+      "email": email.toString(),
       "createdAt": Timestamp.now(),
       "role": "Khách hàng",
       "TrangThai": "Đang hoạt động",
-      "HangThanhVien": "Nhựa"
+      "HangThanhVien": "Nhựa",
+      "AvatarUrl" : "assets/account/images/474621319_122198072636131249_4305780536062375088_n.jpg"
     });
   }
-
 }

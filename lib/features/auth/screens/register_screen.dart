@@ -34,6 +34,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final nameController = TextEditingController();
 
 
   @override
@@ -83,13 +84,62 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
+                            'Họ và Tên',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Container(
+                            padding: EdgeInsets.only(
+                              left: 10,
+                              right: 10,
+                              top: 5,
+                              bottom: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Color(0xFF3980c3)),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsGeometry.only(right: 10),
+                                  child: Icon(Icons.person_outlined),
+                                ),
+                                Expanded(
+                                  child: TextField(
+                                    onChanged: (text) {
+                                      // setState(() {
+                                      //   if (isEmailValid(text)) {
+                                      //     _emailErrorText = ' ';
+                                      //   } else {
+                                      //     _emailErrorText = 'Email không hợp lệ';
+                                      //   }
+                                      // });
+                                    },
+                                    controller: nameController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Nhập tên của bạn',
+                                      border: InputBorder.none,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          // Text(_emailErrorText.toString(), style: TextStyle(color: Colors.red, fontSize: 12),),
+                          Text(
                             'Email',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 10),
+                          SizedBox(height: 5),
                           Container(
                             padding: EdgeInsets.only(
                               left: 10,
@@ -130,7 +180,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                           Text(_emailErrorText.toString(), style: TextStyle(color: Colors.red, fontSize: 12),),
-                          SizedBox(height: 10),
                           Text(
                             'Password',
                             style: TextStyle(
@@ -225,7 +274,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                                   String uid = userCredential.user!.uid;
                                   AuthServices authServices = AuthServices();
-                                  authServices.registerUsers(uid, emailController.text.trim());
+                                  authServices.registerUsers(uid, emailController.text.trim(), nameController.text.trim());
 
                                   Fluttertoast.showToast(
                                       msg: "Đăng ký thành công",

@@ -4,6 +4,7 @@ import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // nhớ import
 import 'package:hehehehe/features/auth/screens/login_screen.dart';
 import 'package:hehehehe/features/auth/services/auth_service.dart';
+import 'package:hehehehe/features/product/screens/product_info.dart';
 import 'package:hehehehe/globals.dart' as globals;
 
 class CartScreen extends StatefulWidget {
@@ -15,6 +16,8 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   final User? user = FirebaseAuth.instance.currentUser;
+  final AuthServices authService = AuthServices();
+
   int tongTienHeHe = 0; // biến tổng tiền toàn cục cho State
 
   @override
@@ -92,59 +95,139 @@ class _CartScreenState extends State<CartScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Image.network(
-                          '${globals.baseUri}/${item["HinhAnhVariant"]}',
-                          height: 60,
-                          fit: BoxFit.fitHeight,
+                        GestureDetector(
+                          onTap: () {
+                            print('Đã ấn ' + item["MaSP"]);
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration: const Duration(milliseconds: 300),
+                                pageBuilder: (context, animation, secondaryAnimation) =>
+                                    ProductInfo(maSanPham: item["MaSP"]),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                      .chain(CurveTween(curve: Curves.easeInOutSine));
+                                  return SlideTransition(position: animation.drive(tween), child: child);
+                                },
+                              ),
+                            );
+                          },
+                          child: Image.network(
+                            '${globals.baseUri}/${item["HinhAnhVariant"]}',
+                            height: 60,
+                            fit: BoxFit.fitHeight,
+                          ),
                         ),
                         Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              spacing: 5,
-                              children: [
-                                Text(
-                                  item["TenSP"] ?? "",
-                                  maxLines: 4,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
+                          child: GestureDetector(
+                            onTap: () {
+                              print('Đã ấn ' + item["MaSP"]);
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  transitionDuration: const Duration(milliseconds: 300),
+                                  pageBuilder: (context, animation, secondaryAnimation) =>
+                                      ProductInfo(maSanPham: item["MaSP"]),
+                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                    final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                        .chain(CurveTween(curve: Curves.easeInOutSine));
+                                    return SlideTransition(position: animation.drive(tween), child: child);
+                                  },
                                 ),
-                                Text(
-                                  GiaSP.toVND(),
-                                  style: const TextStyle(
-                                      color: Color(0xFF3c81c6),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                                Text('Số lượng: $SoLuong'),
-                              ],
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                spacing: 5,
+                                children: [
+                                  Text(
+                                    item["TenSP"] ?? "",
+                                    maxLines: 3,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text('Phân loại: ${item["ThuocTinhSP"]}', style: TextStyle(fontSize: 12)),
+                                  Text(
+                                    GiaSP.toVND(),
+                                    style: const TextStyle(
+                                        color: Color(0xFF3c81c6),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
+                                  Text('Số lượng: $SoLuong', style: TextStyle(fontSize: 12)),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: Colors.grey.shade400,
-                              width: 1,
+                        Column(
+                          spacing: 10,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.grey.shade400,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (SoLuong == 1) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: Text("Xác nhận"),
+                                            content: Text("Người anh em có chắc muốn xóa không?"),
+                                            actions: [
+                                              TextButton(onPressed: () => Navigator.pop(context), child: Text("Hủy")),
+                                              TextButton(onPressed: () { authService.removeCartItems(user!.uid, item["MaVarientSanPham"]);Navigator.pop(context); }, child: Text("Xóa")),
+                                            ],
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      if (SoLuong == 0 || SoLuong < 0) {return;}
+                                      authService.updateCartQuantities(user!.uid, item["MaVarientSanPham"],-1);
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: const Icon(Icons.remove_outlined, size: 16),
+                                    ),
+                                  ),
+                                  Text(SoLuong.toString()),
+                                  GestureDetector(
+                                    onTap: () {
+                                      authService.updateCartQuantities(user!.uid, item["MaVarientSanPham"],1);
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: const Icon(Icons.add_outlined, size: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          child: Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.remove_outlined,
-                                    size: 16),
-                              ),
-                              Text(SoLuong.toString()),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.add_outlined,
-                                    size: 16),
-                              ),
-                            ],
-                          ),
+                            GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text("Xác nhận"),
+                                      content: Text("Người anh em có chắc muốn xóa không?"),
+                                      actions: [
+                                        TextButton(onPressed: () => Navigator.pop(context), child: Text("Hủy")),
+                                        TextButton(onPressed: () { authService.removeCartItems(user!.uid, item["MaVarientSanPham"]);Navigator.pop(context); }, child: Text("Xóa")),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              child: Text("Xoá", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)))
+                          ],
                         ),
                       ],
                     ),

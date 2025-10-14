@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class DanhSachDiaChi extends StatefulWidget {
-  const DanhSachDiaChi({super.key});
+class AccountAddress extends StatefulWidget {
+  const AccountAddress({super.key});
 
   @override
-  State<DanhSachDiaChi> createState() => _DanhSachDiaChiState();
+  State<AccountAddress> createState() => _AccountAddressState();
 }
 
-class _DanhSachDiaChiState extends State<DanhSachDiaChi> {
+class _AccountAddressState extends State<AccountAddress> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,52 +34,25 @@ class _DanhSachDiaChiState extends State<DanhSachDiaChi> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
+            Text('Danh sách đơn hàng'),
           ],
         ),
 
@@ -87,4 +60,3 @@ class _DanhSachDiaChiState extends State<DanhSachDiaChi> {
     );
   }
 }
-

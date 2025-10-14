@@ -83,23 +83,6 @@ class _AccountMainState extends State<AccountMain> {
                           children: [
                             Row(
                               children: [
-                                Container(
-                                  height: 100,
-                                  width: 100,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        globals.baseUri + '/' + 'assets/account/images/Resonator_Lupa.png',
-                                      ),
-                                      // fit: BoxFit.cover,
-                                    ),
-                                    border: Border.all(
-                                      color: Colors.black,
-                                      width: 1,
-                                    ),
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                ),
                                 StreamBuilder<User?>(
                                   stream: FirebaseAuth.instance.authStateChanges(),
                                   builder: (context, snapshot) {
