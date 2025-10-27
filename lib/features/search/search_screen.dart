@@ -95,7 +95,7 @@ class _SearchScreenState extends State<SearchScreen> {
               ],
             ),
             ProductCard(
-              key: ValueKey(_currentQuery), // ép rebuild khi query đổi
+              key: ValueKey(_currentQuery),
               route: '/products',
               tenSanPham: _currentQuery,
             ),

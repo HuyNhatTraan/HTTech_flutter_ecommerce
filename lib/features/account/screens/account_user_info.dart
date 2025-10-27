@@ -35,24 +35,41 @@ class _AccountUserInfoState extends State<AccountUserInfo> {
 
           final userData = snapshot.data!;
 
+          final currentUser = FirebaseAuth.instance.currentUser;
+
           return Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Họ tên: ${userData['name'] ?? 'Chưa có'}",
-                    style: TextStyle(fontSize: 18)),
-                SizedBox(height: 10),
-                Text("Email: ${userData['email'] ?? 'Chưa có'}"),
-                SizedBox(height: 10),
-                Text("Số điện thoại: ${userData['SoDienThoai'] ?? 'Chưa có'}"),
-                SizedBox(height: 10),
-                Text("Ngày đăng ký: ${(userData['createdAt'] as Timestamp).toDate().toString()}"),
-                SizedBox(height: 10),
-                Text("Hạng thành viên: ${userData['HangThanhVien'] ?? 'Chưa có'}"),
+                Text(
+                  "Họ tên: ${userData['name'] ?? currentUser?.displayName ?? 'Chưa có'}",
+                  style: const TextStyle(fontSize: 18),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "Email: ${userData['email'] ?? currentUser?.email ?? 'Chưa có'}",
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "Số điện thoại: ${userData['SoDienThoai'] ?? 'Chưa có'}",
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "Ngày đăng ký: ${
+                      userData['createdAt'] != null
+                          ? (userData['createdAt'] as Timestamp).toDate().toString()
+                          : currentUser?.metadata.creationTime?.toString() ?? 'Không rõ'
+                  }",
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "Hạng thành viên: ${userData['HangThanhVien'] ?? 'Nhựa'}",
+                ),
               ],
             ),
           );
+
         },
       ),
     );

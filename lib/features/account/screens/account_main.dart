@@ -108,6 +108,16 @@ class _AccountMainState extends State<AccountMain> {
                                           Padding(
                                             padding: const EdgeInsets.only(left: 10),
                                             child: ElevatedButton(
+                                              style: ButtonStyle(
+                                                backgroundColor: WidgetStatePropertyAll(Color(0xFFd2f5fc)),
+                                                side: WidgetStatePropertyAll(
+                                                  BorderSide(
+                                                    color: Colors.blue,
+                                                    width: 2,
+                                                  ),
+                                                ),
+                                                elevation: WidgetStatePropertyAll(0),
+                                              ),
                                               onPressed: () {
                                                 Navigator.push(
                                                   context,
@@ -129,7 +139,7 @@ class _AccountMainState extends State<AccountMain> {
                                                   ),
                                                 );
                                               },
-                                              child: Text('Đăng nhập ngay'),
+                                              child: Text('Đăng nhập ngay', style: TextStyle(color: Color(0xFF3c81c6), fontWeight: FontWeight.bold),),
                                             ),
                                           ),
                                         ],

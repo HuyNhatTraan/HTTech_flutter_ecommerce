@@ -36,7 +36,7 @@ class _AccountInfoBannerState extends State<AccountInfoBanner> {
         }
 
         if (!snapshot.hasData || snapshot.data == null) {
-          return Center(child: Text("Không tìm thấy thông tin người dùng"));
+          return Center(child: Text("Không tìm thấy thông tin người dùng", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),));
         }
 
         final userData = snapshot.data!;
@@ -48,9 +48,9 @@ class _AccountInfoBannerState extends State<AccountInfoBanner> {
               width: 100,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(
-                    globals.baseUri + '/' + userData['AvatarUrl'],
-                  ),
+                  image: userData['AvatarUrl'] != null && userData['AvatarUrl'].toString().startsWith('http')
+                      ? NetworkImage(userData['AvatarUrl'])
+                      : NetworkImage('${globals.baseUri}/${userData['AvatarUrl']}'),
                   fit: BoxFit.cover,
                 ),
                 border: Border.all(

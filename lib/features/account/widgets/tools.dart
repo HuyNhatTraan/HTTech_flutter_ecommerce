@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hehehehe/features/account/screens/account_order_history.dart';
 import 'package:hehehehe/features/account/screens/account_address.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hehehehe/features/account/screens/account_support.dart';
 import 'package:hehehehe/features/account/screens/account_user_info.dart';
 import 'package:hehehehe/features/auth/screens/login_screen.dart';
+import 'package:hehehehe/features/auth/services/auth_service.dart';
+import 'package:hehehehe/features/settings/screens/setting_screen.dart';
 
 class Tools extends StatefulWidget {
   const Tools({super.key});
@@ -89,7 +93,7 @@ class _ToolsState extends State<Tools> {
                                 ),
                                 pageBuilder:
                                     (context, animation, secondaryAnimation) =>
-                                        AccountUserInfo(),
+                                        AccountOrderHistory(),
                                 transitionsBuilder:
                                     (
                                       context,
@@ -309,38 +313,29 @@ class _ToolsState extends State<Tools> {
                                   milliseconds: 300,
                                 ),
                                 pageBuilder:
-                                    (
-                                    context,
-                                    animation,
-                                    secondaryAnimation,
-                                    ) => LoginScreen(),
+                                    (context, animation, secondaryAnimation) =>
+                                        LoginScreen(),
                                 transitionsBuilder:
                                     (
-                                    context,
-                                    animation,
-                                    secondaryAnimation,
-                                    child,
+                                      context,
+                                      animation,
+                                      secondaryAnimation,
+                                      child,
                                     ) {
-                                  final tween =
-                                  Tween(
-                                    begin: const Offset(
-                                      1,
-                                      0,
-                                    ),
-                                    end: Offset.zero,
-                                  ).chain(
-                                    CurveTween(
-                                      curve: Curves
-                                          .easeInOutSine,
-                                    ),
-                                  );
-                                  return SlideTransition(
-                                    position: animation.drive(
-                                      tween,
-                                    ),
-                                    child: child,
-                                  );
-                                },
+                                      final tween =
+                                          Tween(
+                                            begin: const Offset(1, 0),
+                                            end: Offset.zero,
+                                          ).chain(
+                                            CurveTween(
+                                              curve: Curves.easeInOutSine,
+                                            ),
+                                          );
+                                      return SlideTransition(
+                                        position: animation.drive(tween),
+                                        child: child,
+                                      );
+                                    },
                               ),
                             );
                           } else {
@@ -351,38 +346,29 @@ class _ToolsState extends State<Tools> {
                                   milliseconds: 300,
                                 ),
                                 pageBuilder:
-                                    (
-                                    context,
-                                    animation,
-                                    secondaryAnimation,
-                                    ) => AccountUserInfo(),
+                                    (context, animation, secondaryAnimation) =>
+                                        AccountUserInfo(),
                                 transitionsBuilder:
                                     (
-                                    context,
-                                    animation,
-                                    secondaryAnimation,
-                                    child,
+                                      context,
+                                      animation,
+                                      secondaryAnimation,
+                                      child,
                                     ) {
-                                  final tween =
-                                  Tween(
-                                    begin: const Offset(
-                                      1,
-                                      0,
-                                    ),
-                                    end: Offset.zero,
-                                  ).chain(
-                                    CurveTween(
-                                      curve: Curves
-                                          .easeInOutSine,
-                                    ),
-                                  );
-                                  return SlideTransition(
-                                    position: animation.drive(
-                                      tween,
-                                    ),
-                                    child: child,
-                                  );
-                                },
+                                      final tween =
+                                          Tween(
+                                            begin: const Offset(1, 0),
+                                            end: Offset.zero,
+                                          ).chain(
+                                            CurveTween(
+                                              curve: Curves.easeInOutSine,
+                                            ),
+                                          );
+                                      return SlideTransition(
+                                        position: animation.drive(tween),
+                                        child: child,
+                                      );
+                                    },
                               ),
                             );
                           }
@@ -440,53 +426,89 @@ class _ToolsState extends State<Tools> {
                       ),
                     ),
                     Expanded(
-                      child: Container(
-                        margin: EdgeInsets.all(4),
-                        // height: 90,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey, width: 1),
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Column(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: Column(
-                                      children: [
-                                        Icon(
-                                          Icons.groups_outlined,
-                                          size: 64,
-                                          color: Color(0xFF706E6E),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Text(
-                                          "Hỗ trợ",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          "Liên hệ chúng tôi nếu bạn cần giúp đỡ",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.normal,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              transitionDuration: const Duration(
+                                milliseconds: 300,
                               ),
-                            ],
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      AccountSupport(),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    final tween =
+                                        Tween(
+                                          begin: const Offset(1, 0),
+                                          end: Offset.zero,
+                                        ).chain(
+                                          CurveTween(
+                                            curve: Curves.easeInOutSine,
+                                          ),
+                                        );
+                                    return SlideTransition(
+                                      position: animation.drive(tween),
+                                      child: child,
+                                    );
+                                  },
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.all(4),
+                          // height: 90,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey, width: 1),
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.groups_outlined,
+                                            size: 64,
+                                            color: Color(0xFF706E6E),
+                                          ),
+                                          SizedBox(height: 10),
+                                          Text(
+                                            "Hỗ trợ",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w900,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            "Liên hệ chúng tôi nếu bạn cần giúp đỡ",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -509,18 +531,60 @@ class _ToolsState extends State<Tools> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       GestureDetector(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              spacing: 10,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              transitionDuration: const Duration(
+                                milliseconds: 300,
+                              ),
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      SettingScreen(),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    final tween =
+                                        Tween(
+                                          begin: const Offset(1, 0),
+                                          end: Offset.zero,
+                                        ).chain(
+                                          CurveTween(
+                                            curve: Curves.easeInOutSine,
+                                          ),
+                                        );
+                                    return SlideTransition(
+                                      position: animation.drive(tween),
+                                      child: child,
+                                    );
+                                  },
+                            ),
+                          );
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: GestureDetector(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Icon(Icons.settings_outlined),
-                                Text('Cài đặt', style: TextStyle(fontSize: 16)),
+                                Row(
+                                  spacing: 10,
+                                  children: [
+                                    Icon(Icons.settings_outlined),
+                                    Text(
+                                      'Cài đặt',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                                Icon(Icons.keyboard_arrow_right_outlined),
                               ],
                             ),
-                            Icon(Icons.keyboard_arrow_right_outlined),
-                          ],
+                          ),
                         ),
                       ),
                       Divider(color: Colors.grey),
@@ -579,6 +643,7 @@ class _ToolsState extends State<Tools> {
                                 onTap: () async {
                                   try {
                                     await FirebaseAuth.instance.signOut();
+                                    await GoogleSignIn().signOut();
                                     await Future.delayed(
                                       const Duration(milliseconds: 500),
                                     );
@@ -601,7 +666,7 @@ class _ToolsState extends State<Tools> {
                                   padding: EdgeInsets.all(0),
                                   child: Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Row(
                                         spacing: 10,

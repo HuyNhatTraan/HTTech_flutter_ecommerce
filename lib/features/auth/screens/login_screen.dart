@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hehehehe/features/account/screens/account_support.dart';
 import 'package:hehehehe/features/auth/screens/register_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hehehehe/features/auth/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,10 +13,19 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool isEmailValid(String email) {
+    final emailRegExp = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+
+    // Dùng phương thức .hasMatch() để kiểm tra xem email có khớp khuôn không
+    return emailRegExp.hasMatch(email);
+  }
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   bool _obscureText = true;
+
+  String _emailErrorText = ' ';
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +52,30 @@ class _LoginScreenState extends State<LoginScreen> {
               //   ),
               // );
             },
-            child: Padding(padding: EdgeInsets.all(10), child: Text('Help')),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(milliseconds: 300),
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        AccountSupport(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          final tween = Tween(
+                            begin: const Offset(1, 0),
+                            end: Offset.zero,
+                          ).chain(CurveTween(curve: Curves.easeInOutSine));
+                          return SlideTransition(
+                            position: animation.drive(tween),
+                            child: child,
+                          );
+                        },
+                  ),
+                );
+              },
+              child: Padding(padding: EdgeInsets.all(10), child: Text('Help')),
+            ),
           ),
         ],
       ),
@@ -90,6 +124,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Expanded(
                                   child: TextField(
                                     controller: emailController,
+                                    onChanged: (text) {
+                                      if (isEmailValid(text)) {
+                                        _emailErrorText = ' ';
+                                      } else {
+                                        _emailErrorText = 'Email không hợp lệ';
+                                      }
+                                    },
                                     decoration: InputDecoration(
                                       hintText: 'Nhập Email của bạn',
                                       border: InputBorder.none,
@@ -100,7 +141,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 10),
+                          Text(
+                            _emailErrorText.toString(),
+                            style: TextStyle(color: Colors.red, fontSize: 12),
+                          ),
+                          SizedBox(height: 5),
                           Text(
                             'Password',
                             style: TextStyle(
@@ -121,7 +166,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center, // cho icon và textfield thẳng hàng
+                              crossAxisAlignment: CrossAxisAlignment
+                                  .center, // cho icon và textfield thẳng hàng
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(right: 10),
@@ -134,7 +180,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     decoration: InputDecoration(
                                       suffixIcon: IconButton(
                                         icon: Icon(
-                                          _obscureText ? Icons.visibility_off : Icons.visibility,
+                                          _obscureText
+                                              ? Icons.visibility_off
+                                              : Icons.visibility,
                                           size: 18, // chỉnh size nhỏ cho cân
                                         ),
                                         onPressed: () {
@@ -146,11 +194,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                       hintText: 'Nhập mật khẩu của bạn',
                                       border: InputBorder.none,
                                       isDense: true, // giúp textfield gọn lại
-                                      contentPadding: EdgeInsets.symmetric(vertical: 12), // căn giữa text
+                                      contentPadding: EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ), // căn giữa text
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 10),
                               ],
                             ),
                           ),
@@ -173,54 +222,72 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               onPressed: () async {
-                                try {
-                                  await FirebaseAuth.instance.signInWithEmailAndPassword(
-                                      email: emailController.text.trim(),
-                                      password: passwordController.text.trim(),
+                                if (passwordController.text.isEmpty ||
+                                    emailController.text.isEmpty) {
+                                  Fluttertoast.showToast(
+                                    msg: "Vui lòng nhập đầy đủ thông tin.",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Color(0xFF3a81c4),
+                                    textColor: Colors.white,
+                                    fontSize: 16.0,
                                   );
+                                  return;
+                                }
+                                if (_emailErrorText == 'Email không hợp lệ') {
+                                  Fluttertoast.showToast(
+                                    msg: "Vui lòng nhập email hợp lệ.",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Color(0xFF3a81c4),
+                                    textColor: Colors.white,
+                                    fontSize: 16.0,
+                                  );
+                                  return;
+                                }
+                                try {
+                                  await FirebaseAuth.instance
+                                      .signInWithEmailAndPassword(
+                                        email: emailController.text.trim(),
+                                        password: passwordController.text
+                                            .trim(),
+                                      );
 
                                   Fluttertoast.showToast(
-                                      msg: "Đăng nhập thành công",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Color(0xFF3a81c4),
-                                      textColor: Colors.white,
-                                      fontSize: 16.0
+                                    msg: "Đăng nhập thành công",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Color(0xFF3a81c4),
+                                    textColor: Colors.white,
+                                    fontSize: 16.0,
                                   );
 
-                                  Navigator.pop(context);
-
+                                  Navigator.of(context).popUntil((route) => route.isFirst);
                                 } on FirebaseAuthException catch (e) {
                                   if (e.code == 'user-not-found') {
                                     Fluttertoast.showToast(
-                                        msg: "Không tìm thấy tài khoản này",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor: Color(0xFF3a81c4),
-                                        textColor: Colors.white,
-                                        fontSize: 16.0
+                                      msg: "Không tìm thấy tài khoản này",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Color(0xFF3a81c4),
+                                      textColor: Colors.white,
+                                      fontSize: 16.0,
                                     );
-                                  } else if (e.code == 'wrong-password') {
+                                  } else if (e.code == 'wrong-password' ||
+                                      e.code == 'invalid-credential') {
                                     Fluttertoast.showToast(
-                                        msg: "Sai mật khẩu hoặc tài khoản. Vui lòng thử lại",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 2,
-                                        backgroundColor: Color(0xFF3a81c4),
-                                        textColor: Colors.white,
-                                        fontSize: 16.0
-                                    );
-                                  } else if (e.code == 'invalid-credential') {
-                                    Fluttertoast.showToast(
-                                        msg: "Đã có lỗi xảy ra vui lòng thử lại.",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 2,
-                                        backgroundColor: Color(0xFF3a81c4),
-                                        textColor: Colors.white,
-                                        fontSize: 16.0
+                                      msg:
+                                          "Sai mật khẩu hoặc tài khoản. Vui lòng thử lại",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 2,
+                                      backgroundColor: Color(0xFF3a81c4),
+                                      textColor: Colors.white,
+                                      fontSize: 16.0,
                                     );
                                   }
                                 }
@@ -324,31 +391,33 @@ class _LoginScreenState extends State<LoginScreen> {
                           SizedBox(height: 10),
                           // Đăng nhập với GG
                           ElevatedButton(
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  elevation: 0, // chỉnh độ cao shadow
-                                  backgroundColor: Color(0xFFd4f6ff),
-                                  content: const Text(
-                                    'Tính năng này đang được xây dựng thử lại sau hen',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                  duration: const Duration(seconds: 2),
-                                  width: 320.0, // Width of the SnackBar.
-                                  padding: const EdgeInsets.all(20),
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                    side: BorderSide(
-                                      color: Color(0xFF706e6e),
-                                      width: 0.3,
-                                    ),
-                                  ),
-                                ),
-                              );
+                            onPressed: () async {
+                              AuthServices authServices = AuthServices();
+                              final userCredential = await authServices.signInWithGoogle();
+                              if (userCredential != null) {
+                                Fluttertoast.showToast(
+                                    msg: "Đăng nhập thành công",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Color(0xFFd2f5fc),
+                                    textColor: Color(0xFF3c81c6),
+                                    fontSize: 16.0
+                                );
+                                Navigator.of(context).popUntil((route) => route.isFirst);
+                                print("Đăng nhập thành công: ${userCredential.user?.displayName}");
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: "Người dùng đã huỷ hoặc lỗi.",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Color(0xFFd2f5fc),
+                                    textColor: Color(0xFF3c81c6),
+                                    fontSize: 16.0
+                                );
+                                print("Người dùng đã huỷ hoặc lỗi.");
+                              }
                             },
                             style: ButtonStyle(
                               shape: WidgetStateProperty.all(
@@ -385,7 +454,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           SizedBox(height: 10),
                           // Đăng nhập với GG
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   elevation: 0, // chỉnh độ cao shadow

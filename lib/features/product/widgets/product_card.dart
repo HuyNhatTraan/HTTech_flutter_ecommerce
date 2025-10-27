@@ -76,7 +76,7 @@ class _ProductCardState extends State<ProductCard> {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(20.0),
-          child: Text("Không tìm thấy sản phẩm nào.",
+          child: Text('Không tìm thấy sản phẩm nào.',
               style: TextStyle(fontSize: 16, color: Colors.grey)),
         ),
       );

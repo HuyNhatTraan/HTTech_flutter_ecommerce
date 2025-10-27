@@ -210,7 +210,8 @@ class _ProductVariantsState extends State<ProductVariants> {
                   ],
                 ),
                 SizedBox(height: 10),
-                SizedBox(
+                Container(
+                  padding: EdgeInsets.all(0),
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -247,7 +248,6 @@ class _ProductVariantsState extends State<ProductVariants> {
                           ),
                         );
                       }
-
                     },
                     child: Text(
                       'Thêm vào giỏ hàng',
@@ -255,7 +255,7 @@ class _ProductVariantsState extends State<ProductVariants> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 20,)
               ],
             ),
           ),

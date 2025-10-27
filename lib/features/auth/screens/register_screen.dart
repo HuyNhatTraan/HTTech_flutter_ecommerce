@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hehehehe/features/account/screens/account_support.dart';
 import 'package:hehehehe/features/auth/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,27 +16,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _obscureText = true;
 
   bool isEmailValid(String email) {
-    final emailRegExp = RegExp(
-      r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
-    );
+    final emailRegExp = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
     // Dùng phương thức .hasMatch() để kiểm tra xem email có khớp khuôn không
     return emailRegExp.hasMatch(email);
   }
 
-// --- Ví dụ sử dụng ---
-  void main() {
-    print(isEmailValid("test@gmail.com")); // Sẽ in ra: true
-    print(isEmailValid("testgmail.com"));  // Sẽ in ra: false
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message.toString(),
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Color(0xFF3a81c4),
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
+  String _nameErrorText = ' ';
   String _emailErrorText = ' ';
-  String? _passwordErrorText;
+  String _passwordErrorText = ' ';
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +67,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
               //   ),
               // );
             },
-            child: Padding(padding: EdgeInsets.all(10), child: Text('Help')),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(milliseconds: 300),
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        AccountSupport(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          final tween = Tween(
+                            begin: const Offset(1, 0),
+                            end: Offset.zero,
+                          ).chain(CurveTween(curve: Curves.easeInOutSine));
+                          return SlideTransition(
+                            position: animation.drive(tween),
+                            child: child,
+                          );
+                        },
+                  ),
+                );
+              },
+              child: Padding(padding: EdgeInsets.all(10), child: Text('Help')),
+            ),
           ),
         ],
       ),
@@ -90,6 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+
                           SizedBox(height: 5),
                           Container(
                             padding: EdgeInsets.only(
@@ -111,13 +140,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 Expanded(
                                   child: TextField(
                                     onChanged: (text) {
-                                      // setState(() {
-                                      //   if (isEmailValid(text)) {
-                                      //     _emailErrorText = ' ';
-                                      //   } else {
-                                      //     _emailErrorText = 'Email không hợp lệ';
-                                      //   }
-                                      // });
+                                      setState(() {
+                                        if (nameController.text == '') {
+                                          _nameErrorText =
+                                              'Vui lòng nhập tên của bạn.';
+                                        } else {
+                                          _nameErrorText = '';
+                                        }
+                                      });
                                     },
                                     controller: nameController,
                                     decoration: InputDecoration(
@@ -130,8 +160,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 10,),
-                          // Text(_emailErrorText.toString(), style: TextStyle(color: Colors.red, fontSize: 12),),
+                          SizedBox(height: 10),
+                          Text(
+                            _nameErrorText.toString(),
+                            style: TextStyle(color: Colors.red, fontSize: 12),
+                          ),
                           Text(
                             'Email',
                             style: TextStyle(
@@ -164,7 +197,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         if (isEmailValid(text)) {
                                           _emailErrorText = ' ';
                                         } else {
-                                          _emailErrorText = 'Email không hợp lệ';
+                                          _emailErrorText =
+                                              'Email không hợp lệ';
                                         }
                                       });
                                     },
@@ -179,7 +213,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ],
                             ),
                           ),
-                          Text(_emailErrorText.toString(), style: TextStyle(color: Colors.red, fontSize: 12),),
+                          Text(
+                            _emailErrorText.toString(),
+                            style: TextStyle(color: Colors.red, fontSize: 12),
+                          ),
                           Text(
                             'Password',
                             style: TextStyle(
@@ -200,7 +237,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center, // cho icon và textfield thẳng hàng
+                              crossAxisAlignment: CrossAxisAlignment
+                                  .center, // cho icon và textfield thẳng hàng
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(right: 10),
@@ -209,12 +247,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 Expanded(
                                   child: TextField(
                                     controller: passwordController,
+                                    onChanged: (text) {
+                                      if (passwordController.text.length < 6) {
+                                        setState(() {
+                                          _passwordErrorText =
+                                              'Vui lòng nhập mật khẩu có ít nhất 6 ký tự';
+                                        });
+                                      } else {
+                                        setState(() {
+                                          _passwordErrorText = '';
+                                        });
+                                      }
+                                    },
                                     obscureText: _obscureText,
                                     //controller: passwordController,
                                     decoration: InputDecoration(
                                       suffixIcon: IconButton(
                                         icon: Icon(
-                                          _obscureText ? Icons.visibility_off : Icons.visibility,
+                                          _obscureText
+                                              ? Icons.visibility_off
+                                              : Icons.visibility,
                                           size: 18, // chỉnh size nhỏ cho cân
                                         ),
                                         onPressed: () {
@@ -226,15 +278,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       hintText: 'Nhập mật khẩu của bạn',
                                       border: InputBorder.none,
                                       isDense: true, // giúp textfield gọn lại
-                                      contentPadding: EdgeInsets.symmetric(vertical: 12), // căn giữa text
+                                      contentPadding: EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ), // căn giữa text
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 10),
                               ],
                             ),
                           ),
-                          SizedBox(height: 10),
+                          Text(
+                            _passwordErrorText.toString(),
+                            style: TextStyle(color: Colors.red, fontSize: 12),
+                          ),
                           Container(
                             padding: EdgeInsets.all(0),
                             width: double.infinity,
@@ -253,55 +309,61 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                               ),
                               onPressed: () async {
-                                print('Đã ấn');
-                                if (emailController.text.trim().isEmpty || passwordController.text.trim().isEmpty) {
-                                  Fluttertoast.showToast(
-                                      msg: "Vui lòng nhập đầy đủ thông tin",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Color(0xFF3a81c4),
-                                      textColor: Colors.white,
-                                      fontSize: 16.0
-                                  );
+                                final email = emailController.text.trim();
+                                final password = passwordController.text.trim();
+                                final name = nameController.text.trim();
+
+                                if (email.isEmpty ||
+                                    password.isEmpty ||
+                                    name.isEmpty) {
+                                  showToast('Vui lòng nhập đầy đủ thông tin');
                                   return;
                                 }
+
+                                final emailRegex = RegExp(
+                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                );
+                                if (!emailRegex.hasMatch(email)) {
+                                  showToast('Email không hợp lệ');
+                                  return;
+                                }
+
+                                if (password.length < 6) {
+                                  showToast('Mật khẩu phải có ít nhất 6 ký tự');
+                                  return;
+                                }
+
                                 try {
-                                  UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                                    email: emailController.text.trim(),
-                                    password: passwordController.text.trim(),
-                                  );
+                                  UserCredential userCredential =
+                                      await FirebaseAuth.instance
+                                          .createUserWithEmailAndPassword(
+                                            email: email,
+                                            password: password,
+                                          );
 
-                                  String uid = userCredential.user!.uid;
+                                  final uid = userCredential.user!.uid;
+
                                   AuthServices authServices = AuthServices();
-                                  authServices.registerUsers(uid, emailController.text.trim(), nameController.text.trim());
-
-                                  Fluttertoast.showToast(
-                                      msg: "Đăng ký thành công",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Color(0xFF3a81c4),
-                                      textColor: Colors.white,
-                                      fontSize: 16.0
+                                  await authServices.registerToFirebaseEmail(
+                                    uid,
+                                    email,
+                                    name,
                                   );
 
-                                  Navigator.pop(context);
-
+                                  showToast('Đăng ký thành công');
+                                  Navigator.of(context).popUntil((route) => route.isFirst);
                                 } on FirebaseAuthException catch (e) {
                                   if (e.code == 'email-already-in-use') {
-                                    Fluttertoast.showToast(
-                                        msg: "Email này đã được dùng",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor: Color(0xFF3a81c4),
-                                        textColor: Colors.white,
-                                        fontSize: 16.0
-                                    );
+                                    showToast('Email đã được sử dụng');
+                                  } else if (e.code == 'invalid-email') {
+                                    showToast('Địa chỉ email không hợp lệ');
+                                  } else if (e.code == 'weak-password') {
+                                    showToast('Mật khẩu quá yếu');
+                                  } else {
+                                    showToast('Lỗi: ${e.message}');
                                   }
                                 } catch (e) {
-                                  print(e);
+                                  print('Lỗi không xác định: $e');
                                 }
                               },
                               child: Padding(
@@ -370,31 +432,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           SizedBox(height: 10),
                           // Đăng nhập với GG
                           ElevatedButton(
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  elevation: 0, // chỉnh độ cao shadow
-                                  backgroundColor: Color(0xFFd4f6ff),
-                                  content: const Text(
-                                    'Tính năng này đang được xây dựng thử lại sau hen',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                  duration: const Duration(seconds: 2),
-                                  width: 320.0, // Width of the SnackBar.
-                                  padding: const EdgeInsets.all(20),
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                    side: BorderSide(
-                                      color: Color(0xFF706e6e),
-                                      width: 0.3,
-                                    ),
-                                  ),
-                                ),
-                              );
+                            onPressed: () async {
+                              AuthServices authServices = AuthServices();
+                              final userCredential = await authServices
+                                  .signInWithGoogle();
+                              if (userCredential != null) {
+                                Fluttertoast.showToast(
+                                  msg: "Đăng nhập thành công",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Color(0xFFd2f5fc),
+                                  textColor: Color(0xFF3c81c6),
+                                  fontSize: 16.0,
+                                );
+                                Navigator.of(
+                                  context,
+                                ).popUntil((route) => route.isFirst);
+                                print(
+                                  "Đăng nhập thành công: ${userCredential.user?.displayName}",
+                                );
+                              } else {
+                                Fluttertoast.showToast(
+                                  msg: "Người dùng đã huỷ hoặc lỗi.",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Color(0xFFd2f5fc),
+                                  textColor: Color(0xFF3c81c6),
+                                  fontSize: 16.0,
+                                );
+                                print("Người dùng đã huỷ hoặc lỗi.");
+                              }
                             },
                             style: ButtonStyle(
                               shape: WidgetStateProperty.all(

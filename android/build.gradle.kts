@@ -22,3 +22,14 @@ subprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
+
+buildscript {
+    dependencies {
+        classpath("com.google.gms:google-services:4.4.4")
+        classpath("com.android.tools.build:gradle:8.6.0")
+    }
+}
+
+plugins {
+    id("com.google.gms.google-services")
+}

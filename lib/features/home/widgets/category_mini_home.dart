@@ -73,101 +73,141 @@ class _DanhMucSanPhamWidgetState extends State<DanhMucSanPhamWidget> {
             ),
           ),
         ),
-
-        // Phần Grid + "Xem tất cả" chung 1 hàng
-        Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Grid
-                  Expanded(
-                    child: _isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : _products.isEmpty
-                        ? Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(20.0),
-                        child: Text(
-                          "Không tìm thấy sản phẩm nào.",
-                          style: TextStyle(
-                              fontSize: 16, color: Colors.grey),
-                        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 300),
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            DanhMucSanPhamProducts(maDanhMuc: 'DM01', tenDanhMuc: 'Chuột', bannerDanhMuc: 'assets/category/images/chuot-gaming-banner_730e8164-fb23-4b96-9cb0-98e85e9c1a44.webp',),
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                              .chain(CurveTween(curve: Curves.easeInOutSine));
+                          return SlideTransition(position: animation.drive(tween), child: child);
+                        },
                       ),
-                    )
-                        : GridView.builder(
-                      gridDelegate:
-                      SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3, // số cột
-                      ),
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _products.length,
-                      itemBuilder: (context, index) {
-                        final product = _products[index];
-                        return GestureDetector(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => DanhMucSanPhamProducts(maDanhMuc: product["MaDanhMuc"], tenDanhMuc: product["TenDanhMuc"], bannerDanhMuc: product["BannerDanhMuc"])));
-                            print('Đã ấn vào danh mục ' + product["MaDanhMuc"]);
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(0),
-                            child: Container(
-                              margin: const EdgeInsets.all(4),
-                              height: 90,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    color: Colors.grey, width: 1),
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                    globals.baseUri + '/' + product["SmallIconDanhMuc"],
-                                  ),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  // Nút "Xem tất cả"
-                  GestureDetector(
-                    onTap: () {
-                      globals.currentPageIndex.value = 1;
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.all(4),
-                      height: 90,
-                      width: 90,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Color(0xFFCCC6C6),
-                      ),
-                      child: const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(15),
-                          child: Text(
-                            "Xem tất cả",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Color(0xFF696666),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(4),
+                    height: 90,
+                    width: 90,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Color(0xFF9d9d9d)),
+                      color: Color(0xFFCCC6C6),
+                      image: DecorationImage(
+                        image: NetworkImage(globals.baseUri + '/assets/category/images/icon-chuot-gaming-2.png'),
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 300),
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            DanhMucSanPhamProducts(maDanhMuc: 'DM02', tenDanhMuc: 'Bàn phím', bannerDanhMuc: 'assets/category/images/Ban-phim-co.webp',),
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                              .chain(CurveTween(curve: Curves.easeInOutSine));
+                          return SlideTransition(position: animation.drive(tween), child: child);
+                        },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(4),
+                    height: 90,
+                    width: 90,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Color(0xFF9d9d9d)),
+                      color: Color(0xFFCCC6C6),
+                      image: DecorationImage(
+                        image: NetworkImage(globals.baseUri + '/assets/category/images/icon-ban-phim-gaming-2.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 300),
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            DanhMucSanPhamProducts(maDanhMuc: 'DM04', tenDanhMuc: 'Pad chuột', bannerDanhMuc: 'assets/category/images/lot-chuot-101817.webp',),
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                              .chain(CurveTween(curve: Curves.easeInOutSine));
+                          return SlideTransition(position: animation.drive(tween), child: child);
+                        },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(4),
+                    height: 90,
+                    width: 90,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Color(0xFF9d9d9d)),
+                      color: Color(0xFFCCC6C6),
+                      image: DecorationImage(
+                        image: NetworkImage(globals.baseUri + '/assets/category/images/icon-lot-chuot-2.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    globals.currentPageIndex.value = 1;
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(4),
+                    height: 90,
+                    width: 90,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color(0xFFCCC6C6),
+                    ),
+                    child: const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Text(
+                          "Xem tất cả",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF696666),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );

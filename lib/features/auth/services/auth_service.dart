@@ -1,29 +1,56 @@
-// import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hehehehe/globals.dart';
+import 'package:http/http.dart' as http;
 
 class AuthServices {
   // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;
 
-  // Lấy thông tin giỏ hàng bằng uid người dùng
-  Future<List<Map<String, dynamic>>> getCart(String uid) async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection("cart")
-        .doc(uid)
-        .collection("SanPham")
-        .get();
-
-    return snapshot.docs.map((doc) => doc.data()).toList();
-  }
-
-  // Lấy thông tin users
   Future<Map<String, dynamic>?> getUser(String uid) async {
-    final snapshot =
-    await FirebaseFirestore.instance.collection("users").doc(uid).get();
+    try {
+      // Tham chiếu đến collection "users"
+      final docRef = FirebaseFirestore.instance.collection("users").doc(uid);
+      final snapshot = await docRef.get();
 
-    return snapshot.data();
+      // Nếu user đã có trong Firestore
+      if (snapshot.exists) {
+        return snapshot.data();
+      }
+
+      // Nếu chưa có (ví dụ user đăng nhập bằng Google)
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        // Kiểm tra xem provider có phải Google không
+        final isGoogleUser = user.providerData.any((p) => p.providerId == 'google.com');
+
+        if (isGoogleUser) {
+          final googleUserData = {
+            'uid': user.uid,
+            'name': user.displayName ?? 'Người dùng Google',
+            'email': user.email ?? '',
+            'AvatarUrl': user.photoURL ?? '',
+            'HangThanhVien': 'Nhựa',
+            'provider': 'google',
+          };
+
+          // (Tuỳ chọn) Tự động lưu vào Firestore nếu chưa có
+          await docRef.set(googleUserData, SetOptions(merge: true));
+
+          return googleUserData;
+        }
+      }
+
+      // Nếu không tìm thấy user
+      return null;
+    } catch (e) {
+      print('Lỗi khi lấy thông tin user: $e');
+      return null;
+    }
   }
+
 
 
   // Xoá sản phẩm trong giỏ hàng
@@ -50,6 +77,93 @@ class AuthServices {
     }, SetOptions(merge: true));
   }
 
+  // Chuyển giỏ hàng sang đơn hàng và xoá đơn hàng cũ
+  Future<void> moveCartToOrders(String uid) async {
+    final firestore = FirebaseFirestore.instance;
+    final cartRef = firestore.collection('cart').doc(uid).collection('SanPham');
+    final orderRef = firestore.collection('orders');
+
+    // Lấy tất cả sản phẩm trong giỏ
+    final cartSnapshot = await cartRef.get();
+
+    if (cartSnapshot.docs.isEmpty) {
+      print("Giỏ hàng trống!");
+      return;
+    }
+
+    // Tạo id đơn hàng mới
+    final newOrderDoc = orderRef.doc();
+    final orderId = newOrderDoc.id;
+
+    // Tạo dữ liệu đơn hàng
+    final orderData = {
+      "UserID": uid,
+      "OrderID": orderId,
+      "NgayDatHang": FieldValue.serverTimestamp(),
+      "TrangThai": "Đang xử lý",
+    };
+
+    // Ghi đơn hàng mới
+    await newOrderDoc.set(orderData);
+
+    // Thêm toàn bộ sản phẩm từ cart sang orders
+    final batch = firestore.batch();
+
+    for (var doc in cartSnapshot.docs) {
+      final spRef = newOrderDoc.collection("SanPham").doc(doc.id);
+      batch.set(spRef, doc.data());
+    }
+
+    // Xoá toàn bộ giỏ hàng
+    for (var doc in cartSnapshot.docs) {
+      batch.delete(cartRef.doc(doc.id));
+    }
+
+    await batch.commit();
+  }
+
+  Future<UserCredential?> signInWithGoogle() async {
+    try {
+      // B1: Gọi hộp thoại chọn tài khoản Google
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) return null; // Người dùng ấn Cancel
+
+      // B2: Lấy token xác thực
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      // B3: Tạo credential cho Firebase
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final user = userCredential.user;
+
+      registerUser(googleUser.email, user!.uid, googleUser.displayName!, "Google");
+      // B4: Đăng nhập vào Firebase
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      print('Lỗi đăng nhập Google: $e');
+      return null;
+    }
+  }
+
+  Future<void> signOutGoogle() async {
+    try {
+      // Đăng xuất khỏi Google Sign-In
+      await GoogleSignIn().signOut();
+
+      // Đăng xuất khỏi Firebase
+      await FirebaseAuth.instance.signOut();
+
+      print('Đăng xuất Google thành công!');
+    } catch (e) {
+      print('Lỗi khi đăng xuất Google: $e');
+    }
+  }
+
   // Thêm giỏ hàng
   Future addCart(String uid, String maSP, String tenSP, String giaSP, String maVarientSanPham, String hinhAnhVariant, int soLuong, String thuocTinhSP) async {
     await FirebaseFirestore.instance
@@ -69,8 +183,37 @@ class AuthServices {
     }, SetOptions(merge: true));
   }
 
+  Future<void> registerUser(String email, String maTaiKhoan, String tenKH, String loginMethod) async {
+    final url = Uri.parse(baseUri + '/register');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json', // Rất quan trọng
+        },
+        body: jsonEncode({
+          'email': email,
+          'maTaiKhoan': maTaiKhoan,
+          'tenKH': tenKH,
+          'loginMethod': loginMethod,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print('✅ ${data['alert']}');
+      } else {
+        print('⚠️ Lỗi server: ${response.statusCode}');
+        print('Chi tiết: ${response.body}');
+      }
+    } catch (e) {
+      print('❌ Lỗi kết nối: $e');
+    }
+  }
+
   // Đăng ký và lưu thẳng vào Firestore via Firebase
-  Future<void> registerUsers(String uid, String email, String name) async {
+  Future<void> registerToFirebaseEmail(String uid, String email, String name) async {
     db.collection("users").doc(uid).set({
       "name": name.toString(),
       "email": email.toString(),
@@ -80,5 +223,7 @@ class AuthServices {
       "HangThanhVien": "Nhựa",
       "AvatarUrl" : "assets/account/images/474621319_122198072636131249_4305780536062375088_n.jpg"
     });
+
+    registerUser(email, uid, name, "Email & Password");
   }
 }

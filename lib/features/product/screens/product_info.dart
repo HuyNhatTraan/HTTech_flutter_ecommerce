@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hehehehe/features/cart/screens/cart_screen.dart';
 import 'package:hehehehe/features/product/widgets/product_carousel.dart';
@@ -22,6 +23,8 @@ class _ProductInfoState extends State<ProductInfo> {
   // dynamic = kiểu dữ liệu có thể là bất kỳ thứ gì (int, String, Map, List...).
   List<dynamic> _products = [];
   bool _isLoading = true; // Thêm biến để theo dõi trạng thái tải
+
+  final User? user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -315,30 +318,6 @@ class _ProductInfoState extends State<ProductInfo> {
             Expanded(
               child: GestureDetector(
                 onTap: () {
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //   SnackBar(
-                  //     elevation: 0, // chỉnh độ cao shadow
-                  //     backgroundColor: Color(0xFFd4f6ff),
-                  //     content: const Text(
-                  //       'Tính năng này đang được xây dựng thử lại sau hen',
-                  //       style: TextStyle(
-                  //         color: Colors.black,
-                  //         fontWeight: FontWeight.w800,
-                  //       ),
-                  //     ),
-                  //     duration: const Duration(seconds: 2),
-                  //     width: 320.0, // Width of the SnackBar.
-                  //     padding: const EdgeInsets.all(20),
-                  //     behavior: SnackBarBehavior.floating,
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(30.0),
-                  //       side: BorderSide(
-                  //         color: Color(0xFF706e6e),
-                  //         width: 0.3,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // );
                   showModalBottomSheet(
                     context: context,
                     builder: (BuildContext context) {
@@ -398,26 +377,34 @@ class _ProductInfoState extends State<ProductInfo> {
             Expanded(
               child: GestureDetector(
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      elevation: 0, // chỉnh độ cao shadow
-                      backgroundColor: Color(0xFFd4f6ff),
-                      content: const Text(
-                        'Tính năng này đang được xây dựng thử lại sau hen',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w800,
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return SingleChildScrollView(
+                        child: Container(
+                          padding: EdgeInsets.all(0),
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 8),
+                              Center(
+                                child: Icon(
+                                  Icons.more_horiz_outlined,
+                                  size: 30,
+                                ),
+                              ),
+                              ProductVariants(
+                                route: "/productVariants",
+                                maSanPham: widget.maSanPham,
+                                tenSanPham: _products[0]["TenSanPham"],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      duration: const Duration(seconds: 2),
-                      width: 320.0, // Width of the SnackBar.
-                      padding: const EdgeInsets.all(20),
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                        side: BorderSide(color: Color(0xFF706e6e), width: 0.3),
-                      ),
-                    ),
+                      );
+                    },
                   );
                 },
                 child: Container(

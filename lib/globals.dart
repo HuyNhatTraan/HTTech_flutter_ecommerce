@@ -6,5 +6,5 @@ import 'package:hehehehe/env.dart';
 // và cú pháp để set cho nó là [ currentPageIndex.value = [0 -> 3] ]
 ValueNotifier<int> currentPageIndex = ValueNotifier(0);
 
-// String baseUri = serverUri; // Server
-String baseUri = localUri; // Local for testing purpose
+String baseUri = serverUri; // Server
+// String baseUri = localUri; // Local for testing purpose

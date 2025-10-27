@@ -1,4 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
+import 'package:hehehehe/features/auth/services/auth_service.dart';
+import 'package:hehehehe/globals.dart' as globals;
 
 class AccountOrderHistory extends StatefulWidget {
   const AccountOrderHistory({super.key});
@@ -8,81 +13,252 @@ class AccountOrderHistory extends StatefulWidget {
 }
 
 class _AccountOrderHistoryState extends State<AccountOrderHistory> {
+  final User? user = FirebaseAuth.instance.currentUser;
+  final AuthServices authService = AuthServices();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFf5f5f5),
       appBar: AppBar(
-        backgroundColor: Color(0xFFFFFFFF),
-        surfaceTintColor: Colors.transparent, // tắt cái overlay tím
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 4,
-        leading: Padding(
-          padding: const EdgeInsets.only(
-            left: 8.0,
-            right: 4.0,
-            top: 4.0,
-            bottom: 4.0,
-          ),
-          child: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.keyboard_backspace_outlined),
-          ),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.keyboard_backspace_outlined),
         ),
-        title: Text('Quản lý đơn hàng', style: TextStyle(fontWeight: FontWeight.w900)),
+        title: const Text(
+          'Lịch sử đặt hàng',
+          style: TextStyle(fontWeight: FontWeight.w900),
+        ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-            Text('Lịch sử đơn hàng'),
-          ],
-        ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('orders')
+            .where('UserID', isEqualTo: user!.uid)
+            .orderBy('NgayDatHang', descending: true)
+            .snapshots(),
+        builder: (context, orderSnapshot) {
+          if (orderSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
+          if (orderSnapshot.hasError) {
+            return Center(child: Text('Lỗi: ${orderSnapshot.error}'));
+          }
+
+          if (!orderSnapshot.hasData || orderSnapshot.data!.docs.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.production_quantity_limits_outlined, size: 64, color: Color(0xFF3c81c6)),
+                  const SizedBox(height: 15),
+                  const Text(
+                    'Bạn chưa có đơn hàng nào cả',
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xFF3c81c6),
+                        fontWeight: FontWeight.w900
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFD2F5FC),
+                      foregroundColor: const Color(0xFF3C81C6),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side:
+                        const BorderSide(color: Color(0xFF3C81C6), width: 1),
+                      ),
+                    ),
+                    child: const Text('Tiếp tục mua hàng',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final orders = orderSnapshot.data!.docs;
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(10),
+            itemCount: orders.length,
+            itemBuilder: (context, index) {
+              final order = orders[index];
+              final orderId = order.id;
+              final orderData = order.data() as Map<String, dynamic>;
+
+              return Container(
+                padding: EdgeInsets.all(5),
+                margin: EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 5,
+                      offset: const Offset(0, 2),
+                    )
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // === Header đơn hàng ===
+                    Padding(
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Mã đơn: $orderId',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 13),
+                          ),
+                          Text(
+                            orderData['TrangThai'] ?? "Đang xử lý",
+                            style: const TextStyle(
+                                color: Color(0xFF3C81C6),
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      child: Text(
+                        'Ngày đặt: ${(orderData['NgayDatHang'] as Timestamp).toDate()}.',
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ),
+
+                    // === Danh sách sản phẩm ===
+                    StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('orders')
+                          .doc(orderId)
+                          .collection('SanPham')
+                          .snapshots(),
+                      builder: (context, productSnapshot) {
+                        if (!productSnapshot.hasData) {
+                          return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ));
+                        }
+
+                        final products = productSnapshot.data!.docs;
+                        num tongTien = 0;
+
+                        for (var p in products) {
+                          final sp = p.data() as Map<String, dynamic>;
+                          final gia = num.tryParse(sp["GiaSP"].toString()) ?? 0;
+                          final sl = sp["SoLuong"] ?? 1;
+                          tongTien += gia * sl;
+                        }
+
+                        return Column(
+                          children: [
+                            ...products.map((product) {
+                              final data =
+                              product.data() as Map<String, dynamic>;
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: Colors.grey[400]!, width: .5),
+                                        image: DecorationImage(
+                                            image: NetworkImage(
+                                                globals.baseUri + '/' + data["HinhAnhVariant"]
+                                            ),
+                                        )
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            data["TenSP"] ?? "",
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            'Phân loại: ${data["ThuocTinhSP"] ?? ""}',
+                                            style: const TextStyle(fontSize: 12),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            '${data["GiaSP"].toString().toVND()}',
+                                            style: const TextStyle(
+                                                color: Color(0xFF3C81C6),
+                                                fontWeight: FontWeight.w700),
+                                          ),
+                                          Text(
+                                            'Số lượng: ${data["SoLuong"]}',
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                              child: Row(
+                                spacing: 10,
+                                mainAxisAlignment:
+                                MainAxisAlignment.end,
+                                children: [
+                                  const Text("Tổng tiền:",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600)),
+                                  Text(tongTien.toString().toVND(),
+                                    style: const TextStyle(
+                                        color: Color(0xFF3C81C6),
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                          ],
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
