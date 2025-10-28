@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -22,22 +24,22 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
-
+    FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   // Đăng ký handler cho background
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // Cấu hình local noti
-  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
-  const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   runApp(const MyApp());
@@ -51,8 +53,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          textTheme: GoogleFonts.beVietnamProTextTheme(),
-          colorScheme: ColorScheme.light(),
+        textTheme: GoogleFonts.beVietnamProTextTheme(),
+        colorScheme: ColorScheme.light(),
       ),
       home: const HomePage(),
     );
@@ -73,7 +75,20 @@ class _HomePage extends State<HomePage> {
     globals.currentPageIndex;
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print('📢 Foreground: ${message.notification?.title}');
+      final title = message.notification?.title ?? message.data['title'];
+      final rawBody = message.notification?.body ?? message.data['body'] ?? '';
+      final body = rawBody.replaceFirst(RegExp(r'^(Thông báo:\s*)'), '');
+
+      // Debug test xem có hiện hong ớ
+      print('🔥 Title: $title');
+      print('📩 Body: $body');
+
+      // Thêm vào Firestore với collection('notifications')
+      await FirebaseFirestore.instance.collection('notifications').add({
+        'title': title,
+        'body': body,
+        'time': FieldValue.serverTimestamp(),
+      });
 
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -95,16 +110,6 @@ class _HomePage extends State<HomePage> {
         );
       }
     });
-
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('📢 Foreground: ${message.notification?.title}');
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('📨 Clicked notification: ${message.data}');
-    });
-
   }
 
   void initialization() async {
@@ -119,20 +124,14 @@ class _HomePage extends State<HomePage> {
       provisional: false,
       sound: true,
     );
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Got a message whilst in the foreground!');
-      print('Message data: ${message.data}');
-
-      if (message.notification != null) {
-        print('Message also contained a notification: ${message.notification}');
-      }
-    });
     FlutterNativeSplash.remove();
   }
 
+  int _curentCartNum = 0;
+
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<int>( // phải return
+    return ValueListenableBuilder<int>(
       valueListenable: globals.currentPageIndex,
       builder: (context, value, child) {
         return Scaffold(
@@ -147,13 +146,13 @@ class _HomePage extends State<HomePage> {
                 top: 4.0,
                 bottom: 4.0,
               ),
-              child: Image.asset('assets/icon.png', width: 20, height: 20),
+              child: Image.asset('assets/icon.png', height: 20),
             ),
             title: SizedBox(
               height: 40,
               child: TextField(
-                onSubmitted: (value){
-                  print('Đã nhập' + value);
+                onSubmitted: (value) {
+                  print('Đã nhập $value');
                   Navigator.push(
                     context,
                     PageRouteBuilder(
@@ -162,15 +161,18 @@ class _HomePage extends State<HomePage> {
                       pageBuilder: (context, animation, secondaryAnimation) {
                         return SearchScreen(searchQuery: value);
                       },
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                        final tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
-                            .chain(CurveTween(curve: Curves.easeInOutSine));
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            final tween = Tween(
+                              begin: const Offset(1.0, 0.0),
+                              end: Offset.zero,
+                            ).chain(CurveTween(curve: Curves.easeInOutSine));
 
-                        return SlideTransition(
-                          position: animation.drive(tween),
-                          child: child,
-                        );
-                      },
+                            return SlideTransition(
+                              position: animation.drive(tween),
+                              child: child,
+                            );
+                          },
                     ),
                   );
                 },
@@ -194,30 +196,203 @@ class _HomePage extends State<HomePage> {
               ),
             ),
             actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.shopping_cart_outlined,
-                    color: Color(0xFF3c81c6),
-                    size: 25,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 300),
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const CartScreen(),
-                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                          final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
-                              .chain(CurveTween(curve: Curves.easeInOutSine));
-                          return SlideTransition(position: animation.drive(tween), child: child);
-                        },
+              StreamBuilder<User?>(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (context, snapshot) {
+                  final user = snapshot.data;
+
+                  if (user == null) {
+                    _curentCartNum = 0;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Stack(
+                        clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  transitionDuration: const Duration(milliseconds: 300),
+                                  pageBuilder: (context, animation, secondaryAnimation) =>
+                                  const CartScreen(),
+                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                    final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                        .chain(CurveTween(curve: Curves.easeInOutSine));
+                                    return SlideTransition(position: animation.drive(tween), child: child);
+                                  },
+                                ),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.shopping_cart_outlined,
+                              color: Color(0xFF3c81c6),
+                              size: 28,
+                            ),
+                          ),
+                          Positioned(
+                            right: 5,
+                            bottom: 2,
+                            child: Container(
+                              width: 20,
+                              padding: const EdgeInsets.all(2),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF3c81c6),
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Text(
+                                _curentCartNum.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     );
-                  },
-                ),
+                  }
+
+                  return StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('cart')
+                        .doc(user.uid)
+                        .collection('SanPham')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        _curentCartNum = 0;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: Stack(
+                            clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    PageRouteBuilder(
+                                      transitionDuration: const Duration(milliseconds: 300),
+                                      pageBuilder: (context, animation, secondaryAnimation) =>
+                                      const CartScreen(),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                            .chain(CurveTween(curve: Curves.easeInOutSine));
+                                        return SlideTransition(position: animation.drive(tween), child: child);
+                                      },
+                                    ),
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.shopping_cart_outlined,
+                                  color: Color(0xFF3c81c6),
+                                  size: 28,
+                                ),
+                              ),
+                              Positioned(
+                                right: 5,
+                                bottom: 2,
+                                child: Container(
+                                  width: 20,
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF3c81c6),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  child: Text(
+                                    _curentCartNum.toString(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      final items = snapshot.data!.docs;
+
+                      int _tempCartNum = 0;
+                      for (var item in items) {
+                        _tempCartNum += int.tryParse(item['SoLuong'].toString()) ?? 0;
+                      }
+
+                      _curentCartNum = _tempCartNum;
+
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: Stack(
+                          clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration: const Duration(milliseconds: 300),
+                                    pageBuilder: (context, animation, secondaryAnimation) =>
+                                    const CartScreen(),
+                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                      final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                          .chain(CurveTween(curve: Curves.easeInOutSine));
+                                      return SlideTransition(position: animation.drive(tween), child: child);
+                                    },
+                                  ),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.shopping_cart_outlined,
+                                color: Color(0xFF3c81c6),
+                                size: 28,
+                              ),
+                            ),
+                            Positioned(
+                              right: 5,
+                              bottom: 2,
+                              child: Container(
+                                width: 20,
+                                padding: const EdgeInsets.all(2),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF3c81c6),
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 16,
+                                  minHeight: 16,
+                                ),
+                                child: Text(
+                                  _curentCartNum.toString(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),
@@ -234,7 +409,8 @@ class _HomePage extends State<HomePage> {
             backgroundColor: Colors.white,
             indicatorColor: Color(0xFFc6e7ff),
             selectedIndex: value,
-            onDestinationSelected: (index) => globals.currentPageIndex.value = index,
+            onDestinationSelected: (index) =>
+                globals.currentPageIndex.value = index,
             destinations: const [
               NavigationDestination(
                 icon: Icon(Icons.home_outlined),

@@ -76,18 +76,20 @@ class _ProductCardState extends State<ProductCard> {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(20.0),
-          child: Text('Không tìm thấy sản phẩm nào.',
+          child: Text("Không tìm thấy sản phẩm nào.",
               style: TextStyle(fontSize: 16, color: Colors.grey)),
         ),
       );
     }
 
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(15),
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisExtent: 310,
+          mainAxisExtent: 300,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
         ),
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -118,14 +120,12 @@ class _ProductCardState extends State<ProductCard> {
         );
       },
       child: Container(
-        margin: EdgeInsets.all(5),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Ảnh
             Container(
@@ -153,7 +153,7 @@ class _ProductCardState extends State<ProductCard> {
                   Text(product["GiaSP"].toString().toVND(unit: 'đ'),
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   const Row(
                     children: [
                       Icon(Icons.star, color: Colors.amber, size: 16),

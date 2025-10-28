@@ -23,16 +23,19 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      color: Color(0xFF3c81c6),
-      onRefresh: _reloadData,
-      child: SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
-        child: Column(
-          children: [
-            DanhMucSanPhamFullWidget(key: ValueKey(reloadCategoryCount)),
-            CacThuongHieuPP(key: ValueKey(reloadBrandCount)),
-          ],
+    return Scaffold(
+      backgroundColor: Color(0xFFf6f6f6),
+      body: RefreshIndicator(
+        color: Color(0xFF3c81c6),
+        onRefresh: _reloadData,
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              DanhMucSanPhamFullWidget(key: ValueKey(reloadCategoryCount)),
+              CacThuongHieuPP(key: ValueKey(reloadBrandCount)),
+            ],
+          ),
         ),
       ),
     );

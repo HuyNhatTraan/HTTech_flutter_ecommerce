@@ -32,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Color(0xFFf6f6f6),
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -114,6 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             decoration: BoxDecoration(
                               border: Border.all(color: Color(0xFF3980c3)),
                               borderRadius: BorderRadius.circular(10),
+                              color: Colors.white
                             ),
                             child: Row(
                               children: [
@@ -164,6 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             decoration: BoxDecoration(
                               border: Border.all(color: Color(0xFF3980c3)),
                               borderRadius: BorderRadius.circular(10),
+                                color: Colors.white
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment
@@ -438,9 +441,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 children: [
                                   Image(
                                     height: 30,
-                                    image: NetworkImage(
-                                      'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png',
-                                    ),
+                                    image: AssetImage('assets/768px-Google_22G22_logo.svg.png')
                                   ),
                                   SizedBox(width: 20),
                                   Text(
@@ -499,9 +500,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 children: [
                                   Image(
                                     height: 30,
-                                    image: NetworkImage(
-                                      'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/2048px-2021_Facebook_icon.svg.png',
-                                    ),
+                                    image: AssetImage('assets/2048px-2021_Facebook_icon.svg.jpg')
                                   ),
                                   SizedBox(width: 20),
                                   Text(

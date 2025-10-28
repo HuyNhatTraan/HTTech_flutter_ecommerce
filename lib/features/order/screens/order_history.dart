@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 import 'package:hehehehe/features/auth/services/auth_service.dart';
+import 'package:hehehehe/features/cart/screens/cart_screen.dart';
 import 'package:hehehehe/globals.dart' as globals;
 
 class AccountOrderHistory extends StatefulWidget {
@@ -15,6 +16,8 @@ class AccountOrderHistory extends StatefulWidget {
 class _AccountOrderHistoryState extends State<AccountOrderHistory> {
   final User? user = FirebaseAuth.instance.currentUser;
   final AuthServices authService = AuthServices();
+
+  int _curentCartNum = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +35,205 @@ class _AccountOrderHistoryState extends State<AccountOrderHistory> {
           'Lịch sử đặt hàng',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
+        actions: [
+          StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              final user = snapshot.data;
+
+              if (user == null) {
+                _curentCartNum = 0;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Stack(
+                    clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              transitionDuration: const Duration(milliseconds: 300),
+                              pageBuilder: (context, animation, secondaryAnimation) => CartScreen(),
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                    .chain(CurveTween(curve: Curves.easeInOutSine));
+                                return SlideTransition(position: animation.drive(tween), child: child);
+                              },
+                            ),
+                          );
+                        },
+                        icon: Icon(
+                          Icons.shopping_cart_outlined,
+                          color: Color(0xFF3c81c6),
+                          size: 28,
+                        ),
+                      ),
+                      Positioned(
+                        right: 5,
+                        bottom: 2,
+                        child: Container(
+                          width: 20,
+                          padding: const EdgeInsets.all(2),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF3c81c6),
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 16,
+                            minHeight: 16,
+                          ),
+                          child: Text(
+                            _curentCartNum.toString(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('cart')
+                    .doc(user.uid)
+                    .collection('SanPham')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    _curentCartNum = 0;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Stack(
+                        clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  transitionDuration: const Duration(milliseconds: 300),
+                                  pageBuilder: (context, animation, secondaryAnimation) =>
+                                  const CartScreen(),
+                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                    final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                        .chain(CurveTween(curve: Curves.easeInOutSine));
+                                    return SlideTransition(position: animation.drive(tween), child: child);
+                                  },
+                                ),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.shopping_cart_outlined,
+                              color: Color(0xFF3c81c6),
+                              size: 28,
+                            ),
+                          ),
+                          Positioned(
+                            right: 5,
+                            bottom: 2,
+                            child: Container(
+                              width: 20,
+                              padding: const EdgeInsets.all(2),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF3c81c6),
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Text(
+                                _curentCartNum.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  final items = snapshot.data!.docs;
+
+                  int _tempCartNum = 0;
+                  for (var item in items) {
+                    _tempCartNum += int.tryParse(item['SoLuong'].toString()) ?? 0;
+                  }
+
+                  _curentCartNum = _tempCartNum;
+
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Stack(
+                      clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration: const Duration(milliseconds: 300),
+                                pageBuilder: (context, animation, secondaryAnimation) =>
+                                const CartScreen(),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                      .chain(CurveTween(curve: Curves.easeInOutSine));
+                                  return SlideTransition(position: animation.drive(tween), child: child);
+                                },
+                              ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.shopping_cart_outlined,
+                            color: Color(0xFF3c81c6),
+                            size: 28,
+                          ),
+                        ),
+                        Positioned(
+                          right: 5,
+                          bottom: 2,
+                          child: Container(
+                            width: 20,
+                            padding: const EdgeInsets.all(2),
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF3c81c6),
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              _curentCartNum.toString(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance

@@ -78,7 +78,7 @@ class AuthServices {
   }
 
   // Chuyển giỏ hàng sang đơn hàng và xoá đơn hàng cũ
-  Future<void> moveCartToOrders(String uid) async {
+  Future<void> moveCartToOrders(String uid, String phuongThucThanhToan, String hinhThucGiaoHang, String imagePreview) async {
     final firestore = FirebaseFirestore.instance;
     final cartRef = firestore.collection('cart').doc(uid).collection('SanPham');
     final orderRef = firestore.collection('orders');
@@ -99,6 +99,9 @@ class AuthServices {
     final orderData = {
       "UserID": uid,
       "OrderID": orderId,
+      "PhuongThucThanhToan": phuongThucThanhToan,
+      "HinhThucGiaoHang": hinhThucGiaoHang,
+      "AnhDonHang" : imagePreview,
       "NgayDatHang": FieldValue.serverTimestamp(),
       "TrangThai": "Đang xử lý",
     };

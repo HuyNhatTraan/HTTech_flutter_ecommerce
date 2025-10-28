@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hehehehe/globals.dart';
 import 'package:http/http.dart' as http;
@@ -61,7 +62,7 @@ class _DanhMucSanPhamFullWidgetState extends State<DanhMucSanPhamFullWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10, top:20, bottom: 0),
+          padding: const EdgeInsets.only(left: 10, right: 10, top:10, bottom: 0),
           child: Text(
             "Danh mục sản phẩm",
             style: TextStyle(
@@ -106,34 +107,37 @@ class _DanhMucSanPhamFullWidgetState extends State<DanhMucSanPhamFullWidget> {
                       Expanded(
                         child: Stack(
                           children: [
-                            Container(
-                              height: 180,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.grey, width: 1),
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                    baseUri + '/' + product["HinhAnhDanhMuc"],
+                            CachedNetworkImage(
+                              imageUrl: "${baseUri}/${product["HinhAnhDanhMuc"]}",
+                              imageBuilder: (context, imageProvider) => Container(
+                                height: 180,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.grey, width: 1),
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.black26,
+                                      BlendMode.darken,
+                                    ),
                                   ),
-                                  fit: BoxFit.cover,
-                                  colorFilter: ColorFilter.mode(
-                                    Colors.black26,
-                                    BlendMode.darken,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    product["TenDanhMuc"],
+                                    textAlign:
+                                    TextAlign.center, // phòng khi text dài nhiều dòng
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
-                              child: Center(
-                                child: Text(
-                                  product["TenDanhMuc"],
-                                  textAlign:
-                                  TextAlign.center, // phòng khi text dài nhiều dòng
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
+                              placeholder: (context, url) => CircularProgressIndicator(),
+                              errorWidget: (context, url, error) => Icon(Icons.error),
                             ),
                           ],
                         ),

@@ -112,6 +112,7 @@ class _CacThuongHieuPPState extends State<CacThuongHieuPP> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(color: Colors.grey, width: 1),
+                                color: Colors.white,
                                 image: DecorationImage(
                                   image: NetworkImage(
                                     baseUri + '/' + product['ImgThuongHieu'],

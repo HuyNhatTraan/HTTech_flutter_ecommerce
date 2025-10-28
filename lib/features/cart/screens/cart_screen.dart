@@ -22,7 +22,8 @@ class _CartScreenState extends State<CartScreen> {
   final AuthServices authService = AuthServices();
   bool isEmptyCart = true;
 
-  int tongTienHeHe = 0; // biến tổng tiền toàn cục cho State
+  int tongTienHeHe = 0;
+  String anhPreview = '';
 
   @override
   Widget build(BuildContext context) {
@@ -136,10 +137,10 @@ class _CartScreenState extends State<CartScreen> {
                         padding: const EdgeInsets.all(10),
                         itemCount: items.length,
                         itemBuilder: (context, index) {
-                          final item =
-                              items[index].data() as Map<String, dynamic>;
+                          final item = items[index].data() as Map<String, dynamic>;
                           final GiaSP = item["GiaSP"].toString();
                           final SoLuong = item["SoLuong"];
+                          anhPreview = '/${item["HinhAnhVariant"]}';
                           return Column(
                             children: [
                               Container(
@@ -205,6 +206,7 @@ class _CartScreenState extends State<CartScreen> {
                                       },
                                       child: Image.network(
                                         '${globals.baseUri}/${item["HinhAnhVariant"]}',
+                                        width: 60,
                                         height: 60,
                                         fit: BoxFit.fitHeight,
                                       ),
@@ -490,7 +492,7 @@ class _CartScreenState extends State<CartScreen> {
                           transitionDuration: const Duration(milliseconds: 300),
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
-                                  CheckoutGioHang(),
+                                  CheckoutGioHang(anhPreview: anhPreview.toString()),
                           transitionsBuilder:
                               (context, animation, secondaryAnimation, child) {
                                 final tween =

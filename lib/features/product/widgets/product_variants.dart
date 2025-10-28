@@ -98,9 +98,16 @@ class _ProductVariantsState extends State<ProductVariants> {
                   if (_productsVariants.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(left: 20),
-                      child: Text(
-                        _productsVariants[0]["LoaiSP"],
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 3,
+                        children: [
+                          Text(
+                            _productsVariants[0]["LoaiSP"],
+                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          ),
+                          Text('*Chọn màu sắc:', style: TextStyle(color: Colors.grey),)
+                        ],
                       ),
                     ),
                   Padding(
@@ -139,21 +146,21 @@ class _ProductVariantsState extends State<ProductVariants> {
                               _selectedVariantImgUrl = product["HinhAnhVariant"].toString();
                               _selectedThuocTinhSP = product["ThuocTinhSP"].toString();
                             });
-                            print('Đã chọn sản phẩm: ${product["MaVarientSanPham"]}' + _selectedVariant);
+                            print('Đã chọn sản phẩm: ${product["MaVarientSanPham"]} $_selectedVariant');
                           },
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.all(Radius.circular(10)),
                               border: Border.all(
-                                color: isSelected ? Colors.blue : const Color(0xFF3c81c6),
+                                color: isSelected ? Colors.blue : const Color(0xFF706e6e),
                                 width: isSelected ? 3 : 1,
                               ),
                               color: Colors.white,
                             ),
                             padding: const EdgeInsets.all(5),
                             child: Image.network(
-                              globals.baseUri + '/' + product["HinhAnhVariant"],
+                              "${globals.baseUri}/${product["HinhAnhVariant"]}",
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -218,7 +225,17 @@ class _ProductVariantsState extends State<ProductVariants> {
                       backgroundColor: Color(0xFFc3e5ff),
                     ),
                     onPressed: _selectedIndex == -1
-                        ? null // null = tự động disable + xám đi
+                        ? () {
+                      Fluttertoast.showToast(
+                          msg: "Vui lòng chọn màu sắc",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Color(0xFF3a81c4),
+                          textColor: Colors.white,
+                          fontSize: 16.0
+                      );
+                    }
                         : () {
                       if (user != null) {
                         AuthServices authServices = AuthServices();

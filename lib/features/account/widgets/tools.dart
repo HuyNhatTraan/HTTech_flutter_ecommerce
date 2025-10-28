@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hehehehe/features/account/screens/account_order_history.dart';
-import 'package:hehehehe/features/account/screens/account_address.dart';
+import 'package:hehehehe/features/order/screens/order_history.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hehehehe/features/account/screens/account_support.dart';
 import 'package:hehehehe/features/account/screens/account_user_info.dart';
 import 'package:hehehehe/features/auth/screens/login_screen.dart';
-import 'package:hehehehe/features/auth/services/auth_service.dart';
 import 'package:hehehehe/features/settings/screens/setting_screen.dart';
 
 class Tools extends StatefulWidget {
@@ -125,6 +123,7 @@ class _ToolsState extends State<Tools> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(color: Colors.grey, width: 1),
+                            color: Colors.white,
                           ),
                           child: Center(
                             child: Column(
@@ -248,6 +247,7 @@ class _ToolsState extends State<Tools> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(color: Colors.grey, width: 1),
+                            color: Colors.white,
                           ),
                           child: Center(
                             child: Column(
@@ -379,6 +379,7 @@ class _ToolsState extends State<Tools> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(color: Colors.grey, width: 1),
+                            color: Colors.white,
                           ),
                           child: Center(
                             child: Column(
@@ -467,6 +468,7 @@ class _ToolsState extends State<Tools> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(color: Colors.grey, width: 1),
+                            color: Colors.white,
                           ),
                           child: Center(
                             child: Column(
@@ -526,6 +528,7 @@ class _ToolsState extends State<Tools> {
                     // color: Colors.white,
                     border: Border.all(color: Colors.grey, width: 1),
                     borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -566,7 +569,7 @@ class _ToolsState extends State<Tools> {
                           );
                         },
                         child: Container(
-                          color: Colors.transparent,
+                          color: Colors.white,
                           child: GestureDetector(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

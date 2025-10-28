@@ -9,7 +9,8 @@ import 'package:hehehehe/features/product/screens/product_info.dart';
 import 'package:hehehehe/globals.dart' as globals;
 
 class CheckoutGioHang extends StatefulWidget {
-  const CheckoutGioHang({super.key});
+  final String anhPreview;
+  const CheckoutGioHang({super.key, required this.anhPreview});
 
   @override
   State<CheckoutGioHang> createState() => _CheckoutGioHangState();
@@ -43,394 +44,296 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
       ),
       body: user == null
           ? _buildLoginPrompt(context)
-          : StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('cart')
-            .doc(user!.uid)
-            .collection('SanPham')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return Center(child: Text('Lỗi: ${snapshot.error}'));
-          }
-
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.production_quantity_limits_outlined,
-                      size: 64, color: Color(0xFF3c81c6)),
-                  const SizedBox(height: 15),
-                  const Text(
-                    'Giỏ hàng trống',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3c81c6),
-                        fontWeight: FontWeight.w900),
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: const Color(0xFFD2F5FC),
-                      foregroundColor: const Color(0xFF3C81C6),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(color: Color(0xFF3C81C6), width: 1),
-                      ),
-                    ),
-                    child: const Text('Tiếp tục mua hàng', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          // Tính tổng tiền
-          int tong = 0;
-          final items = snapshot.data!.docs;
-          for (var doc in items) {
-            final gia = int.tryParse(doc['GiaSP'].toString()) ?? 0;
-            final soLuong = int.tryParse(doc['SoLuong'].toString()) ?? 0;
-
-            tong += gia * soLuong;
-          }
-
-          // cập nhật vào biến state cho bottomNav
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (tongTienHeHe != tong) {
-              setState(() => tongTienHeHe = tong);
-            }
-          });
-
-          return SingleChildScrollView(
+          : SingleChildScrollView(
             child: Column(
               children: [
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(10),
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    final item = items[index].data() as Map<String, dynamic>;
-                    final GiaSP = item["GiaSP"].toString();
-                    final SoLuong = item["SoLuong"];
-                    return Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            border:
-                            Border.all(color: Colors.grey, width: 1),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                FutureBuilder<QuerySnapshot>(
+                  future: FirebaseFirestore.instance
+                        .collection('cart')
+                        .doc(user!.uid)
+                        .collection('SanPham')
+                        .get(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+            
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Lỗi: ${snapshot.error}'));
+                      }
+            
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              GestureDetector(
-                                onTap: () {
-                                  print('Đã ấn ' + item["MaSP"]);
-                                  Navigator.push(
-                                    context,
-                                    PageRouteBuilder(
-                                      transitionDuration: const Duration(milliseconds: 300),
-                                      pageBuilder: (context, animation, secondaryAnimation) =>
-                                          ProductInfo(maSanPham: item["MaSP"]),
-                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                        final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
-                                            .chain(CurveTween(curve: Curves.easeInOutSine));
-                                        return SlideTransition(position: animation.drive(tween), child: child);
-                                      },
-                                    ),
-                                  );
+                              const Icon(
+                                Icons.production_quantity_limits_outlined,
+                                size: 64,
+                                color: Color(0xFF3c81c6),
+                              ),
+                              const SizedBox(height: 15),
+                              const Text(
+                                'Giỏ hàng trống',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Color(0xFF3c81c6),
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
                                 },
-                                child: Image.network(
-                                  '${globals.baseUri}/${item["HinhAnhVariant"]}',
-                                  height: 80,
-                                  fit: BoxFit.fitHeight,
-                                ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    print('Đã ấn ' + item["MaSP"]);
-                                    Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                        transitionDuration: const Duration(milliseconds: 300),
-                                        pageBuilder: (context, animation, secondaryAnimation) =>
-                                            ProductInfo(maSanPham: item["MaSP"]),
-                                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                          final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
-                                              .chain(CurveTween(curve: Curves.easeInOutSine));
-                                          return SlideTransition(position: animation.drive(tween), child: child);
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      spacing: 5,
-                                      children: [
-                                        Text(
-                                          item["TenSP"] ?? "",
-                                          maxLines: 3,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text('Phân loại: ${item["ThuocTinhSP"]}', style: TextStyle(fontSize: 12)),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              GiaSP.toVND(),
-                                              style: const TextStyle(
-                                                  color: Color(0xFF3c81c6),
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16),
-                                            ),
-                                            Text('Số lượng: $SoLuong', style: TextStyle(fontSize: 12)),
-                                          ],
-                                        )
-
-                                      ],
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: const Color(0xFFD2F5FC),
+                                  foregroundColor: const Color(0xFF3C81C6),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    side: const BorderSide(
+                                      color: Color(0xFF3C81C6),
+                                      width: 1,
                                     ),
                                   ),
                                 ),
-                              ),
-                              Column(
-                                spacing: 10,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: Colors.grey.shade400,
-                                        width: 1,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                child: const Text(
+                                  'Tiếp tục mua hàng',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                    );
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey, width: 1),
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Phương thức thanh toán', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-                        Row(
-                          children: [
-                            Radio<String>(
-                              value: 'COD',
-                              groupValue: _selectedThanhToan,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _selectedThanhToan = value;
-                                });
-                              },
-                            ),
-                            Text('Thanh toán khi nhận hàng (COD)'),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Radio<String>(
-                              value: 'ATM',
-                              groupValue: _selectedThanhToan,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _selectedThanhToan = value;
-                                });
-                              },
-                            ),
-                            Text('Chuyển khoản ngân hàng'),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10,),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey, width: 1),
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Hình thức giao hàng', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-                        Row(
-                          children: [
-                            Radio<String>(
-                              value: 'Hoả tốc',
-                              groupValue: _selectedGiaoHang,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _selectedGiaoHang = value;
-                                });
-                              },
-                            ),
-                            Text('Hoả tốc (nội thành)'),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Radio<String>(
-                              value: 'Nhận hàng tại cửa hàng',
-                              groupValue: _selectedGiaoHang,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _selectedGiaoHang = value;
-                                });
-                              },
-                            ),
-                            Text('Nhận hàng tại cửa hàng'),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Radio<String>(
-                              value: 'Giao nhanh',
-                              groupValue: _selectedGiaoHang,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _selectedGiaoHang = value;
-                                });
-                              },
-                            ),
-                            Expanded(child: Text('Nhanh (1-3 ngày khu vục TPHCM, 3-6 ngày cho các khu vực khác)')),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10,),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey, width: 1),
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Tại sao nên mua tại HT Tech', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-                        SizedBox(height: 10,),
-                        Row(
-                          spacing: 15,
-                          children: [
-                            Icon(
-                              Icons.airport_shuttle_outlined,
-                              size: 40,
-                            ),
-                            Expanded(
-                              child: Column(
-                                spacing: 3,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                        );
+                      }
+            
+                      // Tính tổng tiền
+                      int tong = 0;
+                      final items = snapshot.data!.docs;
+                      for (var doc in items) {
+                        final gia = int.tryParse(doc['GiaSP'].toString()) ?? 0;
+                        final soLuong = int.tryParse(doc['SoLuong'].toString()) ?? 0;
+            
+                        tong += gia * soLuong;
+                      }
+            
+                      // cập nhật vào biến state cho bottomNav
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (tongTienHeHe != tong) {
+                          setState(() => tongTienHeHe = tong);
+                        }
+                      });
+            
+                      return Column(
+                        children: [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: const EdgeInsets.all(10),
+                            itemCount: items.length,
+                            itemBuilder: (context, index) {
+                              final item =
+                                  items[index].data() as Map<String, dynamic>;
+                              final GiaSP = item["GiaSP"].toString();
+                              final SoLuong = item["SoLuong"];
+                              return Column(
                                 children: [
-                                  Text('Giao hàng nhanh', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                                  Text('HCM và khu vục phía Nam: Giao hàng từ 1 - 3 ngày làm việc. Các khu vực khác giao hàng từ 3 - 6 ngày làm việc.', style: TextStyle(fontSize: 12),)
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: Colors.grey,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            print('Đã ấn ' + item["MaSP"]);
+                                            Navigator.push(
+                                              context,
+                                              PageRouteBuilder(
+                                                transitionDuration: const Duration(
+                                                  milliseconds: 300,
+                                                ),
+                                                pageBuilder:
+                                                    (
+                                                      context,
+                                                      animation,
+                                                      secondaryAnimation,
+                                                    ) => ProductInfo(
+                                                      maSanPham: item["MaSP"],
+                                                    ),
+                                                transitionsBuilder:
+                                                    (
+                                                      context,
+                                                      animation,
+                                                      secondaryAnimation,
+                                                      child,
+                                                    ) {
+                                                      final tween =
+                                                          Tween(
+                                                            begin: const Offset(
+                                                              1,
+                                                              0,
+                                                            ),
+                                                            end: Offset.zero,
+                                                          ).chain(
+                                                            CurveTween(
+                                                              curve: Curves
+                                                                  .easeInOutSine,
+                                                            ),
+                                                          );
+                                                      return SlideTransition(
+                                                        position: animation.drive(
+                                                          tween,
+                                                        ),
+                                                        child: child,
+                                                      );
+                                                    },
+                                              ),
+                                            );
+                                          },
+                                          child: Image.network(
+                                            '${globals.baseUri}/${item["HinhAnhVariant"]}',
+                                            height: 80,
+                                            fit: BoxFit.fitHeight,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              print('Đã ấn ' + item["MaSP"]);
+                                              Navigator.push(
+                                                context,
+                                                PageRouteBuilder(
+                                                  transitionDuration:
+                                                      const Duration(
+                                                        milliseconds: 300,
+                                                      ),
+                                                  pageBuilder:
+                                                      (
+                                                        context,
+                                                        animation,
+                                                        secondaryAnimation,
+                                                      ) => ProductInfo(
+                                                        maSanPham: item["MaSP"],
+                                                      ),
+                                                  transitionsBuilder:
+                                                      (
+                                                        context,
+                                                        animation,
+                                                        secondaryAnimation,
+                                                        child,
+                                                      ) {
+                                                        final tween =
+                                                            Tween(
+                                                              begin: const Offset(
+                                                                1,
+                                                                0,
+                                                              ),
+                                                              end: Offset.zero,
+                                                            ).chain(
+                                                              CurveTween(
+                                                                curve: Curves
+                                                                    .easeInOutSine,
+                                                              ),
+                                                            );
+                                                        return SlideTransition(
+                                                          position: animation.drive(
+                                                            tween,
+                                                          ),
+                                                          child: child,
+                                                        );
+                                                      },
+                                                ),
+                                              );
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 8,
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                spacing: 5,
+                                                children: [
+                                                  Text(
+                                                    item["TenSP"] ?? "",
+                                                    maxLines: 3,
+                                                    style: const TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Phân loại: ${item["ThuocTinhSP"]}',
+                                                    style: TextStyle(fontSize: 12),
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        GiaSP.toVND(),
+                                                        style: const TextStyle(
+                                                          color: Color(0xFF3c81c6),
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        'Số lượng: $SoLuong',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Column(
+                                          spacing: 10,
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(
+                                                  10,
+                                                ),
+                                                border: Border.all(
+                                                  color: Colors.grey.shade400,
+                                                  width: 1,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
                                 ],
-                              ),
-                            )
-                          ]
-                        ),
-                        SizedBox(height: 10,),
-                        Row(
-                          spacing: 15,
-                          children: [
-                            Icon(
-                              Icons.restart_alt_outlined,
-                              size: 40,
-                            ),
-                            Expanded(
-                              child: Column(
-                                spacing: 3,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Dịch vụ sau bán hàng', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                                  Text('Hỗ trợ đổi trả trong vòng 14 ngày do các vấn đề do nhà sản xuất.', style: TextStyle(fontSize: 12),)
-                                ],
-                              ),
-                            )
-                          ]
-                        ),
-                        SizedBox(height: 10,),
-                        Row(
-                          spacing: 15,
-                          children: [
-                            Icon(
-                              Icons.credit_card_outlined,
-                              size: 40,
-                            ),
-                            Expanded(
-                              child: Column(
-                                spacing: 3,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Thanh toán an toàn', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                                  Text('Thanh toán an toàn & bảo mật. Dễ dàng và nhanh chóng.', style: TextStyle(fontSize: 12),),
-                                  Row(
-                                    spacing: 3,
-                                    children: [
-                                      Image(image: NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/960px-Visa_Inc._logo.svg.png'), width: 40,),
-                                      Image(image: NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/MasterCard_early_1990s_logo.svg/250px-MasterCard_early_1990s_logo.svg.png'), width: 40,),
-                                      Image(image: NetworkImage('https://camo.githubusercontent.com/b624142eb1373b5f2b06067da2427c6386d90d17519aee75ad69d2b8baefee59/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7461736b6d616e616765726561676c6f623132332f696d6167652f75706c6f61642f76313634313937303939352f5669657451522e34366137386362625f7574777a7a682e706e67'), width: 40,),
-                                      Image(image: NetworkImage('https://e7.pngegg.com/pngimages/157/1005/png-clipart-ucb-logo-jcb-co-ltd-logo-payment-credit-card-card-vetor-text-service-thumbnail.png'), width: 40,),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            )
-                          ]
-                        ),
-                      ],
-                    ),
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                ),
+                _radioOption(context),
               ],
             ),
-          );
-        },
-      ),
+          ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.white,
         child: Row(
@@ -445,15 +348,21 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                 Text(
                   tongTienHeHe.toString().toVND(),
                   style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF3c81c6)),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF3c81c6),
+                  ),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () {
-                    authService.moveCartToOrders(user!.uid);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => CheckoutSuccess()));
+                    authService.moveCartToOrders(user!.uid, _selectedThanhToan.toString(), _selectedGiaoHang.toString(), widget.anhPreview);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CheckoutSuccess(),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFD2F5FC),
@@ -472,10 +381,316 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _radioOption(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey, width: 1),
+            ),
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Phương thức thanh toán',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Radio<String>(
+                      value: 'COD',
+                      groupValue: _selectedThanhToan,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedThanhToan = value;
+                        });
+                      },
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedThanhToan = 'COD';
+                        });
+                      },
+                      child: Text(
+                        'Thanh toán khi nhận hàng (COD)',
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio<String>(
+                      value: 'ATM',
+                      groupValue: _selectedThanhToan,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedThanhToan = value;
+                        });
+                      },
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedThanhToan = 'ATM';
+                        });
+                      },
+                      child: Text('Chuyển khoản ngân hàng'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey, width: 1),
+            ),
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Hình thức giao hàng',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Radio<String>(
+                      value: 'Hoả tốc',
+                      groupValue: _selectedGiaoHang,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedGiaoHang = value;
+                        });
+                      },
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedGiaoHang = 'Hoả tốc';
+                        });
+                      },
+                      child: Text('Hoả tốc (nội thành)'),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio<String>(
+                      value: 'Nhận hàng tại cửa hàng',
+                      groupValue: _selectedGiaoHang,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedGiaoHang = value;
+                        });
+                      },
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedGiaoHang =
+                          'Nhận hàng tại cửa hàng';
+                        });
+                      },
+                      child: Text('Nhận hàng tại cửa hàng'),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio<String>(
+                      value: 'Giao nhanh',
+                      groupValue: _selectedGiaoHang,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedGiaoHang = value;
+                        });
+                      },
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedGiaoHang = 'Giao nhanh';
+                          });
+                        },
+                        child: Text(
+                          'Nhanh (1-3 ngày khu vục TPHCM, 3-6 ngày cho các khu vực khác)',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey, width: 1),
+            ),
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Tại sao nên mua tại HT Tech',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Row(
+                  spacing: 15,
+                  children: [
+                    Icon(
+                      Icons.airport_shuttle_outlined,
+                      size: 40,
+                    ),
+                    Expanded(
+                      child: Column(
+                        spacing: 3,
+                        crossAxisAlignment:
+                        CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Giao hàng nhanh',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            'HCM và khu vục phía Nam: Giao hàng từ 1 - 3 ngày làm việc. Các khu vực khác giao hàng từ 3 - 6 ngày làm việc.',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  spacing: 15,
+                  children: [
+                    Icon(Icons.restart_alt_outlined, size: 40),
+                    Expanded(
+                      child: Column(
+                        spacing: 3,
+                        crossAxisAlignment:
+                        CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Dịch vụ sau bán hàng',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            'Hỗ trợ đổi trả trong vòng 14 ngày do các vấn đề do nhà sản xuất.',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  spacing: 15,
+                  children: [
+                    Icon(Icons.credit_card_outlined, size: 40),
+                    Expanded(
+                      child: Column(
+                        spacing: 3,
+                        crossAxisAlignment:
+                        CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Thanh toán an toàn',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            'Thanh toán an toàn & bảo mật. Dễ dàng và nhanh chóng.',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          Row(
+                            spacing: 3,
+                            children: [
+                              Image(
+                                image: NetworkImage(
+                                  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/960px-Visa_Inc._logo.svg.png',
+                                ),
+                                width: 40,
+                              ),
+                              Image(
+                                image: NetworkImage(
+                                  'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/MasterCard_early_1990s_logo.svg/250px-MasterCard_early_1990s_logo.svg.png',
+                                ),
+                                width: 40,
+                              ),
+                              Image(
+                                image: NetworkImage(
+                                  'https://camo.githubusercontent.com/b624142eb1373b5f2b06067da2427c6386d90d17519aee75ad69d2b8baefee59/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7461736b6d616e616765726561676c6f623132332f696d6167652f75706c6f61642f76313634313937303939352f5669657451522e34366137386362625f7574777a7a682e706e67',
+                                ),
+                                width: 40,
+                              ),
+                              Image(
+                                image: NetworkImage(
+                                  'https://e7.pngegg.com/pngimages/157/1005/png-clipart-ucb-logo-jcb-co-ltd-logo-payment-credit-card-card-vetor-text-service-thumbnail.png',
+                                ),
+                                width: 40,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -484,15 +699,19 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.production_quantity_limits_outlined,
-              size: 64, color: Color(0xFF3c81c6)),
+          const Icon(
+            Icons.production_quantity_limits_outlined,
+            size: 64,
+            color: Color(0xFF3c81c6),
+          ),
           const SizedBox(height: 15),
           const Text(
             'Vui lòng đăng nhập để xem giỏ hàng.',
             style: TextStyle(
-                fontSize: 18,
-                color: Color(0xFF3c81c6),
-                fontWeight: FontWeight.w900),
+              fontSize: 18,
+              color: Color(0xFF3c81c6),
+              fontWeight: FontWeight.w900,
+            ),
           ),
           const SizedBox(height: 10),
           ElevatedButton(
@@ -502,17 +721,18 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                 PageRouteBuilder(
                   transitionDuration: const Duration(milliseconds: 300),
                   pageBuilder: (context, animation, secondaryAnimation) =>
-                  const LoginScreen(),
+                      const LoginScreen(),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
-                    final tween = Tween(
-                        begin: const Offset(1, 0), end: Offset.zero)
-                        .chain(CurveTween(curve: Curves.easeInOutSine));
-                    return SlideTransition(
-                      position: animation.drive(tween),
-                      child: child,
-                    );
-                  },
+                        final tween = Tween(
+                          begin: const Offset(1, 0),
+                          end: Offset.zero,
+                        ).chain(CurveTween(curve: Curves.easeInOutSine));
+                        return SlideTransition(
+                          position: animation.drive(tween),
+                          child: child,
+                        );
+                      },
                 ),
               );
             },
