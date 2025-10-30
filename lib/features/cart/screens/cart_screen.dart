@@ -24,6 +24,7 @@ class _CartScreenState extends State<CartScreen> {
 
   int tongTienHeHe = 0;
   String anhPreview = '';
+  int cartNum = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +38,13 @@ class _CartScreenState extends State<CartScreen> {
           onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.keyboard_backspace_outlined),
         ),
-        title: const Text(
-          'Giỏ hàng',
-          style: TextStyle(fontWeight: FontWeight.w900),
-        ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text('Giỏ hàng ', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('(${cartNum.toString()})', style: TextStyle(fontSize: 14, color: Colors.grey[500]))
+          ],
+        )
       ),
       body: user == null
           ? _buildLoginPrompt(context)
@@ -112,12 +116,15 @@ class _CartScreenState extends State<CartScreen> {
                 // Tính tổng tiền
                 int tong = 0;
                 final items = snapshot.data!.docs;
+                int tempCartNum = 0;
                 for (var doc in items) {
                   final gia = int.tryParse(doc['GiaSP'].toString()) ?? 0;
                   final soLuong = int.tryParse(doc['SoLuong'].toString()) ?? 0;
-
+                  tempCartNum += soLuong;
                   tong += gia * soLuong;
                 }
+
+                cartNum = tempCartNum;
 
                 // cập nhật vào biến state cho bottomNav
                 WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -288,10 +295,6 @@ class _CartScreenState extends State<CartScreen> {
                                                   fontSize: 16,
                                                 ),
                                               ),
-                                              Text(
-                                                'Số lượng: $SoLuong',
-                                                style: TextStyle(fontSize: 12),
-                                              ),
                                             ],
                                           ),
                                         ),
@@ -339,6 +342,7 @@ class _CartScreenState extends State<CartScreen> {
                                                                   );
                                                               setState(() {
                                                                 isEmptyCart = true;
+                                                                cartNum = 0;
                                                               });
                                                               Navigator.pop(
                                                                 context,
@@ -362,7 +366,8 @@ class _CartScreenState extends State<CartScreen> {
                                                         -1,
                                                       );
                                                 },
-                                                child: Padding(
+                                                child: Container(
+                                                  color: Colors.transparent,
                                                   padding: const EdgeInsets.all(
                                                     10.0,
                                                   ),
@@ -377,14 +382,10 @@ class _CartScreenState extends State<CartScreen> {
                                                 onTap: () {
                                                   authService.updateCartQuantities(user!.uid, item["MaVarientSanPham"], 1,);
                                                 },
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                    10.0,
-                                                  ),
-                                                  child: const Icon(
-                                                    Icons.add_outlined,
-                                                    size: 16,
-                                                  ),
+                                                child: Container(
+                                                  color: Colors.transparent,
+                                                  padding: const EdgeInsets.all(10),
+                                                  child: const Icon(Icons.add_outlined, size: 16),
                                                 ),
                                               ),
                                             ],
@@ -413,6 +414,7 @@ class _CartScreenState extends State<CartScreen> {
                                                       );
                                                       setState(() {
                                                         isEmptyCart = true;
+                                                        cartNum = 0;
                                                       });
                                                       Navigator.pop(context);
                                                     },
@@ -547,6 +549,9 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildLoginPrompt(BuildContext context) {
+    setState(() {
+      cartNum = 0;
+    });
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

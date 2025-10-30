@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hehehehe/features/cart/screens/cart_screen.dart';
 import 'package:hehehehe/features/product/widgets/product_card.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -20,7 +24,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    int _curentCartNum = 0;
     return Scaffold(
+      backgroundColor: Color(0xFFf6f6f6),
       appBar: AppBar(
         surfaceTintColor: Colors.white,
         title: SizedBox(
@@ -43,7 +49,18 @@ class _SearchScreenState extends State<SearchScreen> {
               isDense: true,
               prefixIcon: const Icon(Icons.search, size: 24),
               border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                      color: Color(0xFF9e9e9e)
+                  )
+              ),
+              enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFF9e9e9e)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFF3c81c6)),
               ),
               filled: true,
               fillColor: Colors.white,
@@ -52,22 +69,340 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: IconButton(
-              icon: const Icon(
-                Icons.filter_alt_outlined,
-                color: Color(0xFF3c81c6),
-                size: 25,
-              ),
-              onPressed: () {},
-            ),
+          StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              final user = snapshot.data;
+
+              if (user == null) {
+                _curentCartNum = 0;
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 300),
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const CartScreen(),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                              final tween = Tween(
+                                begin: const Offset(1, 0),
+                                end: Offset.zero,
+                              ).chain(CurveTween(curve: Curves.easeInOutSine));
+                              return SlideTransition(
+                                position: animation.drive(tween),
+                                child: child,
+                              );
+                            },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    color: Colors.transparent,
+                    padding: const EdgeInsets.all(5),
+                    child: Stack(
+                      clipBehavior:
+                          Clip.none, // cho phép chữ tràn ra ngoài icon
+                      children: [
+                        Icon(
+                          Icons.shopping_cart_outlined,
+                          color: Color(0xFF3c81c6),
+                          size: 28,
+                        ),
+                        Positioned(
+                          right: -5,
+                          bottom: -5,
+                          child: Container(
+                            width: 20,
+                            padding: const EdgeInsets.all(2),
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF3c81c6),
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              _curentCartNum.toString(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              return StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('cart')
+                    .doc(user.uid)
+                    .collection('SanPham')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    _curentCartNum = 0;
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: const Duration(
+                              milliseconds: 300,
+                            ),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    const CartScreen(),
+                            transitionsBuilder:
+                                (
+                                  context,
+                                  animation,
+                                  secondaryAnimation,
+                                  child,
+                                ) {
+                                  final tween =
+                                      Tween(
+                                        begin: const Offset(1, 0),
+                                        end: Offset.zero,
+                                      ).chain(
+                                        CurveTween(curve: Curves.easeInOutSine),
+                                      );
+                                  return SlideTransition(
+                                    position: animation.drive(tween),
+                                    child: child,
+                                  );
+                                },
+                          ),
+                        );
+                      },
+                      child: Container(
+                        color: Colors.transparent,
+                        padding: const EdgeInsets.all(5),
+                        child: Stack(
+                          clipBehavior:
+                              Clip.none, // cho phép chữ tràn ra ngoài icon
+                          children: [
+                            Icon(
+                              Icons.shopping_cart_outlined,
+                              color: Color(0xFF3c81c6),
+                              size: 28,
+                            ),
+                            Positioned(
+                              right: -5,
+                              bottom: -5,
+                              child: Container(
+                                width: 20,
+                                padding: const EdgeInsets.all(2),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF3c81c6),
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 16,
+                                  minHeight: 16,
+                                ),
+                                child: Text(
+                                  _curentCartNum.toString(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  final items = snapshot.data!.docs;
+
+                  int _tempCartNum = 0;
+                  for (var item in items) {
+                    _tempCartNum +=
+                        int.tryParse(item['SoLuong'].toString()) ?? 0;
+                  }
+
+                  _curentCartNum = _tempCartNum;
+
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 300),
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  const CartScreen(),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                                final tween =
+                                    Tween(
+                                      begin: const Offset(1, 0),
+                                      end: Offset.zero,
+                                    ).chain(
+                                      CurveTween(curve: Curves.easeInOutSine),
+                                    );
+                                return SlideTransition(
+                                  position: animation.drive(tween),
+                                  child: child,
+                                );
+                              },
+                        ),
+                      );
+                    },
+                    child: Container(
+                      color: Colors.transparent,
+                      padding: const EdgeInsets.all(5),
+                      child: Stack(
+                        clipBehavior:
+                            Clip.none, // cho phép chữ tràn ra ngoài icon
+                        children: [
+                          Icon(
+                            Icons.shopping_cart_outlined,
+                            color: Color(0xFF3c81c6),
+                            size: 28,
+                          ),
+                          Positioned(
+                            right: -5,
+                            bottom: -5,
+                            child: Container(
+                              width: 20,
+                              padding: const EdgeInsets.all(2),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF3c81c6),
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Text(
+                                _curentCartNum.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
           ),
+          SizedBox(width: 15),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: Color(0xFF9e9e9e)), bottom: BorderSide(color: Color(0xFF9e9e9e))),
+                color: Colors.white,
+              ),
+              //width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Fluttertoast.showToast(
+                          msg: "Tính năng này đang được xây dựng",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Color(0xFFc6e7ff),
+                          textColor: Color(0xFF3c81c6),
+                          fontSize: 16.0
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      child: Text('Liên quan', style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                    child: VerticalDivider(
+                      color: Colors.grey[800],
+                      thickness: 2,
+                      width: 10,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Fluttertoast.showToast(
+                          msg: "Tính năng này đang được xây dựng",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Color(0xFFc6e7ff),
+                          textColor: Color(0xFF3c81c6),
+                          fontSize: 16.0
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      child: Text('Mới nhất', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                    child: VerticalDivider(
+                      color: Colors.grey[800],
+                      thickness: 2,
+                      width: 10,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Fluttertoast.showToast(
+                          msg: "Tính năng này đang được xây dựng",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Color(0xFFc6e7ff),
+                          textColor: Color(0xFF3c81c6),
+                          fontSize: 16.0
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      child: Row(
+                        spacing: 5,
+                        children: [
+                          Icon(
+                            Icons.north_outlined,
+                            color: Colors.grey,
+                            size: 16,
+                          ),
+                          Text('Giá', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Row(
               children: [
                 Padding(
@@ -82,7 +417,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ),
                       Text(
-                        "' $_currentQuery' ",
+                        "' $_currentQuery ' ",
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

@@ -30,6 +30,17 @@ class _ThongBaoState extends State<ThongBao> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 15,
+                right: 15,
+                bottom: 5,
+              ),
+              child: Text(
+                'Thông báo hệ thống & khuyến mãi',
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              ),
+            ),
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('notifications')

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:hehehehe/features/product/screens/product_info.dart';
@@ -54,7 +55,7 @@ class _BannerSPMoiState extends State<BannerSPMoi> {
           width: double.infinity,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: NetworkImage(item['url']),
+              image: CachedNetworkImageProvider(item['url']),
               fit: BoxFit.cover,
               colorFilter: ColorFilter.mode(
                 Colors.black.withValues(alpha: 0.2),

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hehehehe/features/category/screens/category_brands_screen.dart';
 import 'package:hehehehe/globals.dart';
@@ -114,9 +115,7 @@ class _CacThuongHieuPPState extends State<CacThuongHieuPP> {
                                 border: Border.all(color: Colors.grey, width: 1),
                                 color: Colors.white,
                                 image: DecorationImage(
-                                  image: NetworkImage(
-                                    baseUri + '/' + product['ImgThuongHieu'],
-                                  ),
+                                  image: CachedNetworkImageProvider('$baseUri/${product['ImgThuongHieu']}'),
                                   //fit: BoxFit.cover,
                                 ),
                               ),

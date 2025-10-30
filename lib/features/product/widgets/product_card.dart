@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hehehehe/globals.dart' as globals;
 import 'package:http/http.dart' as http;
@@ -133,7 +134,7 @@ class _ProductCardState extends State<ProductCard> {
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
                 image: DecorationImage(
-                  image: NetworkImage("${globals.baseUri}/${product["HinhAnhDaiDienSP"]}"),
+                  image: CachedNetworkImageProvider("${globals.baseUri}/${product["HinhAnhDaiDienSP"]}"),
                   fit: BoxFit.cover,
                 ),
               ),
