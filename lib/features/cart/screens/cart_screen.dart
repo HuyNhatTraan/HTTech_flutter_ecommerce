@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // nhớ import
 import 'package:fluttertoast/fluttertoast.dart';
@@ -26,6 +27,8 @@ class _CartScreenState extends State<CartScreen> {
   String anhPreview = '';
   int cartNum = 0;
 
+  TextEditingController? _numberController;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,9 +45,12 @@ class _CartScreenState extends State<CartScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text('Giỏ hàng ', style: TextStyle(fontWeight: FontWeight.bold)),
-            Text('(${cartNum.toString()})', style: TextStyle(fontSize: 14, color: Colors.grey[500]))
+            Text(
+              '(${cartNum.toString()})',
+              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+            ),
           ],
-        )
+        ),
       ),
       body: user == null
           ? _buildLoginPrompt(context)
@@ -144,10 +150,12 @@ class _CartScreenState extends State<CartScreen> {
                         padding: const EdgeInsets.all(10),
                         itemCount: items.length,
                         itemBuilder: (context, index) {
-                          final item = items[index].data() as Map<String, dynamic>;
+                          final item =
+                              items[index].data() as Map<String, dynamic>;
                           final GiaSP = item["GiaSP"].toString();
-                          final SoLuong = item["SoLuong"];
+                          var SoLuong = item["SoLuong"];
                           anhPreview = '/${item["HinhAnhVariant"]}';
+
                           return Column(
                             children: [
                               Container(
@@ -341,7 +349,8 @@ class _CartScreenState extends State<CartScreen> {
                                                                     item["MaVarientSanPham"],
                                                                   );
                                                               setState(() {
-                                                                isEmptyCart = true;
+                                                                isEmptyCart =
+                                                                    true;
                                                                 cartNum = 0;
                                                               });
                                                               Navigator.pop(
@@ -377,15 +386,111 @@ class _CartScreenState extends State<CartScreen> {
                                                   ),
                                                 ),
                                               ),
-                                              Text(SoLuong.toString()),
+                                              SizedBox(
+                                                width: 30,
+                                                child: TextField(
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                  ),
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter.digitsOnly,
+                                                  ],
+                                                  textAlign: TextAlign.center,
+                                                  controller:
+                                                      TextEditingController(
+                                                        text:
+                                                            SoLuong.toString(),
+                                                      ),
+                                                  decoration:
+                                                      const InputDecoration(
+                                                        border:
+                                                            InputBorder.none,
+                                                        isDense: true,
+                                                        contentPadding:
+                                                            EdgeInsets.zero,
+                                                      ),
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  onSubmitted: (value) {
+                                                    if (value.isEmpty) {
+                                                      int tempSoLuong = SoLuong;
+                                                      print(tempSoLuong);
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) => AlertDialog(
+                                                          title: Text(
+                                                            "Xác nhận",
+                                                          ),
+                                                          content: Text(
+                                                            "Người anh em có chắc muốn xóa không?",
+                                                          ),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                  context,
+                                                                );
+                                                                setState(() {
+                                                                  SoLuong =
+                                                                      tempSoLuong;
+                                                                });
+                                                              },
+                                                              child: Text(
+                                                                "Hủy",
+                                                              ),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                authService
+                                                                    .removeCartItems(
+                                                                      user!.uid,
+                                                                      item["MaVarientSanPham"],
+                                                                    );
+                                                                setState(() {
+                                                                  isEmptyCart =
+                                                                      true;
+                                                                  cartNum = 0;
+                                                                });
+                                                                Navigator.pop(
+                                                                  context,
+                                                                );
+                                                              },
+                                                              child: Text(
+                                                                "Xóa",
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      authService
+                                                          .updateCartQuantitiesByInput(
+                                                            user!.uid,
+                                                            item["MaVarientSanPham"],
+                                                            int.parse(value),
+                                                          );
+                                                    }
+                                                  },
+                                                ),
+                                              ),
                                               GestureDetector(
                                                 onTap: () {
-                                                  authService.updateCartQuantities(user!.uid, item["MaVarientSanPham"], 1,);
+                                                  authService
+                                                      .updateCartQuantities(
+                                                        user!.uid,
+                                                        item["MaVarientSanPham"],
+                                                        1,
+                                                      );
                                                 },
                                                 child: Container(
                                                   color: Colors.transparent,
-                                                  padding: const EdgeInsets.all(10),
-                                                  child: const Icon(Icons.add_outlined, size: 16),
+                                                  padding: const EdgeInsets.all(
+                                                    10,
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.add_outlined,
+                                                    size: 16,
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -475,14 +580,14 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   )
                 else
-                Text(
-                  tongTienHeHe.toString().toVND(),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF3c81c6),
+                  Text(
+                    tongTienHeHe.toString().toVND(),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF3c81c6),
+                    ),
                   ),
-                ),
                 const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () {
@@ -494,7 +599,9 @@ class _CartScreenState extends State<CartScreen> {
                           transitionDuration: const Duration(milliseconds: 300),
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
-                                  CheckoutGioHang(anhPreview: anhPreview.toString()),
+                                  CheckoutGioHang(
+                                    anhPreview: anhPreview.toString(),
+                                  ),
                           transitionsBuilder:
                               (context, animation, secondaryAnimation, child) {
                                 final tween =
@@ -513,15 +620,16 @@ class _CartScreenState extends State<CartScreen> {
                       );
                     } else {
                       Fluttertoast.showToast(
-                          msg: "Giỏ hàng đang trống ớ",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Color(0xFFd1f4fb),
-                          textColor: Color(0xFF3a81c4),
-                          fontSize: 16.0,
+                        msg: "Giỏ hàng đang trống ớ",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Color(0xFFd1f4fb),
+                        textColor: Color(0xFF3a81c4),
+                        fontSize: 16.0,
                       );
-                    };
+                    }
+                    ;
                   },
 
                   style: ElevatedButton.styleFrom(

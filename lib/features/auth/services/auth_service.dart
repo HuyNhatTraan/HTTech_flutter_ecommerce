@@ -77,6 +77,19 @@ class AuthServices {
     }, SetOptions(merge: true));
   }
 
+  Future updateCartQuantitiesByInput(String uid, String maVarientSanPham, int num) async {
+    await FirebaseFirestore.instance
+        .collection("cart")
+        .doc(uid)
+        .collection("SanPham")
+        .doc(maVarientSanPham.toString())
+        .set({
+      "MaVarientSanPham": maVarientSanPham,
+      "SoLuong": num,
+      "NgayThem": FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
   // Chuyển giỏ hàng sang đơn hàng và xoá đơn hàng cũ
   Future<void> moveCartToOrders(String uid, String phuongThucThanhToan, String hinhThucGiaoHang, String imagePreview) async {
     final firestore = FirebaseFirestore.instance;

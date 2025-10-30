@@ -80,8 +80,8 @@ class _HomePage extends State<HomePage> {
       final body = rawBody.replaceFirst(RegExp(r'^(Thông báo:\s*)'), '');
 
       // Debug test xem có hiện hong ớ
-      print('🔥 Title: $title');
-      print('📩 Body: $body');
+      print('Title: $title');
+      print('Body: $body');
 
       // Thêm vào Firestore với collection('notifications')
       await FirebaseFirestore.instance.collection('notifications').add({
@@ -185,16 +185,16 @@ class _HomePage extends State<HomePage> {
                   hintText: 'Tìm kiếm sản phẩm',
                   hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
                   isDense: true,
-                  prefixIcon: Icon(Icons.search, size: 24),
+                  prefixIcon: Icon(Icons.search, size: 24, color: Color(0xFF3c81c6)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide(
-                        color: Color(0xFF9e9e9e)
+                        color: Color(0xFF3c81c6)
                     )
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: Color(0xFF9e9e9e)),
+                    borderSide: const BorderSide(color: Color(0xFF3c81c6)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -234,7 +234,7 @@ class _HomePage extends State<HomePage> {
                         color: Colors.transparent,
                         padding: const EdgeInsets.all(5),
                         child: Stack(
-                          clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon
+                          clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon giỏ hàng ớ
                           children: [
                             Icon(
                               Icons.shopping_cart_outlined,
@@ -242,24 +242,20 @@ class _HomePage extends State<HomePage> {
                               size: 28,
                             ),
                             Positioned(
-                              right: -5,
-                              bottom: -5,
+                              right: -15,
+                              bottom: -10,
                               child: Container(
-                                width: 20,
-                                padding: const EdgeInsets.all(2),
+                                width: 35,
+                                padding: const EdgeInsets.all(5),
                                 decoration: const BoxDecoration(
                                   color: Color(0xFF3c81c6),
                                   shape: BoxShape.circle,
                                 ),
-                                constraints: const BoxConstraints(
-                                  minWidth: 16,
-                                  minHeight: 16,
-                                ),
                                 child: Text(
-                                  _curentCartNum.toString(),
+                                  _curentCartNum > 99 ? '99+' : _curentCartNum.toString(),
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 14,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                   ),
                                   textAlign: TextAlign.center,
@@ -301,7 +297,7 @@ class _HomePage extends State<HomePage> {
                             color: Colors.transparent,
                             padding: const EdgeInsets.all(5),
                             child: Stack(
-                              clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon
+                              clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon giỏ hàng ớ
                               children: [
                                 Icon(
                                   Icons.shopping_cart_outlined,
@@ -309,24 +305,20 @@ class _HomePage extends State<HomePage> {
                                   size: 28,
                                 ),
                                 Positioned(
-                                  right: -5,
-                                  bottom: -5,
+                                  right: -15,
+                                  bottom: -10,
                                   child: Container(
-                                    width: 20,
-                                    padding: const EdgeInsets.all(2),
+                                    width: 35,
+                                    padding: const EdgeInsets.all(5),
                                     decoration: const BoxDecoration(
                                       color: Color(0xFF3c81c6),
                                       shape: BoxShape.circle,
                                     ),
-                                    constraints: const BoxConstraints(
-                                      minWidth: 16,
-                                      minHeight: 16,
-                                    ),
                                     child: Text(
-                                      _curentCartNum.toString(),
+                                      _curentCartNum > 99 ? '99+' : _curentCartNum.toString(),
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 14,
+                                        fontSize: _curentCartNum > 99 ? 10 : 12,
                                         fontWeight: FontWeight.bold,
                                       ),
                                       textAlign: TextAlign.center,
@@ -368,7 +360,7 @@ class _HomePage extends State<HomePage> {
                           color: Colors.transparent,
                           padding: const EdgeInsets.all(5),
                           child: Stack(
-                            clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon
+                            clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon giỏ hàng ớ
                             children: [
                               Icon(
                                 Icons.shopping_cart_outlined,
@@ -376,24 +368,20 @@ class _HomePage extends State<HomePage> {
                                 size: 28,
                               ),
                               Positioned(
-                                right: -5,
-                                bottom: -5,
+                                right: -15,
+                                bottom: -10,
                                 child: Container(
-                                  width: 20,
-                                  padding: const EdgeInsets.all(2),
+                                  width: 35,
+                                  padding: const EdgeInsets.all(5),
                                   decoration: const BoxDecoration(
                                     color: Color(0xFF3c81c6),
                                     shape: BoxShape.circle,
                                   ),
-                                  constraints: const BoxConstraints(
-                                    minWidth: 16,
-                                    minHeight: 16,
-                                  ),
                                   child: Text(
-                                    _curentCartNum.toString(),
+                                    _curentCartNum > 99 ? '99+' : _curentCartNum.toString(),
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 14,
+                                      fontSize: _curentCartNum > 99 ? 10 : 12,
                                       fontWeight: FontWeight.bold,
                                     ),
                                     textAlign: TextAlign.center,

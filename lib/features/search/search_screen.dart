@@ -47,16 +47,16 @@ class _SearchScreenState extends State<SearchScreen> {
               hintText: 'Tìm kiếm sản phẩm...',
               hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
               isDense: true,
-              prefixIcon: const Icon(Icons.search, size: 24),
+              prefixIcon: const Icon(Icons.search, size: 24, color: Color(0xFF3c81c6),),
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(
-                      color: Color(0xFF9e9e9e)
+                      color: Color(0xFF3c81c6)
                   )
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Color(0xFF9e9e9e)),
+                borderSide: const BorderSide(color: Color(0xFF3c81c6)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -83,18 +83,12 @@ class _SearchScreenState extends State<SearchScreen> {
                       PageRouteBuilder(
                         transitionDuration: const Duration(milliseconds: 300),
                         pageBuilder: (context, animation, secondaryAnimation) =>
-                            const CartScreen(),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) {
-                              final tween = Tween(
-                                begin: const Offset(1, 0),
-                                end: Offset.zero,
-                              ).chain(CurveTween(curve: Curves.easeInOutSine));
-                              return SlideTransition(
-                                position: animation.drive(tween),
-                                child: child,
-                              );
-                            },
+                        const CartScreen(),
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                              .chain(CurveTween(curve: Curves.easeInOutSine));
+                          return SlideTransition(position: animation.drive(tween), child: child);
+                        },
                       ),
                     );
                   },
@@ -102,8 +96,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     color: Colors.transparent,
                     padding: const EdgeInsets.all(5),
                     child: Stack(
-                      clipBehavior:
-                          Clip.none, // cho phép chữ tràn ra ngoài icon
+                      clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon giỏ hàng ớ
                       children: [
                         Icon(
                           Icons.shopping_cart_outlined,
@@ -111,24 +104,20 @@ class _SearchScreenState extends State<SearchScreen> {
                           size: 28,
                         ),
                         Positioned(
-                          right: -5,
-                          bottom: -5,
+                          right: -15,
+                          bottom: -10,
                           child: Container(
-                            width: 20,
-                            padding: const EdgeInsets.all(2),
+                            width: 35,
+                            padding: const EdgeInsets.all(5),
                             decoration: const BoxDecoration(
                               color: Color(0xFF3c81c6),
                               shape: BoxShape.circle,
                             ),
-                            constraints: const BoxConstraints(
-                              minWidth: 16,
-                              minHeight: 16,
-                            ),
                             child: Text(
-                              _curentCartNum.toString(),
+                              _curentCartNum > 99 ? '99+' : _curentCartNum.toString(),
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
                               textAlign: TextAlign.center,
@@ -155,31 +144,14 @@ class _SearchScreenState extends State<SearchScreen> {
                         Navigator.push(
                           context,
                           PageRouteBuilder(
-                            transitionDuration: const Duration(
-                              milliseconds: 300,
-                            ),
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    const CartScreen(),
-                            transitionsBuilder:
-                                (
-                                  context,
-                                  animation,
-                                  secondaryAnimation,
-                                  child,
-                                ) {
-                                  final tween =
-                                      Tween(
-                                        begin: const Offset(1, 0),
-                                        end: Offset.zero,
-                                      ).chain(
-                                        CurveTween(curve: Curves.easeInOutSine),
-                                      );
-                                  return SlideTransition(
-                                    position: animation.drive(tween),
-                                    child: child,
-                                  );
-                                },
+                            transitionDuration: const Duration(milliseconds: 300),
+                            pageBuilder: (context, animation, secondaryAnimation) =>
+                            const CartScreen(),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                  .chain(CurveTween(curve: Curves.easeInOutSine));
+                              return SlideTransition(position: animation.drive(tween), child: child);
+                            },
                           ),
                         );
                       },
@@ -187,8 +159,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         color: Colors.transparent,
                         padding: const EdgeInsets.all(5),
                         child: Stack(
-                          clipBehavior:
-                              Clip.none, // cho phép chữ tràn ra ngoài icon
+                          clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon giỏ hàng ớ
                           children: [
                             Icon(
                               Icons.shopping_cart_outlined,
@@ -196,24 +167,20 @@ class _SearchScreenState extends State<SearchScreen> {
                               size: 28,
                             ),
                             Positioned(
-                              right: -5,
-                              bottom: -5,
+                              right: -15,
+                              bottom: -10,
                               child: Container(
-                                width: 20,
-                                padding: const EdgeInsets.all(2),
+                                width: 35,
+                                padding: const EdgeInsets.all(5),
                                 decoration: const BoxDecoration(
                                   color: Color(0xFF3c81c6),
                                   shape: BoxShape.circle,
                                 ),
-                                constraints: const BoxConstraints(
-                                  minWidth: 16,
-                                  minHeight: 16,
-                                ),
                                 child: Text(
-                                  _curentCartNum.toString(),
+                                  _curentCartNum > 99 ? '99+' : _curentCartNum.toString(),
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 14,
+                                    fontSize: _curentCartNum > 99 ? 10 : 12,
                                     fontWeight: FontWeight.bold,
                                   ),
                                   textAlign: TextAlign.center,
@@ -230,8 +197,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
                   int _tempCartNum = 0;
                   for (var item in items) {
-                    _tempCartNum +=
-                        int.tryParse(item['SoLuong'].toString()) ?? 0;
+                    _tempCartNum += int.tryParse(item['SoLuong'].toString()) ?? 0;
                   }
 
                   _curentCartNum = _tempCartNum;
@@ -242,23 +208,13 @@ class _SearchScreenState extends State<SearchScreen> {
                         context,
                         PageRouteBuilder(
                           transitionDuration: const Duration(milliseconds: 300),
-                          pageBuilder:
-                              (context, animation, secondaryAnimation) =>
-                                  const CartScreen(),
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) {
-                                final tween =
-                                    Tween(
-                                      begin: const Offset(1, 0),
-                                      end: Offset.zero,
-                                    ).chain(
-                                      CurveTween(curve: Curves.easeInOutSine),
-                                    );
-                                return SlideTransition(
-                                  position: animation.drive(tween),
-                                  child: child,
-                                );
-                              },
+                          pageBuilder: (context, animation, secondaryAnimation) =>
+                          const CartScreen(),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                .chain(CurveTween(curve: Curves.easeInOutSine));
+                            return SlideTransition(position: animation.drive(tween), child: child);
+                          },
                         ),
                       );
                     },
@@ -266,8 +222,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       color: Colors.transparent,
                       padding: const EdgeInsets.all(5),
                       child: Stack(
-                        clipBehavior:
-                            Clip.none, // cho phép chữ tràn ra ngoài icon
+                        clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon giỏ hàng ớ
                         children: [
                           Icon(
                             Icons.shopping_cart_outlined,
@@ -275,24 +230,20 @@ class _SearchScreenState extends State<SearchScreen> {
                             size: 28,
                           ),
                           Positioned(
-                            right: -5,
-                            bottom: -5,
+                            right: -15,
+                            bottom: -10,
                             child: Container(
-                              width: 20,
-                              padding: const EdgeInsets.all(2),
+                              width: 35,
+                              padding: const EdgeInsets.all(5),
                               decoration: const BoxDecoration(
                                 color: Color(0xFF3c81c6),
                                 shape: BoxShape.circle,
                               ),
-                              constraints: const BoxConstraints(
-                                minWidth: 16,
-                                minHeight: 16,
-                              ),
                               child: Text(
-                                _curentCartNum.toString(),
+                                _curentCartNum > 99 ? '99+' : _curentCartNum.toString(),
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 14,
+                                  fontSize: _curentCartNum > 99 ? 10 : 12,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 textAlign: TextAlign.center,
@@ -307,7 +258,7 @@ class _SearchScreenState extends State<SearchScreen> {
               );
             },
           ),
-          SizedBox(width: 15),
+          SizedBox(width: 15)
         ],
       ),
       body: SingleChildScrollView(

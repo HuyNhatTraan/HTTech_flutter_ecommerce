@@ -87,7 +87,8 @@ class _DanhMucSanPhamFullWidgetState extends State<DanhMucSanPhamFullWidget> {
             ),
           ): GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // số cột
+                crossAxisCount: 2, // số cột
+                mainAxisExtent: 150
             ),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -96,7 +97,19 @@ class _DanhMucSanPhamFullWidgetState extends State<DanhMucSanPhamFullWidget> {
               final product = _products[index];
               return GestureDetector(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => DanhMucSanPhamProducts(maDanhMuc: product["MaDanhMuc"], tenDanhMuc: product["TenDanhMuc"], bannerDanhMuc: product["BannerDanhMuc"])));
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 300),
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          DanhMucSanPhamProducts(maDanhMuc: product["MaDanhMuc"], tenDanhMuc: product["TenDanhMuc"], bannerDanhMuc: product["BannerDanhMuc"]),
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                            .chain(CurveTween(curve: Curves.easeInOutSine));
+                        return SlideTransition(position: animation.drive(tween), child: child);
+                      },
+                    ),
+                  );
                   print('Đã ấn ' + product["TenDanhMuc"]);
                 },
                 child: Container(

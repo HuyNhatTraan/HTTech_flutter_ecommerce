@@ -134,10 +134,11 @@ class _ProductInfoState extends State<ProductInfo> {
                       ),
                     );
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 10),
+                  child: Container(
+                    color: Colors.transparent,
+                    padding: const EdgeInsets.all(5),
                     child: Stack(
-                      clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon
+                      clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon giỏ hàng ớ
                       children: [
                         Icon(
                           Icons.shopping_cart_outlined,
@@ -145,24 +146,20 @@ class _ProductInfoState extends State<ProductInfo> {
                           size: 28,
                         ),
                         Positioned(
-                          right: -5,
-                          bottom: -5,
+                          right: -15,
+                          bottom: -10,
                           child: Container(
-                            width: 20,
-                            padding: const EdgeInsets.all(2),
+                            width: 35,
+                            padding: const EdgeInsets.all(5),
                             decoration: const BoxDecoration(
                               color: Color(0xFF3c81c6),
                               shape: BoxShape.circle,
                             ),
-                            constraints: const BoxConstraints(
-                              minWidth: 16,
-                              minHeight: 16,
-                            ),
                             child: Text(
-                              _curentCartNum.toString(),
+                              _curentCartNum > 99 ? '99+' : _curentCartNum.toString(),
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
                               textAlign: TextAlign.center,
@@ -200,10 +197,11 @@ class _ProductInfoState extends State<ProductInfo> {
                           ),
                         );
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10),
+                      child: Container(
+                        color: Colors.transparent,
+                        padding: const EdgeInsets.all(5),
                         child: Stack(
-                          clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon
+                          clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon giỏ hàng ớ
                           children: [
                             Icon(
                               Icons.shopping_cart_outlined,
@@ -211,24 +209,20 @@ class _ProductInfoState extends State<ProductInfo> {
                               size: 28,
                             ),
                             Positioned(
-                              right: -5,
-                              bottom: -5,
+                              right: -15,
+                              bottom: -10,
                               child: Container(
-                                width: 20,
-                                padding: const EdgeInsets.all(2),
+                                width: 35,
+                                padding: const EdgeInsets.all(5),
                                 decoration: const BoxDecoration(
                                   color: Color(0xFF3c81c6),
                                   shape: BoxShape.circle,
                                 ),
-                                constraints: const BoxConstraints(
-                                  minWidth: 16,
-                                  minHeight: 16,
-                                ),
                                 child: Text(
-                                  _curentCartNum.toString(),
+                                  _curentCartNum > 99 ? '99+' : _curentCartNum.toString(),
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 14,
+                                    fontSize: _curentCartNum > 99 ? 10 : 12,
                                     fontWeight: FontWeight.bold,
                                   ),
                                   textAlign: TextAlign.center,
@@ -266,10 +260,11 @@ class _ProductInfoState extends State<ProductInfo> {
                         ),
                       );
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 10),
+                    child: Container(
+                      color: Colors.transparent,
+                      padding: const EdgeInsets.all(5),
                       child: Stack(
-                        clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon
+                        clipBehavior: Clip.none, // cho phép chữ tràn ra ngoài icon giỏ hàng ớ
                         children: [
                           Icon(
                             Icons.shopping_cart_outlined,
@@ -277,24 +272,20 @@ class _ProductInfoState extends State<ProductInfo> {
                             size: 28,
                           ),
                           Positioned(
-                            right: -5,
-                            bottom: -5,
+                            right: -15,
+                            bottom: -10,
                             child: Container(
-                              width: 20,
-                              padding: const EdgeInsets.all(2),
+                              width: 35,
+                              padding: const EdgeInsets.all(5),
                               decoration: const BoxDecoration(
                                 color: Color(0xFF3c81c6),
                                 shape: BoxShape.circle,
                               ),
-                              constraints: const BoxConstraints(
-                                minWidth: 16,
-                                minHeight: 16,
-                              ),
                               child: Text(
-                                _curentCartNum.toString(),
+                                _curentCartNum > 99 ? '99+' : _curentCartNum.toString(),
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 14,
+                                  fontSize: _curentCartNum > 99 ? 10 : 12,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 textAlign: TextAlign.center,
@@ -309,7 +300,7 @@ class _ProductInfoState extends State<ProductInfo> {
               );
             },
           ),
-          SizedBox(width: 10)
+          SizedBox(width: 15)
         ],
       ),
       body: SingleChildScrollView(
@@ -501,6 +492,7 @@ class _ProductInfoState extends State<ProductInfo> {
               child: GestureDetector(
                 onTap: () {
                   showModalBottomSheet(
+                    isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context) {
                       return SingleChildScrollView(
@@ -560,6 +552,7 @@ class _ProductInfoState extends State<ProductInfo> {
               child: GestureDetector(
                 onTap: () {
                   showModalBottomSheet(
+                    isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context) {
                       return SingleChildScrollView(

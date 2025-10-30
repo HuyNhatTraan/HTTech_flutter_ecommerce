@@ -5,6 +5,8 @@ import 'package:hehehehe/features/auth/screens/login_screen.dart';
 import 'package:hehehehe/features/product/widgets/product_card.dart';
 import 'package:hehehehe/globals.dart';
 
+import 'notification_systems.dart';
+
 class ThongBao extends StatefulWidget {
   const ThongBao({super.key});
 
@@ -31,146 +33,214 @@ class _ThongBaoState extends State<ThongBao> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                left: 15,
-                right: 15,
-                bottom: 5,
-              ),
-              child: Text(
-                'Thông báo hệ thống & khuyến mãi',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ),
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('notifications')
-                  .orderBy('time', descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+              padding: const EdgeInsets.only(left: 15, right: 15, bottom: 5),
+              child: Column(
+                spacing: 5,
+                children: [
+                  GestureDetector(
+                    onTap: (){
 
-                if (snapshot.hasError) {
-                  return Center(child: Text('Lỗi: ${snapshot.error}'));
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Column(
-                    children: const [
-                      Icon(
-                        Icons.notifications_active_outlined,
-                        size: 64,
-                        color: Color(0xFF3c81c6),
-                      ),
-                      Text(
-                        'Không có thông báo nào.',
-                        style: TextStyle(
-                          color: Color(0xFF3c81c6),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Color(0xFFadadad),
+                          width: 1,
                         ),
                       ),
-                    ],
-                  );
-                }
-
-                final items = snapshot.data!.docs;
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 350,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: items.length,
-                        itemBuilder: (context, index) {
-                          final item =
-                              items[index].data() as Map<String, dynamic>;
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 15, right: 15),
-                            child: Column(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: Color(0xFFadadad),
-                                      width: 1,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                                spacing: 3,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(5),
+                                    child: Icon(
+                                      Icons.loyalty_outlined,
+                                      size: 32,
+                                      color: Color(0xFFff7732),
                                     ),
                                   ),
-                                  child: Container(
-                                    padding: EdgeInsetsGeometry.all(0),
-                                    width: double.infinity,
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      spacing: 10,
-                                      children: [
-                                        Image(
-                                          image: NetworkImage(
-                                            'https://www.gstatic.com/mobilesdk/240501_mobilesdk/firebase_28dp.png',
-                                          ),
-                                          width: 35,
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                item['title'],
-                                                style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              Text(item['body']),
-                                              Text(
-                                                (() {
-                                                  final t = item['time'];
-                                                  if (t == null) return '';
-                                                  final d = (t as Timestamp)
-                                                      .toDate();
-                                                  return '${d.day.toString().padLeft(2, '0')}/'
-                                                      '${d.month.toString().padLeft(2, '0')}/'
-                                                      '${d.year} '
-                                                      '${d.hour.toString().padLeft(2, '0')}:'
-                                                      '${d.minute.toString().padLeft(2, '0')}:'
-                                                      '${d.second.toString().padLeft(2, '0')}';
-                                                })(),
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                              ],
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Khuyến mãi', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                                      Text('data', style: TextStyle(color: Colors.grey)),
+                                    ],
+                                  )
+                                ]
                             ),
-                          );
-                        },
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.chevron_right_outlined,
+                                ),
+                              ],
+                            )
+                          ]
                       ),
                     ),
-                  ],
-                );
-              },
+                  ),
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 300),
+                          pageBuilder: (context, animation, secondaryAnimation) =>
+                              NotificationSystems(),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                .chain(CurveTween(curve: Curves.easeInOutSine));
+                            return SlideTransition(position: animation.drive(tween), child: child);
+                          },
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Color(0xFFadadad),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              spacing: 3,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(5),
+                                    child: Icon(
+                                      Icons.notifications_active_outlined,
+                                      size: 32,
+                                      color: Color(0xFF3c81c6),
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Thông báo hệ thống', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                                      StreamBuilder<QuerySnapshot>(
+                                        stream: FirebaseFirestore.instance
+                                            .collection('notifications')
+                                            .orderBy('time', descending: true)
+                                            .limit(1)
+                                            .snapshots(),
+                                        builder: (context, snapshot) {
+                                          if (!snapshot.hasData) return Text("Loading...");
+
+                                          final docs = snapshot.data!.docs;
+                                          if (docs.isEmpty) return Text("Chưa có thông báo");
+
+                                          final data = docs.first.data() as Map<String, dynamic>;
+
+                                          return Text(data['title'] ?? 'Không có tiêu đề', style: TextStyle(color: Colors.grey));
+                                        },
+                                      )
+                                    ],
+                                  )
+                                ]
+                            ),
+                            Row(
+                              children: [
+                                StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('notifications')
+                                      .orderBy('time', descending: true)
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return Container(
+                                          padding: EdgeInsets.all(5),
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color(0xFF3c81c6)
+                                          ), child: Text('0', style: TextStyle(color: Colors.white, fontSize: 12),)
+                                      );
+                                    }
+
+                                    final count = snapshot.data!.size; // <-- số lượng document nè
+                                    return Container(
+                                      width: 30,
+                                      padding: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Color(0xFF3c81c6)
+                                      ), child: Text((count > 9)?'9+':count.toString(), style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),textAlign: TextAlign.center,)
+                                    );
+                                  },
+                                ),
+                                Icon(
+                                  Icons.chevron_right_outlined,
+                                ),
+                              ],
+                            )
+                          ]
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: (){
+
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Color(0xFFadadad),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                                spacing: 3,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Image(image: AssetImage('assets/icon.png'), width: 32)
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Cập nhật HT Tech', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                                      Text('data', style: TextStyle(color: Colors.grey)),
+                                    ],
+                                  )
+                                ]
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.chevron_right_outlined,
+                                ),
+                              ],
+                            )
+                          ]
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(
                 left: 15,
                 right: 15,
                 bottom: 5,
-                top: 20,
+                top: 10,
               ),
               child: Text(
                 'Cập nhật đơn hàng',

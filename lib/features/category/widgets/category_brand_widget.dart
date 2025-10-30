@@ -97,7 +97,19 @@ class _CacThuongHieuPPState extends State<CacThuongHieuPP> {
               final product = _products[index];
               return GestureDetector(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => DanhMucSPBrand(maThuongHieu: product["MaThuongHieu"], bannerThuongHieu: product["BannerThuongHieu"], tenThuongHieu: product["TenThuongHieu"])));
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 300),
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          DanhMucSPBrand(maThuongHieu: product["MaThuongHieu"], bannerThuongHieu: product["BannerThuongHieu"], tenThuongHieu: product["TenThuongHieu"]),
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                            .chain(CurveTween(curve: Curves.easeInOutSine));
+                        return SlideTransition(position: animation.drive(tween), child: child);
+                      },
+                    ),
+                  );
                   print('Đã ấn ' + product["TenThuongHieu"]);
                 },
                 child: Container(
