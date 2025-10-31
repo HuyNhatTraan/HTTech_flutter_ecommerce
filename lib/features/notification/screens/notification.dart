@@ -62,7 +62,7 @@ class _ThongBaoState extends State<ThongBao> {
                                     child: Icon(
                                       Icons.loyalty_outlined,
                                       size: 32,
-                                      color: Color(0xFFff7732),
+                                      color: Color(0xFF3c81c6),
                                     ),
                                   ),
                                   Column(
