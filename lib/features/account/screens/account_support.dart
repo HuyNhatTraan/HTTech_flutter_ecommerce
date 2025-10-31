@@ -96,7 +96,7 @@ class AccountSupport extends StatelessWidget {
             const SizedBox(height: 8),
             TextField(
               decoration: InputDecoration(
-                hintText: 'Nhập tiêu đề vấn đề...',
+                hintText: 'Nhập chủ đế',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -122,11 +122,10 @@ class AccountSupport extends StatelessWidget {
                     ),
                   );
                 },
-                icon: const Icon(Icons.send),
-                label: const Text('Gửi yêu cầu'),
+                icon: const Icon(Icons.send, color: Color(0xFF3c81c6)),
+                label: const Text('Gửi yêu cầu', style: TextStyle(color: Color(0xFF3c81c6), fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),

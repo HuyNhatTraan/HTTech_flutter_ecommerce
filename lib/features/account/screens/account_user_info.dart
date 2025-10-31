@@ -127,9 +127,9 @@ class _AccountUserInfoState extends State<AccountUserInfo> {
                     ),
                   ],
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 40),
                 Padding(
-                  padding: const EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(10),
                   child: Container(
                     padding: EdgeInsetsGeometry.all(15),
                     width: double.infinity,
@@ -306,7 +306,7 @@ class _AccountUserInfoState extends State<AccountUserInfo> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Center(
                     child: ElevatedButton(
                       style: ButtonStyle(
@@ -318,7 +318,7 @@ class _AccountUserInfoState extends State<AccountUserInfo> {
                         ),
                         shape: WidgetStatePropertyAll(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(10),
                             side: BorderSide(color: Colors.grey)
                           ),
                         ),

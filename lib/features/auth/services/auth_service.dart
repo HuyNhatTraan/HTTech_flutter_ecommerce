@@ -51,8 +51,6 @@ class AuthServices {
     }
   }
 
-
-
   // Xoá sản phẩm trong giỏ hàng
   Future removeCartItems(String uid, String maVarientSanPham) async {
     await FirebaseFirestore.instance
@@ -138,6 +136,7 @@ class AuthServices {
     await batch.commit();
   }
 
+  // Đăng nhập với GG
   Future<UserCredential?> signInWithGoogle() async {
     try {
       // B1: Gọi hộp thoại chọn tài khoản Google
@@ -166,6 +165,7 @@ class AuthServices {
     }
   }
 
+  // Đăng xứt khỏi GG
   Future<void> signOutGoogle() async {
     try {
       // Đăng xuất khỏi Google Sign-In
@@ -199,6 +199,23 @@ class AuthServices {
     }, SetOptions(merge: true));
   }
 
+  // Thêm địa chỉ
+  Future addAddress(String uid, String hoVaTen, String phoneNum, String address, String note) async {
+    await FirebaseFirestore.instance
+        .collection("address")
+        .doc(uid)
+        .collection("UserAddress")
+        .doc()
+        .set({
+      "HoVaTen": hoVaTen,
+      "SDT": phoneNum,
+      "Address": address,
+      "Notes": note,
+      "NgayThem": FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
+  // Đăng ký vào DB Local
   Future<void> registerUser(String email, String maTaiKhoan, String tenKH, String loginMethod) async {
     final url = Uri.parse(baseUri + '/register');
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hehehehe/features/account/screens/account_address.dart';
 import 'package:hehehehe/features/order/screens/order_history.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -30,7 +31,7 @@ class _ToolsState extends State<Tools> {
             children: [
               // Công cụ hữu ích
               Padding(
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 5),
                 child: Text(
                   "Công cụ hữu ích",
                   style: TextStyle(
@@ -215,7 +216,7 @@ class _ToolsState extends State<Tools> {
                                 ),
                                 pageBuilder:
                                     (context, animation, secondaryAnimation) =>
-                                        AccountUserInfo(),
+                                        AccountAddress(),
                                 transitionsBuilder:
                                     (
                                       context,

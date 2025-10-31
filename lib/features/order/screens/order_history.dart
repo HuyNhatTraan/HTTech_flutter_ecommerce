@@ -295,18 +295,14 @@ class _AccountOrderHistoryState extends State<AccountOrderHistory> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 5,
-                      offset: const Offset(0, 2),
-                    )
-                  ],
+                  border: Border.all(
+                    color: Color(0xFFa5a5a5),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // === Header đơn hàng ===
+                    // Header đơn hàng
                     Padding(
                       padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
