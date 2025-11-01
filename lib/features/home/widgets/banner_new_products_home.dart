@@ -28,7 +28,7 @@ class _BannerSPMoiState extends State<BannerSPMoi> {
       'url':
           'https://www.phongcachxanh.vn/cdn/shop/files/artisan-mousepad-2800px.jpg?v=1748923883&width=2000',
       'text': 'Mousepad Artisan Zero',
-      'MaSP': 'SP01',
+      'MaSP': 'SP10',
     },
     {
       'url':

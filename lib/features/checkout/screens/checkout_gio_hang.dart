@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hehehehe/features/auth/screens/login_screen.dart';
 import 'package:hehehehe/features/auth/services/auth_service.dart';
 import 'package:hehehehe/features/checkout/screens/checkout_success.dart';
@@ -24,6 +25,7 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
 
   String? _selectedThanhToan = 'COD';
   String? _selectedGiaoHang = 'Hoả tốc';
+  String? selectedDocIDAddress;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,163 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
           ? _buildLoginPrompt(context)
           : SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Padding(
+                    padding: EdgeInsetsGeometry.only(left: 15, right: 15, top: 15),
+                  child: Text('Địa chỉ:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                ),
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("address")
+                      .doc(user?.uid)
+                      .collection("UserAddress")
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Lỗi: ${snapshot.error}'));
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          height: 200,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            spacing: 3,
+                            children: [
+                              Icon(
+                                Icons.add_home_outlined,
+                                size: 64,
+                                color: Color(0xFF3c81c6),
+                              ),
+                              Text(
+                                'Bạn chưa có địa chỉ nào cả.',
+                                style: TextStyle(
+                                  color: Color(0xFF3c81c6),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+
+                    final items = snapshot.data!.docs;
+
+                    return Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          crossAxisSpacing: 5,
+                          mainAxisSpacing: 5,
+                          childAspectRatio: 5.6,
+                        ),
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          final item = items[index].data() as Map<String, dynamic>;
+                          final docID = snapshot.data!.docs[index].id;
+
+                          if (items.isNotEmpty && selectedDocIDAddress == null) {
+                            selectedDocIDAddress = items.first.id;
+                          }
+
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedDocIDAddress = docID;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: selectedDocIDAddress == docID
+                                      ? Color(0xFF3c81c6)
+                                      : const Color(0xFFadadad),
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Radio ở bên trái
+                                  Transform.translate(
+                                    offset: const Offset(-10, 0),
+                                    child: Radio<String>(
+                                      value: docID,
+                                      groupValue: selectedDocIDAddress,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedDocIDAddress = value;
+                                          print(selectedDocIDAddress);
+                                        });
+                                        Fluttertoast.showToast(
+                                          msg: "Đã chọn: $docID",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+                                          backgroundColor: Colors.blue,
+                                          textColor: Colors.white,
+                                        );
+                                      },
+                                      activeColor: Color(0xFF3c81c6),
+                                    ),
+                                  ),
+                            
+                                  // Nội dung bên phải
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      spacing: 4,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            item['HoVaTen'] + ' | ' + item['SDT'],
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            item['Address'],
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFF1d1e1f),
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+                Padding(
+                  padding: EdgeInsetsGeometry.only(left: 15, right: 15, top: 5, bottom: 5),
+                  child: Text('Sản phẩm', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                ),
                 FutureBuilder<QuerySnapshot>(
                   future: FirebaseFirestore.instance
                         .collection('cart')
@@ -130,7 +288,7 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.only(left: 10, right: 10),
                             itemCount: items.length,
                             itemBuilder: (context, index) {
                               final item =
@@ -356,7 +514,7 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                 const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () {
-                    authService.moveCartToOrders(user!.uid, _selectedThanhToan.toString(), _selectedGiaoHang.toString(), widget.anhPreview);
+                    authService.moveCartToOrders(user!.uid, _selectedThanhToan.toString(), _selectedGiaoHang.toString(), widget.anhPreview, selectedDocIDAddress.toString());
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -421,6 +579,7 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                           _selectedThanhToan = value;
                         });
                       },
+                      activeColor: Color(0xFF3c81c6),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -443,7 +602,7 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                         setState(() {
                           _selectedThanhToan = value;
                         });
-                      },
+                      },activeColor: Color(0xFF3c81c6),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -489,7 +648,7 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                         setState(() {
                           _selectedGiaoHang = value;
                         });
-                      },
+                      },activeColor: Color(0xFF3c81c6),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -510,7 +669,7 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                         setState(() {
                           _selectedGiaoHang = value;
                         });
-                      },
+                      },activeColor: Color(0xFF3c81c6),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -532,7 +691,7 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                         setState(() {
                           _selectedGiaoHang = value;
                         });
-                      },
+                      },activeColor: Color(0xFF3c81c6),
                     ),
                     Expanded(
                       child: GestureDetector(
@@ -706,7 +865,7 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
           ),
           const SizedBox(height: 15),
           const Text(
-            'Vui lòng đăng nhập để xem giỏ hàng.',
+            'Vui lòng đăng nhập.',
             style: TextStyle(
               fontSize: 18,
               color: Color(0xFF3c81c6),

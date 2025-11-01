@@ -89,7 +89,7 @@ class AuthServices {
   }
 
   // Chuyển giỏ hàng sang đơn hàng và xoá đơn hàng cũ
-  Future<void> moveCartToOrders(String uid, String phuongThucThanhToan, String hinhThucGiaoHang, String imagePreview) async {
+  Future<void> moveCartToOrders(String uid, String phuongThucThanhToan, String hinhThucGiaoHang, String imagePreview, String MaDiaChi) async {
     final firestore = FirebaseFirestore.instance;
     final cartRef = firestore.collection('cart').doc(uid).collection('SanPham');
     final orderRef = firestore.collection('orders');
@@ -114,6 +114,7 @@ class AuthServices {
       "HinhThucGiaoHang": hinhThucGiaoHang,
       "AnhDonHang" : imagePreview,
       "NgayDatHang": FieldValue.serverTimestamp(),
+      "MaDiaChi": MaDiaChi,
       "TrangThai": "Đang xử lý",
     };
 
@@ -206,6 +207,32 @@ class AuthServices {
         .doc(uid)
         .collection("UserAddress")
         .doc()
+        .set({
+      "HoVaTen": hoVaTen,
+      "SDT": phoneNum,
+      "Address": address,
+      "Notes": note,
+      "NgayThem": FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
+  // Xoá địa chỉ
+  Future deleteAddress(String uid, String docID) async {
+    await FirebaseFirestore.instance
+        .collection("address")
+        .doc(uid)
+        .collection("UserAddress")
+        .doc(docID)
+        .delete();
+  }
+
+  // Chỉnh sửa địa chỉ
+  Future editAddress(String uid, String hoVaTen, String phoneNum, String address, String note, String docID) async {
+    await FirebaseFirestore.instance
+        .collection("address")
+        .doc(uid)
+        .collection("UserAddress")
+        .doc(docID)
         .set({
       "HoVaTen": hoVaTen,
       "SDT": phoneNum,
