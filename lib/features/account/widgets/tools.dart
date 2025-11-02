@@ -594,41 +594,69 @@ class _ToolsState extends State<Tools> {
                       Divider(color: Colors.grey),
                       SizedBox(height: 5),
                       GestureDetector(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              spacing: 10,
-                              children: [
-                                Icon(Icons.grade_outlined),
-                                Text(
-                                  'Đánh giá sản phẩm',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ],
-                            ),
-                            Icon(Icons.keyboard_arrow_right_outlined),
-                          ],
+                        onTap: (){
+                          Fluttertoast.showToast(
+                              msg: "Tính năng này đang được xây dựng",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Color(0xFFd2f5fc),
+                              textColor: Color(0xFF3c81c6),
+                              fontSize: 16.0
+                          );
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                spacing: 10,
+                                children: [
+                                  Icon(Icons.grade_outlined),
+                                  Text(
+                                    'Đánh giá sản phẩm',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                              Icon(Icons.keyboard_arrow_right_outlined),
+                            ],
+                          ),
                         ),
                       ),
                       Divider(color: Colors.grey),
                       SizedBox(height: 5),
                       GestureDetector(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              spacing: 10,
-                              children: [
-                                Icon(Icons.perm_identity_outlined),
-                                Text(
-                                  'Hạng thành viên',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ],
-                            ),
-                            Icon(Icons.keyboard_arrow_right_outlined),
-                          ],
+                        onTap: (){
+                          Fluttertoast.showToast(
+                              msg: "Tính năng này đang được xây dựng",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Color(0xFFd2f5fc),
+                              textColor: Color(0xFF3c81c6),
+                              fontSize: 16.0
+                          );
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                spacing: 10,
+                                children: [
+                                  Icon(Icons.perm_identity_outlined),
+                                  Text(
+                                    'Hạng thành viên',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                              Icon(Icons.keyboard_arrow_right_outlined),
+                            ],
+                          ),
                         ),
                       ),
                       Divider(color: Colors.grey),

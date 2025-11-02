@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 class SettingVersionsApp extends StatefulWidget {
   const SettingVersionsApp({super.key});
@@ -9,6 +10,26 @@ class SettingVersionsApp extends StatefulWidget {
 }
 
 class _SettingVersionsAppState extends State<SettingVersionsApp> {
+
+  @override
+  void initState() {
+    super.initState();
+    getNamePhone();
+  }
+
+  Future<void> getNamePhone() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    print("Check:" + androidInfo.toString());
+    setState(() {
+      phoneModel = androidInfo.model.toString();
+      phoneAdrVer = androidInfo.version.release.toString();
+    });
+  }
+
+  String phoneModel = "";
+  String phoneAdrVer = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +50,7 @@ class _SettingVersionsAppState extends State<SettingVersionsApp> {
                   children: [
                     Image(image: AssetImage('assets/icon.png'), width: 80,),
                     Text('HT Tech', style: TextStyle(color: Color(0xFF3c81c6), fontSize: 16, fontWeight: FontWeight.bold),),
-                    Text('v1.0.0')
+                    Text('v1.0.0', style: TextStyle(fontSize: 16),)
                   ],
                 ),
               ),
@@ -79,7 +100,27 @@ class _SettingVersionsAppState extends State<SettingVersionsApp> {
                   ),
                 ],
               ),
-            )
+            ),
+            Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsetsGeometry.all(15),
+                    color: Colors.white,
+                    child: Text('Thiết bị: $phoneModel'),
+                  ),
+                ],
+              ),
+            Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsetsGeometry.all(15),
+                    color: Colors.white,
+                    child: Text('Phiên bản Android: $phoneAdrVer'),
+                  ),
+                ],
+              ),
           ],
         ),
       ),
