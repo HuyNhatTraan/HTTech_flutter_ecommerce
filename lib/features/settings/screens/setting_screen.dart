@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hehehehe/features/account/screens/account_address.dart';
 import 'package:hehehehe/features/account/screens/account_support.dart';
 import 'package:hehehehe/features/account/screens/account_user_info.dart';
+import 'package:hehehehe/features/settings/screens/setting_versions_app.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -290,14 +291,18 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   GestureDetector(
                     onTap: (){
-                      Fluttertoast.showToast(
-                          msg: "Tính năng này đang được xây dựng",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Color(0xFFd2f5fc),
-                          textColor: Color(0xFF3c81c6),
-                          fontSize: 16.0
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 300),
+                          pageBuilder: (context, animation, secondaryAnimation) =>
+                              SettingVersionsApp(),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                .chain(CurveTween(curve: Curves.easeInOutSine));
+                            return SlideTransition(position: animation.drive(tween), child: child);
+                          },
+                        ),
                       );
                     },
                     child: Container(
