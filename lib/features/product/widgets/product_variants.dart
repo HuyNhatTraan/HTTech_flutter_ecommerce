@@ -34,9 +34,7 @@ class _ProductVariantsState extends State<ProductVariants> {
   void initState() {
     super.initState();
     fetchProducts();
-    _quantityController = TextEditingController(
-      text: _currentQuantities.toString(),
-    );
+    _quantityController.text = _currentQuantities.toString();
   }
 
   Future<void> fetchProducts() async {
@@ -101,7 +99,8 @@ class _ProductVariantsState extends State<ProductVariants> {
 
   final User? user = FirebaseAuth.instance.currentUser;
 
-  late TextEditingController _quantityController;
+  final _quantityController = TextEditingController();
+
 
   @override
   void dispose() {
@@ -266,8 +265,10 @@ class _ProductVariantsState extends State<ProductVariants> {
                             onPressed: () {
                               setState(() {
                                 _currentQuantities--;
+                                _quantityController.text = _currentQuantities.toString();
                                 if (_currentQuantities < 1) {
                                   _currentQuantities = 1;
+                                  _quantityController.text = _currentQuantities.toString();
                                 }
                               });
                             },
@@ -312,6 +313,8 @@ class _ProductVariantsState extends State<ProductVariants> {
                             onPressed: () {
                               setState(() {
                                 _currentQuantities++;
+                                _quantityController.text = _currentQuantities.toString();
+                                print(_currentQuantities);
                               });
                             },
                             icon: Icon(Icons.add_outlined),

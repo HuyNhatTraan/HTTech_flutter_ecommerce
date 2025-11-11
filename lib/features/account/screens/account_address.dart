@@ -60,29 +60,27 @@ class _AccountAddressState extends State<AccountAddress> {
                   }
 
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(20),
-                        height: 200,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          spacing: 3,
-                          children: [
-                            Icon(
-                              Icons.add_home_outlined,
-                              size: 64,
+                    return Container(
+                      padding: const EdgeInsets.all(20),
+                      height: 200,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: 3,
+                        children: [
+                          Icon(
+                            Icons.add_home_outlined,
+                            size: 64,
+                            color: Color(0xFF3c81c6),
+                          ),
+                          Text(
+                            'Bạn chưa có địa chỉ nào cả.',
+                            style: TextStyle(
                               color: Color(0xFF3c81c6),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                            Text(
-                              'Bạn chưa có địa chỉ nào cả.',
-                              style: TextStyle(
-                                color: Color(0xFF3c81c6),
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     );
                   }
@@ -106,7 +104,7 @@ class _AccountAddressState extends State<AccountAddress> {
                                 PageRouteBuilder(
                                   transitionDuration: const Duration(milliseconds: 300),
                                   pageBuilder: (context, animation, secondaryAnimation) =>
-                                      AccountEditAddress(docID: docID),
+                                      AccountEditAddress(docID: docID, name: item['HoVaTen'], sdt: item['SDT'], diaChi: item['Address'], ghiChu: item['Notes']),
                                   transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                     final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
                                         .chain(CurveTween(curve: Curves.easeInOutSine));

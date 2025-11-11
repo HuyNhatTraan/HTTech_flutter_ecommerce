@@ -9,19 +9,36 @@ import 'package:hehehehe/features/checkout/screens/checkout_success.dart';
 import 'package:hehehehe/features/product/screens/product_info.dart';
 import 'package:hehehehe/globals.dart' as globals;
 
-class CheckoutGioHang extends StatefulWidget {
+class CheckoutMuaNgay extends StatefulWidget {
   final String anhPreview;
-  const CheckoutGioHang({super.key, required this.anhPreview});
+  final String maSP;
+  final String maVariantSP;
+  final String tenSP;
+  final String giaSP;
+  final String thuocTinhSP;
+  final List<Map<String, dynamic>> danhSachSanPham;
+  final int soLuong;
 
+  const CheckoutMuaNgay({
+    super.key,
+    required this.anhPreview,
+    required this.maSP,
+    required this.maVariantSP,
+    required this.tenSP,
+    required this.giaSP,
+    required this.thuocTinhSP,
+    required this.danhSachSanPham,
+    required this.soLuong
+  });
   @override
-  State<CheckoutGioHang> createState() => _CheckoutGioHangState();
+  State<CheckoutMuaNgay> createState() => _CheckoutMuaNgayState();
 }
 
-class _CheckoutGioHangState extends State<CheckoutGioHang> {
+class _CheckoutMuaNgayState extends State<CheckoutMuaNgay> {
   final User? user = FirebaseAuth.instance.currentUser;
   final AuthServices authService = AuthServices();
 
-  int tongTienHeHe = 0; // biến tổng tiền toàn cục cho State
+  late int tongTienHeHe = int.parse(widget.giaSP) * widget.soLuong;
 
   String? _selectedThanhToan = 'COD';
   String? _selectedGiaoHang = 'Hoả tốc';
@@ -205,289 +222,196 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                   padding: EdgeInsetsGeometry.only(left: 15, right: 15, top: 5, bottom: 5),
                   child: Text('Sản phẩm', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
                 ),
-                FutureBuilder<QuerySnapshot>(
-                  future: FirebaseFirestore.instance
-                        .collection('cart')
-                        .doc(user!.uid)
-                        .collection('SanPham')
-                        .get(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-            
-                      if (snapshot.hasError) {
-                        return Center(child: Text('Lỗi: ${snapshot.error}'));
-                      }
-            
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.production_quantity_limits_outlined,
-                                size: 64,
-                                color: Color(0xFF3c81c6),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                print('Đã ấn ' + widget.maSP);
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration: const Duration(
+                                      milliseconds: 300,
+                                    ),
+                                    pageBuilder:
+                                        (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                        ) => ProductInfo(
+                                      maSanPham: widget.maSP,
+                                    ),
+                                    transitionsBuilder:
+                                        (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child,
+                                        ) {
+                                      final tween =
+                                      Tween(
+                                        begin: const Offset(
+                                          1,
+                                          0,
+                                        ),
+                                        end: Offset.zero,
+                                      ).chain(
+                                        CurveTween(
+                                          curve: Curves
+                                              .easeInOutSine,
+                                        ),
+                                      );
+                                      return SlideTransition(
+                                        position: animation.drive(
+                                          tween,
+                                        ),
+                                        child: child,
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                              child: Image.network(
+                                '${globals.baseUri}/${widget.anhPreview}',
+                                height: 80,
+                                fit: BoxFit.fitHeight,
                               ),
-                              const SizedBox(height: 15),
-                              const Text(
-                                'Giỏ hàng trống',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Color(0xFF3c81c6),
-                                  fontWeight: FontWeight.w900,
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  print('Đã ấn ' + widget.maSP);
+                                  Navigator.push(
+                                    context,
+                                    PageRouteBuilder(
+                                      transitionDuration:
+                                      const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      pageBuilder:
+                                          (
+                                          context,
+                                          animation,
+                                          secondaryAnimation,
+                                          ) => ProductInfo(
+                                        maSanPham: widget.maSP,
+                                      ),
+                                      transitionsBuilder:
+                                          (
+                                          context,
+                                          animation,
+                                          secondaryAnimation,
+                                          child,
+                                          ) {
+                                        final tween =
+                                        Tween(
+                                          begin: const Offset(
+                                            1,
+                                            0,
+                                          ),
+                                          end: Offset.zero,
+                                        ).chain(
+                                          CurveTween(
+                                            curve: Curves
+                                                .easeInOutSine,
+                                          ),
+                                        );
+                                        return SlideTransition(
+                                          position: animation.drive(
+                                            tween,
+                                          ),
+                                          child: child,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    spacing: 5,
+                                    children: [
+                                      Text(
+                                        widget.tenSP ?? "",
+                                        maxLines: 3,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Phân loại: ${widget.thuocTinhSP}',
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment
+                                            .spaceBetween,
+                                        children: [
+                                          Text(
+                                            widget.giaSP.toVND(),
+                                            style: const TextStyle(
+                                              color: Color(0xFF3c81c6),
+                                              fontWeight:
+                                              FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Số lượng: ${widget.soLuong}',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              const SizedBox(height: 10),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  backgroundColor: const Color(0xFFD2F5FC),
-                                  foregroundColor: const Color(0xFF3C81C6),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    side: const BorderSide(
-                                      color: Color(0xFF3C81C6),
+                            ),
+                            Column(
+                              spacing: 10,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      10,
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.grey.shade400,
                                       width: 1,
                                     ),
                                   ),
                                 ),
-                                child: const Text(
-                                  'Tiếp tục mua hàng',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-            
-                      // Tính tổng tiền
-                      int tong = 0;
-                      final items = snapshot.data!.docs;
-                      for (var doc in items) {
-                        final gia = int.tryParse(doc['GiaSP'].toString()) ?? 0;
-                        final soLuong = int.tryParse(doc['SoLuong'].toString()) ?? 0;
-            
-                        tong += gia * soLuong;
-                      }
-            
-                      // cập nhật vào biến state cho bottomNav
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (tongTienHeHe != tong) {
-                          setState(() => tongTienHeHe = tong);
-                        }
-                      });
-            
-                      return Column(
-                        children: [
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            padding: const EdgeInsets.only(left: 10, right: 10),
-                            itemCount: items.length,
-                            itemBuilder: (context, index) {
-                              final item =
-                                  items[index].data() as Map<String, dynamic>;
-                              final GiaSP = item["GiaSP"].toString();
-                              final SoLuong = item["SoLuong"];
-                              return Column(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: Colors.grey,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            print('Đã ấn ' + item["MaSP"]);
-                                            Navigator.push(
-                                              context,
-                                              PageRouteBuilder(
-                                                transitionDuration: const Duration(
-                                                  milliseconds: 300,
-                                                ),
-                                                pageBuilder:
-                                                    (
-                                                      context,
-                                                      animation,
-                                                      secondaryAnimation,
-                                                    ) => ProductInfo(
-                                                      maSanPham: item["MaSP"],
-                                                    ),
-                                                transitionsBuilder:
-                                                    (
-                                                      context,
-                                                      animation,
-                                                      secondaryAnimation,
-                                                      child,
-                                                    ) {
-                                                      final tween =
-                                                          Tween(
-                                                            begin: const Offset(
-                                                              1,
-                                                              0,
-                                                            ),
-                                                            end: Offset.zero,
-                                                          ).chain(
-                                                            CurveTween(
-                                                              curve: Curves
-                                                                  .easeInOutSine,
-                                                            ),
-                                                          );
-                                                      return SlideTransition(
-                                                        position: animation.drive(
-                                                          tween,
-                                                        ),
-                                                        child: child,
-                                                      );
-                                                    },
-                                              ),
-                                            );
-                                          },
-                                          child: Image.network(
-                                            '${globals.baseUri}/${item["HinhAnhVariant"]}',
-                                            height: 80,
-                                            fit: BoxFit.fitHeight,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              print('Đã ấn ' + item["MaSP"]);
-                                              Navigator.push(
-                                                context,
-                                                PageRouteBuilder(
-                                                  transitionDuration:
-                                                      const Duration(
-                                                        milliseconds: 300,
-                                                      ),
-                                                  pageBuilder:
-                                                      (
-                                                        context,
-                                                        animation,
-                                                        secondaryAnimation,
-                                                      ) => ProductInfo(
-                                                        maSanPham: item["MaSP"],
-                                                      ),
-                                                  transitionsBuilder:
-                                                      (
-                                                        context,
-                                                        animation,
-                                                        secondaryAnimation,
-                                                        child,
-                                                      ) {
-                                                        final tween =
-                                                            Tween(
-                                                              begin: const Offset(
-                                                                1,
-                                                                0,
-                                                              ),
-                                                              end: Offset.zero,
-                                                            ).chain(
-                                                              CurveTween(
-                                                                curve: Curves
-                                                                    .easeInOutSine,
-                                                              ),
-                                                            );
-                                                        return SlideTransition(
-                                                          position: animation.drive(
-                                                            tween,
-                                                          ),
-                                                          child: child,
-                                                        );
-                                                      },
-                                                ),
-                                              );
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 8,
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                spacing: 5,
-                                                children: [
-                                                  Text(
-                                                    item["TenSP"] ?? "",
-                                                    maxLines: 3,
-                                                    style: const TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    'Phân loại: ${item["ThuocTinhSP"]}',
-                                                    style: TextStyle(fontSize: 12),
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        GiaSP.toVND(),
-                                                        style: const TextStyle(
-                                                          color: Color(0xFF3c81c6),
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 16,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        'Số lượng: $SoLuong',
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Column(
-                                          spacing: 10,
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(
-                                                  10,
-                                                ),
-                                                border: Border.all(
-                                                  color: Colors.grey.shade400,
-                                                  width: 1,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                ],
-                              );
-                            },
-                          ),
-                        ],
-                      );
-                    },
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
                   ),
+                ),
                 _radioOption(context),
               ],
             ),
@@ -504,7 +428,7 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
             Row(
               children: [
                 Text(
-                  tongTienHeHe.toString().toVND(),
+                  tongTienHeHe.toVND(),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -514,7 +438,8 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                 const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () {
-                    authService.moveCartToOrders(user!.uid, _selectedThanhToan.toString(), _selectedGiaoHang.toString(), widget.anhPreview, selectedDocIDAddress.toString());
+                    // Fix this thingy
+                    authService.addOrderForUser(user!.uid, _selectedThanhToan.toString(), _selectedGiaoHang.toString(), widget.anhPreview, selectedDocIDAddress.toString(), widget.danhSachSanPham);
                     Navigator.push(
                       context,
                       MaterialPageRoute(

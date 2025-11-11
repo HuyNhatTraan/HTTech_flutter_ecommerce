@@ -14,6 +14,7 @@ import 'package:hehehehe/features/cart/screens/cart_screen.dart';
 import 'package:hehehehe/features/search/search_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.light(),
       ),
       home: const HomePage(),
+      builder: EasyLoading.init(),
     );
   }
 }

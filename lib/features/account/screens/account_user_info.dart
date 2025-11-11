@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hehehehe/features/account/screens/account_edit_user_info.dart';
 import 'package:hehehehe/features/auth/services/auth_service.dart';
 import 'package:hehehehe/globals.dart' as globals;
 
@@ -27,8 +28,11 @@ class _AccountUserInfoState extends State<AccountUserInfo> {
         ),
       ),
       body: SingleChildScrollView(
-        child: FutureBuilder<Map<String, dynamic>?>(
-          future: authService.getUser(user!.uid),
+        child: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection("users")
+              .doc(user!.uid)
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
@@ -218,7 +222,7 @@ class _AccountUserInfoState extends State<AccountUserInfo> {
                                     color: Color(0xFF3c81c6),
                                   ),
                                   Text(
-                                    "${userData['SoDienThoai'] ?? '--'}",
+                                    "${userData['sdt'] ?? 'Chưa thêm số điện thoại'}",
                                     style: const TextStyle(fontSize: 15),
                                   ),
                                 ],
@@ -325,14 +329,18 @@ class _AccountUserInfoState extends State<AccountUserInfo> {
                         elevation: WidgetStatePropertyAll(0),
                       ),
                       onPressed: () {
-                        Fluttertoast.showToast(
-                          msg: "Tính năng này đang được xây dựng",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.red,
-                          textColor: Colors.white,
-                          fontSize: 16.0,
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: const Duration(milliseconds: 300),
+                            pageBuilder: (context, animation, secondaryAnimation) =>
+                                AccountEditUserInfo(),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                  .chain(CurveTween(curve: Curves.easeInOutSine));
+                              return SlideTransition(position: animation.drive(tween), child: child);
+                            },
+                          ),
                         );
                       },
                       child: Container(

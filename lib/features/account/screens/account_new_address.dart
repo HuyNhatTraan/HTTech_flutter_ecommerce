@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hehehehe/features/auth/services/auth_service.dart';
 
@@ -159,21 +160,23 @@ class _AccountNewAddressState extends State<AccountNewAddress> {
                         textColor: Colors.white,
                         fontSize: 16.0
                     );
+                  } else {
+                    EasyLoading.show(status: 'Đang thêm địa chỉ...', maskType: EasyLoadingMaskType.black,);
+
+                    try {
+                      AuthServices authServices = AuthServices();
+                      await authServices.addAddress(user!.uid, hoVaTenController.text, phoneNumController.text, addressController.text, noteController.text);
+
+                      await Future.delayed(Duration(seconds: 1));
+                      EasyLoading.showSuccess('Thành công ùi',maskType: EasyLoadingMaskType.clear);
+                      await Future.delayed(Duration(milliseconds: 500));
+                      Navigator.pop(context);
+                    } catch (e) {
+                      EasyLoading.showError('Có lỗi xảy ra: $e');
+                    } finally {
+                      EasyLoading.dismiss();
+                    }
                   }
-                  AuthServices authServices = AuthServices();
-                  await authServices.addAddress(user!.uid, hoVaTenController.text, phoneNumController.text, addressController.text, noteController.text);
-                  Fluttertoast.showToast(
-                      msg: "Đã nhập: ${hoVaTenController.text}, ${phoneNumController.text}, ${addressController.text}, ${noteController.text}",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0
-                  );
-                  // Future.delayed(const Duration(seconds: 2), () {
-                  //   Navigator.pop(context);
-                  // });
                 },
                 child: Container(
                     padding: EdgeInsets.all(5),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hehehehe/features/account/screens/account_support.dart';
 import 'package:hehehehe/features/auth/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -337,13 +338,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   return;
                                 }
 
+                                EasyLoading.show(status: 'Đợi tý nhen...', maskType: EasyLoadingMaskType.black,);
+
                                 try {
                                   UserCredential userCredential =
-                                      await FirebaseAuth.instance
-                                          .createUserWithEmailAndPassword(
-                                            email: email,
-                                            password: password,
-                                          );
+                                  await FirebaseAuth.instance
+                                      .createUserWithEmailAndPassword(
+                                    email: email,
+                                    password: password,
+                                  );
 
                                   final uid = userCredential.user!.uid;
 
@@ -354,8 +357,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     name,
                                   );
 
-                                  showToast('Đăng ký thành công');
-                                  Navigator.of(context).popUntil((route) => route.isFirst);
+                                  await Future.delayed(Duration(seconds: 1));
+                                  EasyLoading.showSuccess('Đăng ký thành công',maskType: EasyLoadingMaskType.clear);
+                                  await Future.delayed(Duration(milliseconds: 500));
+                                  Navigator.popUntil(context, (route) => route.isFirst);
                                 } on FirebaseAuthException catch (e) {
                                   if (e.code == 'email-already-in-use') {
                                     showToast('Email đã được sử dụng');

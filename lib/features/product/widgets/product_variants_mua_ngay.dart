@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hehehehe/features/auth/screens/login_screen.dart';
+import 'package:hehehehe/features/checkout/screens/checkout_mua_ngay.dart';
 import 'package:http/http.dart' as http;
 import 'package:hehehehe/globals.dart' as globals;
 import 'dart:convert';
@@ -10,11 +12,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../auth/services/auth_service.dart';
 
-class ProductVariants extends StatefulWidget {
+class ProductVariantsMuaNgay extends StatefulWidget {
   final maSanPham;
   final route;
   final String tenSanPham;
-  const ProductVariants({
+  const ProductVariantsMuaNgay({
     super.key,
     required this.maSanPham,
     required this.route,
@@ -22,10 +24,10 @@ class ProductVariants extends StatefulWidget {
   });
 
   @override
-  State<ProductVariants> createState() => _ProductVariantsState();
+  State<ProductVariantsMuaNgay> createState() => _ProductVariantsMuaNgay();
 }
 
-class _ProductVariantsState extends State<ProductVariants> {
+class _ProductVariantsMuaNgay extends State<ProductVariantsMuaNgay> {
   List<dynamic> _productsVariants = [];
 
   bool _isLoading = false;
@@ -345,27 +347,55 @@ class _ProductVariantsState extends State<ProductVariants> {
                             }
                           : () {
                               if (user != null) {
-                                AuthServices authServices = AuthServices();
-                                authServices.addCart(
-                                  user!.uid,
-                                  widget.maSanPham,
-                                  widget.tenSanPham,
-                                  _currentTempPrices.toString(),
-                                  _selectedVariant,
-                                  _selectedVariantImgUrl,
-                                  _currentQuantities,
-                                  _selectedThuocTinhSP,
-                                );
-                                Fluttertoast.showToast(
-                                  msg: "Thêm thành công",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.CENTER,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: Color(0xFF3a81c4),
-                                  textColor: Colors.white,
-                                  fontSize: 16.0,
-                                );
+                                List<Map<String, dynamic>> danhSachSanPham = [
+                                  {
+                                    "MaSP": widget.maSanPham,
+                                    "TenSP": widget.tenSanPham,
+                                    "GiaSP": _currentTempPrices,
+                                    "MaVarientSanPham": _selectedVariant,
+                                    "HinhAnhVariant": _selectedVariantImgUrl,
+                                    "SoLuong": _currentQuantities,
+                                    "NgayThem": FieldValue.serverTimestamp(),
+                                    "ThuocTinhSP": _selectedThuocTinhSP,
+                                  }
+                                ];
+
                                 Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration: const Duration(
+                                      milliseconds: 300,
+                                    ),
+                                    pageBuilder:
+                                        (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                        ) => CheckoutMuaNgay(anhPreview: '/' + _selectedVariantImgUrl, maSP: widget.maSanPham, maVariantSP: _selectedVariant, tenSP: widget.tenSanPham, giaSP: _currentTempPrices, thuocTinhSP: _selectedThuocTinhSP, soLuong: _currentQuantities, danhSachSanPham: danhSachSanPham),
+                                    transitionsBuilder:
+                                        (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child,
+                                        ) {
+                                      final tween =
+                                      Tween(
+                                        begin: const Offset(1, 0),
+                                        end: Offset.zero,
+                                      ).chain(
+                                        CurveTween(
+                                          curve: Curves.easeInOutSine,
+                                        ),
+                                      );
+                                      return SlideTransition(
+                                        position: animation.drive(tween),
+                                        child: child,
+                                      );
+                                    },
+                                  ),
+                                );
                               } else {
                                 Navigator.pop(context);
                                 Navigator.push(
@@ -406,7 +436,7 @@ class _ProductVariantsState extends State<ProductVariants> {
                               }
                             },
                       child: Text(
-                        'Thêm vào giỏ hàng',
+                        'Mua ngay',
                         style: TextStyle(
                           color: Color(0xFF3c81c6),
                           fontWeight: FontWeight.w900,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hehehehe/features/cart/screens/cart_screen.dart';
 import 'package:hehehehe/features/product/widgets/product_carousel.dart';
 import 'package:hehehehe/features/product/widgets/product_description.dart';
+import 'package:hehehehe/features/product/widgets/product_variants_mua_ngay.dart';
 import 'package:hehehehe/features/search/search_screen.dart';
 import 'package:hehehehe/features/product/widgets/product_card.dart';
 import 'package:hehehehe/globals.dart';
@@ -570,7 +571,7 @@ class _ProductInfoState extends State<ProductInfo> {
                                   size: 30,
                                 ),
                               ),
-                              ProductVariants(
+                              ProductVariantsMuaNgay(
                                 route: "/productVariants",
                                 maSanPham: widget.maSanPham,
                                 tenSanPham: _products[0]["TenSanPham"],

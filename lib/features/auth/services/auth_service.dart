@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hehehehe/globals.dart';
 import 'package:http/http.dart' as http;
@@ -9,6 +11,7 @@ class AuthServices {
   // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;
 
+  // Lấy thông tin người dùng
   Future<Map<String, dynamic>?> getUser(String uid) async {
     try {
       // Tham chiếu đến collection "users"
@@ -31,6 +34,8 @@ class AuthServices {
             'uid': user.uid,
             'name': user.displayName ?? 'Người dùng Google',
             'email': user.email ?? '',
+            "sdt":'',
+            "createdAt": Timestamp.now(),
             'AvatarUrl': user.photoURL ?? '',
             'HangThanhVien': 'Nhựa',
             'provider': 'google',
@@ -48,6 +53,30 @@ class AuthServices {
     } catch (e) {
       print('Lỗi khi lấy thông tin user: $e');
       return null;
+    }
+  }
+
+  // Chỉnh sửa thông tin người dùng
+  Future<void> editUser(String uid, String name, String phoneNum,) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .set({
+        "name": name,
+        "sdt": phoneNum,
+      }, SetOptions(merge: true));
+
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: "Đã có lỗi xảy ra. Lỗi: $e",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Color(0xFFd2f5fc),
+          textColor: Color(0xFF3c81c6),
+          fontSize: 16.0
+      );
     }
   }
 
@@ -86,6 +115,59 @@ class AuthServices {
       "SoLuong": num,
       "NgayThem": FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
+  }
+
+  Future<void> addOrderForUser(
+    String uid,
+    String phuongThucThanhToan,
+    String hinhThucGiaoHang,
+    String imagePreview,
+    String maDiaChi,
+    List<Map<String, dynamic>> danhSachSanPham,
+  ) async {
+    final firestore = FirebaseFirestore.instance;
+    final orderCollection = firestore.collection('orders');
+
+    // Tạo tài liệu đơn hàng mới
+    final newOrderDoc = orderCollection.doc();
+    final orderId = newOrderDoc.id;
+
+    // Dữ liệu đơn hàng
+    final orderData = {
+      "UserID": uid,
+      "OrderID": orderId,
+      "PhuongThucThanhToan": phuongThucThanhToan,
+      "HinhThucGiaoHang": hinhThucGiaoHang,
+      "AnhDonHang": imagePreview,
+      "NgayDatHang": FieldValue.serverTimestamp(),
+      "MaDiaChi": maDiaChi,
+      "TrangThai": "Đang xử lý",
+    };
+
+    // Batch để ghi dữ liệu
+    final batch = firestore.batch();
+
+    // Ghi dữ liệu đơn hàng
+    batch.set(newOrderDoc, orderData);
+
+    // Ghi từng sản phẩm vào subcollection "SanPham"
+    for (var sanPham in danhSachSanPham) {
+      final maVarient = sanPham["MaVarientSanPham"];
+      final spDoc = newOrderDoc.collection("SanPham").doc(maVarient);
+
+      batch.set(spDoc, {
+        "MaSP": sanPham["MaSP"],
+        "TenSP": sanPham["TenSP"],
+        "GiaSP": sanPham["GiaSP"],
+        "MaVarientSanPham": maVarient,
+        "HinhAnhVariant": sanPham["HinhAnhVariant"],
+        "SoLuong": FieldValue.increment(sanPham["SoLuong"]),
+        "NgayThem": FieldValue.serverTimestamp(),
+        "ThuocTinhSP": sanPham["ThuocTinhSP"],
+      });
+    }
+
+    await batch.commit();
   }
 
   // Chuyển giỏ hàng sang đơn hàng và xoá đơn hàng cũ
@@ -277,6 +359,7 @@ class AuthServices {
     db.collection("users").doc(uid).set({
       "name": name.toString(),
       "email": email.toString(),
+      "sdt":'',
       "createdAt": Timestamp.now(),
       "role": "Khách hàng",
       "TrangThai": "Đang hoạt động",

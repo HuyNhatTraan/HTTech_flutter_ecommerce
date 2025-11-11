@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart' show EasyLoading, EasyLoadingMaskType;
 import 'package:hehehehe/features/account/screens/account_support.dart';
 import 'package:hehehehe/features/auth/screens/register_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -250,25 +251,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                   );
                                   return;
                                 }
+                                EasyLoading.show(status: 'Đợi tý nhen...', maskType: EasyLoadingMaskType.black,);
+
                                 try {
                                   await FirebaseAuth.instance
                                       .signInWithEmailAndPassword(
-                                        email: emailController.text.trim(),
-                                        password: passwordController.text
-                                            .trim(),
-                                      );
-
-                                  Fluttertoast.showToast(
-                                    msg: "Đăng nhập thành công",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 1,
-                                    backgroundColor: Color(0xFF3a81c4),
-                                    textColor: Colors.white,
-                                    fontSize: 16.0,
+                                    email: emailController.text.trim(),
+                                    password: passwordController.text
+                                        .trim(),
                                   );
 
-                                  Navigator.of(context).popUntil((route) => route.isFirst);
+                                  await Future.delayed(Duration(seconds: 1));
+                                  EasyLoading.showSuccess('Đăng nhập thành công',maskType: EasyLoadingMaskType.clear);
+                                  await Future.delayed(Duration(milliseconds: 500));
+                                  Navigator.popUntil(context, (route) => route.isFirst);
+
                                 } on FirebaseAuthException catch (e) {
                                   if (e.code == 'user-not-found') {
                                     Fluttertoast.showToast(
@@ -284,7 +281,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       e.code == 'invalid-credential') {
                                     Fluttertoast.showToast(
                                       msg:
-                                          "Sai mật khẩu hoặc tài khoản. Vui lòng thử lại",
+                                      "Sai mật khẩu hoặc tài khoản. Vui lòng thử lại",
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.CENTER,
                                       timeInSecForIosWeb: 2,
@@ -294,6 +291,56 @@ class _LoginScreenState extends State<LoginScreen> {
                                     );
                                   }
                                 }
+                                catch (e) {
+                                  EasyLoading.showError('Có lỗi xảy ra: $e');
+                                  print (e);
+                                } finally {
+                                  EasyLoading.dismiss();
+                                }
+                                // try {
+                                //   await FirebaseAuth.instance
+                                //       .signInWithEmailAndPassword(
+                                //         email: emailController.text.trim(),
+                                //         password: passwordController.text
+                                //             .trim(),
+                                //       );
+                                //
+                                //   Fluttertoast.showToast(
+                                //     msg: "Đăng nhập thành công",
+                                //     toastLength: Toast.LENGTH_SHORT,
+                                //     gravity: ToastGravity.CENTER,
+                                //     timeInSecForIosWeb: 1,
+                                //     backgroundColor: Color(0xFF3a81c4),
+                                //     textColor: Colors.white,
+                                //     fontSize: 16.0,
+                                //   );
+                                //
+                                //   Navigator.of(context).popUntil((route) => route.isFirst);
+                                // } on FirebaseAuthException catch (e) {
+                                //   if (e.code == 'user-not-found') {
+                                //     Fluttertoast.showToast(
+                                //       msg: "Không tìm thấy tài khoản này",
+                                //       toastLength: Toast.LENGTH_SHORT,
+                                //       gravity: ToastGravity.CENTER,
+                                //       timeInSecForIosWeb: 1,
+                                //       backgroundColor: Color(0xFF3a81c4),
+                                //       textColor: Colors.white,
+                                //       fontSize: 16.0,
+                                //     );
+                                //   } else if (e.code == 'wrong-password' ||
+                                //       e.code == 'invalid-credential') {
+                                //     Fluttertoast.showToast(
+                                //       msg:
+                                //           "Sai mật khẩu hoặc tài khoản. Vui lòng thử lại",
+                                //       toastLength: Toast.LENGTH_SHORT,
+                                //       gravity: ToastGravity.CENTER,
+                                //       timeInSecForIosWeb: 2,
+                                //       backgroundColor: Color(0xFF3a81c4),
+                                //       textColor: Colors.white,
+                                //       fontSize: 16.0,
+                                //     );
+                                //   }
+                                // }
                               },
                               child: Padding(
                                 padding: EdgeInsets.all(10),

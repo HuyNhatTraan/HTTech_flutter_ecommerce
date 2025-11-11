@@ -1,30 +1,48 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hehehehe/features/auth/services/auth_service.dart';
 import 'package:hehehehe/globals.dart' as globals;
 
-class AccountUserInfo extends StatefulWidget {
-  const AccountUserInfo({super.key});
+class AccountEditUserInfo extends StatefulWidget {
+  const AccountEditUserInfo({super.key});
 
   @override
-  State<AccountUserInfo> createState() => _AccountUserInfoState();
+  State<AccountEditUserInfo> createState() => _AccountEditUserInfoState();
 }
 
-class _AccountUserInfoState extends State<AccountUserInfo> {
+class _AccountEditUserInfoState extends State<AccountEditUserInfo> {
   final User? user = FirebaseAuth.instance.currentUser;
   final AuthServices authService = AuthServices();
+
+  final nameController = TextEditingController();
+  final phoneNumController = TextEditingController();
+
+  final ValueNotifier<String> errorNumText = ValueNotifier('');
+
+  bool isValidVNPhone(String? value) {
+    if (value == null || value.trim().isEmpty) return false;
+
+    // Bỏ khoảng trắng, dấu chấm, gạch nối
+    final cleaned = value.replaceAll(RegExp(r'[\s\.\-]'), '');
+
+    // Regex cho số điện thoại Việt Nam
+    final pattern = r'^(?:0[35789]\d{8}|(?:\+84|84)[35789]\d{8})$';
+    final regex = RegExp(pattern);
+
+    return regex.hasMatch(cleaned);
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF6F6F6),
       appBar: AppBar(
-        title: Text(
-          "Thông tin cá nhân",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: Text('Chỉnh sửa thông tin', style: TextStyle(fontWeight: FontWeight.bold),),
       ),
       body: SingleChildScrollView(
         child: FutureBuilder<Map<String, dynamic>?>(
@@ -42,269 +60,118 @@ class _AccountUserInfoState extends State<AccountUserInfo> {
               return Center(child: Text("Không tìm thấy thông tin người dùng"));
             }
 
-            final userData = snapshot.data!;
+            nameController.text = snapshot.data!['name'];
+            phoneNumController.text = snapshot.data!['sdt'] ?? '';
 
-            final currentUser = FirebaseAuth.instance.currentUser;
-            final String tempAvatarUrl = userData['AvatarUrl'];
-            final String AvatarUrl = tempAvatarUrl.startsWith('http')
-                ? tempAvatarUrl
-                : '${globals.baseUri}/$tempAvatarUrl';
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    // Banner User
-                    Container(
-                      width: double.infinity,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            '${globals.baseUri}/assets/account/images/bannerAccount.png',
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    // Hình ảnh User
-                    Positioned(
-                      right: 1,
-                      left: 1,
-                      bottom: -30,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          print('Đã ấn hình ảnh Avatar');
-                        },
-                        child: Center(
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              border: Border.all(
-                                color: Color(0xFF3c81c6),
-                                width: 2,
-                              ),
-                              image: DecorationImage(
-                                image: NetworkImage(AvatarUrl),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: GestureDetector(
-                              onTap: (){
-                                print('object');
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.black54,
-                                      borderRadius: BorderRadius.only(
-                                          bottomLeft: Radius.circular(15),
-                                          bottomRight: Radius.circular(15)
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'Sửa',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 40),
                 Padding(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(5),
                   child: Container(
-                    padding: EdgeInsetsGeometry.all(15),
                     width: double.infinity,
+                    padding: EdgeInsets.all(15),
                     decoration: BoxDecoration(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(color: Colors.grey),
-                      color: Colors.white,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 10,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 3,
+                        Text('Họ và tên', style: TextStyle(fontSize: 16, color: Colors.grey[600], fontWeight: FontWeight.bold)),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          spacing: 10,
                           children: [
-                            Text('Họ và tên', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[600]),),
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.grey),
+                            Icon(
+                              Icons.badge_outlined,
+                              size: 28,
+                            ),
+                            Expanded(
+                              child: TextField(
+                                controller: nameController,
+                                decoration: const InputDecoration(
+                                  hintText: 'Nhập tên của bạn',
+                                  hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                ),
                               ),
-                              child: Row(
-                                spacing: 5,
-                                children: [
-                                  Icon(
-                                    Icons.badge_outlined,
-                                    color: Color(0xFF3c81c6),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Text('Số điện thoại', style: TextStyle(fontSize: 16, color: Colors.grey[600], fontWeight: FontWeight.bold)),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          spacing: 10,
+                          children: [
+                            Icon(
+                              Icons.phone_outlined,
+                              size: 28,
+                            ),
+                            Expanded(
+                              child: TextField(
+                                onChanged: (value) {
+                                  if (value.isEmpty || phoneNumController.text.isEmpty) {
+                                    errorNumText.value = 'Vui lòng nhập số điện thoại';
+                                  } else if (!isValidVNPhone(value)) {
+                                    errorNumText.value = 'Số điện thoại không hợp lệ';
+                                    print (errorNumText.value);
+                                  } else {
+                                    errorNumText.value = '';
+                                  }
+                                },
+                                controller: phoneNumController,
+                                decoration: const InputDecoration(
+                                  hintText: 'Nhập số điện thoại của bạn',
+                                  hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  Text(
-                                    "${userData['name'] ?? currentUser?.displayName ?? 'Chưa có'}",
-                                    style: const TextStyle(fontSize: 15),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
                                   ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                ),
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
                                 ],
                               ),
                             ),
                           ],
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 3,
-                          children: [
-                            Text('Email', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[600]),),
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.grey),
+                        ValueListenableBuilder<String>(
+                          valueListenable: errorNumText,
+                          builder: (context, error, _) {
+                            return Text(
+                              error,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
                               ),
-                              child: Row(
-                                spacing: 5,
-                                children: [
-                                  Icon(
-                                    Icons.email_outlined,
-                                    color: Color(0xFF3c81c6),
-                                  ),
-                                  Text(
-                                    "${userData['email'] ?? currentUser?.email ?? 'Chưa có'}",
-                                    style: const TextStyle(fontSize: 15),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 3,
-                          children: [
-                            Text('Số điện thoại', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[600]),),
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.grey),
-                              ),
-                              child: Row(
-                                spacing: 5,
-                                children: [
-                                  Icon(
-                                    Icons.phone_outlined,
-                                    color: Color(0xFF3c81c6),
-                                  ),
-                                  Text(
-                                    "${userData['SoDienThoai'] ?? '--'}",
-                                    style: const TextStyle(fontSize: 15),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 3,
-                          children: [
-                            Text('Ngày đăng ký', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[600]),),
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.grey),
-                              ),
-                              child: Row(
-                                spacing: 5,
-                                children: [
-                                  Icon(
-                                    Icons.date_range_outlined,
-                                    color: Color(0xFF3c81c6),
-                                  ),
-                                  Text(
-                                    (() {
-                                      final createdAt = userData['createdAt'];
-                                      DateTime? d;
-
-                                      if (createdAt is Timestamp) {
-                                        d = createdAt.toDate();
-                                      } else if (currentUser?.metadata.creationTime != null) {
-                                        d = currentUser!.metadata.creationTime!;
-                                      }
-
-                                      if (d == null) return 'Không rõ';
-
-                                      return '${d.day.toString().padLeft(2, '0')}/'
-                                          '${d.month.toString().padLeft(2, '0')}/'
-                                          '${d.year} '
-                                          '${d.hour.toString().padLeft(2, '0')}:'
-                                          '${d.minute.toString().padLeft(2, '0')}:'
-                                          '${d.second.toString().padLeft(2, '0')}';
-                                    })(),
-                                    style: const TextStyle(fontSize: 15),
-                                  ),
-                                ],
-                              ),
-
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 3,
-                          children: [
-                            Text('Hạng thành viên', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[600]),),
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.grey),
-                              ),
-                              child: Row(
-                                spacing: 5,
-                                children: [
-                                  Icon(
-                                    Icons.workspace_premium_outlined,
-                                    color: Color(0xFF3c81c6),
-                                  ),
-                                  Text(
-                                    "${userData['HangThanhVien'] ?? 'Nhựa'}",
-                                    style: const TextStyle(fontSize: 15),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
                       ],
                     ),
                   ),
                 ),
+                SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Center(
@@ -318,27 +185,42 @@ class _AccountUserInfoState extends State<AccountUserInfo> {
                         ),
                         shape: WidgetStatePropertyAll(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            side: BorderSide(color: Colors.grey)
+                              borderRadius: BorderRadius.circular(10),
+                              side: BorderSide(color: Colors.grey)
                           ),
                         ),
                         elevation: WidgetStatePropertyAll(0),
                       ),
-                      onPressed: () {
-                        Fluttertoast.showToast(
-                          msg: "Tính năng này đang được xây dựng",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.red,
-                          textColor: Colors.white,
-                          fontSize: 16.0,
-                        );
+                      onPressed: () async {
+                        if (errorNumText.value == 'Số điện thoại không hợp lệ' || errorNumText.value == 'Vui lòng nhập số điện thoại') {
+                          EasyLoading.showError('Vui lòng đúng và đẩy đủ thông tin');
+                          await Future.delayed(Duration(seconds: 1));
+                          EasyLoading.dismiss();
+                        } else {
+                          EasyLoading.show(status: 'Đang cập nhật...', maskType: EasyLoadingMaskType.black,);
+
+                          try {
+                            await authService.editUser(
+                              user!.uid,
+                              nameController.text,
+                              phoneNumController.text,
+                            );
+
+                            await Future.delayed(Duration(seconds: 1));
+                            EasyLoading.showSuccess('Thành công ùi',maskType: EasyLoadingMaskType.clear);
+                            await Future.delayed(Duration(milliseconds: 500));
+                            Navigator.pop(context);
+                          } catch (e) {
+                            EasyLoading.showError('Có lỗi xảy ra: $e');
+                          } finally {
+                            EasyLoading.dismiss();
+                          }
+                        }
                       },
                       child: Container(
-                        padding: EdgeInsets.all(5),
-                        width: double.infinity,
-                          child: Text('Chỉnh sửa thông tin cá nhân',
+                          padding: EdgeInsets.all(5),
+                          width: double.infinity,
+                          child: Text('Chỉnh sửa ngay',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Color(0xFF3c81c6),
