@@ -34,6 +34,10 @@ class _HomeScreenState extends State<HomeScreen> {
               BannerSPMoi(),
               DanhMucSanPhamWidget(),
               SanPhamMoi(key: ValueKey(_reloadProductCart),),
+              Padding(
+                padding: const EdgeInsets.all(15),
+                child: Text('----------- Hết ùi -----------', style: TextStyle(color: Colors.grey),),
+              )
             ],
           ),
         ),

@@ -442,31 +442,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           // Đăng nhập với GG
                           ElevatedButton(
                             onPressed: () async {
+                              EasyLoading.show(status: 'Đợi tý nhen...', maskType: EasyLoadingMaskType.black,);
                               AuthServices authServices = AuthServices();
                               final userCredential = await authServices.signInWithGoogle();
                               if (userCredential != null) {
-                                Fluttertoast.showToast(
-                                    msg: "Đăng nhập thành công",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 1,
-                                    backgroundColor: Color(0xFFd2f5fc),
-                                    textColor: Color(0xFF3c81c6),
-                                    fontSize: 16.0
-                                );
-                                Navigator.of(context).popUntil((route) => route.isFirst);
+                                // await Future.delayed(Duration(seconds: 1));
+                                EasyLoading.showSuccess('Đăng nhập thành công',maskType: EasyLoadingMaskType.clear);
+                                await Future.delayed(Duration(milliseconds: 500));
+                                Navigator.popUntil(context, (route) => route.isFirst);
                                 print("Đăng nhập thành công: ${userCredential.user?.displayName}");
                               } else {
-                                Fluttertoast.showToast(
-                                    msg: "Người dùng đã huỷ hoặc lỗi.",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 1,
-                                    backgroundColor: Color(0xFFd2f5fc),
-                                    textColor: Color(0xFF3c81c6),
-                                    fontSize: 16.0
-                                );
+                                EasyLoading.showError('Người dùng đã huỷ hoặc lỗi.');
+                                await Future.delayed(Duration(milliseconds: 1500));
                                 print("Người dùng đã huỷ hoặc lỗi.");
+                                EasyLoading.dismiss();
                               }
                             },
                             style: ButtonStyle(

@@ -357,20 +357,20 @@ class _SearchScreenState extends State<SearchScreen> {
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(15),
+                  padding: const EdgeInsets.only(top: 15, right: 15, left: 15),
                   child: Row(
                     children: [
                       const Text(
-                        'Kết quả: ',
+                        'Kết quả cho: ',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         "' $_currentQuery ' ",
                         style: const TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF3c81c6),
                         ),

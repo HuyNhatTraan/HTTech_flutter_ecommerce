@@ -68,6 +68,8 @@ class _ProductVariantsMuaNgay extends State<ProductVariantsMuaNgay> {
                     .toString();
                 _selectedThuocTinhSP = _productsVariants[0]["ThuocTinhSP"]
                     .toString();
+                _selectedTonKho = _productsVariants[0]["SoLuongSP"]
+                    .toString();
               });
             }
           });
@@ -97,6 +99,7 @@ class _ProductVariantsMuaNgay extends State<ProductVariantsMuaNgay> {
   String _selectedVariant = '';
   String _selectedVariantImgUrl = '';
   String _selectedThuocTinhSP = '';
+  String _selectedTonKho = '';
   final AuthServices authService = AuthServices();
 
   final User? user = FirebaseAuth.instance.currentUser;
@@ -124,7 +127,7 @@ class _ProductVariantsMuaNgay extends State<ProductVariantsMuaNgay> {
               children: [
                 if (_productsVariants.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(left: 20),
+                    padding: const EdgeInsets.only(left: 20, right: 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 3,
@@ -136,9 +139,23 @@ class _ProductVariantsMuaNgay extends State<ProductVariantsMuaNgay> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(
-                          '*Chọn màu sắc:',
-                          style: TextStyle(color: Colors.grey),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Expanded(child: Text('*Chọn màu sắc: ' + _selectedThuocTinhSP, maxLines: 2,))
+                                ],
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text('Còn lại: ', style: TextStyle(color: Colors.grey)),
+                                Text(_selectedTonKho, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                              ],
+                            )
+                          ],
                         ),
                       ],
                     ),
@@ -168,6 +185,7 @@ class _ProductVariantsMuaNgay extends State<ProductVariantsMuaNgay> {
                                 crossAxisCount: 4,
                                 mainAxisExtent: 95,
                                 crossAxisSpacing: 5,
+                                  mainAxisSpacing: 5
                               ),
                           itemCount: _productsVariants.length,
                           itemBuilder: (context, index) {
@@ -185,6 +203,8 @@ class _ProductVariantsMuaNgay extends State<ProductVariantsMuaNgay> {
                                       product["HinhAnhVariant"].toString();
                                   _selectedThuocTinhSP =
                                       product["ThuocTinhSP"].toString();
+                                  _selectedTonKho =
+                                      product["SoLuongSP"].toString();
                                 });
                                 print(
                                   'Đã chọn sản phẩm: ${product["MaVarientSanPham"]} $_selectedVariant',
