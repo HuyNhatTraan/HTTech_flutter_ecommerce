@@ -11,8 +11,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../auth/services/auth_service.dart';
 
 class ProductVariants extends StatefulWidget {
-  final maSanPham;
-  final route;
+  final String maSanPham;
+  final String route;
   final String tenSanPham;
   const ProductVariants({
     super.key,
@@ -43,7 +43,7 @@ class _ProductVariantsState extends State<ProductVariants> {
     });
     try {
       final url = Uri.parse(
-        globals.baseUri + widget.route + "/" + widget.maSanPham,
+        '${globals.baseUri}${widget.route}/${widget.maSanPham}',
       );
       final response = await http.get(url);
 
@@ -143,7 +143,7 @@ class _ProductVariantsState extends State<ProductVariants> {
                             Expanded(
                               child: Row(
                                 children: [
-                                  Expanded(child: Text('*Chọn màu sắc: ' + _selectedThuocTinhSP, maxLines: 2,))
+                                  Expanded(child: Text('*Chọn màu sắc: ${_selectedThuocTinhSP.toString()}', maxLines: 2,))
                                 ],
                               ),
                             ),

@@ -27,8 +27,6 @@ class _CartScreenState extends State<CartScreen> {
   String anhPreview = '';
   int cartNum = 0;
 
-  TextEditingController? _numberController;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,8 +150,8 @@ class _CartScreenState extends State<CartScreen> {
                         itemBuilder: (context, index) {
                           final item =
                               items[index].data() as Map<String, dynamic>;
-                          final GiaSP = item["GiaSP"].toString();
-                          var SoLuong = item["SoLuong"];
+                          final giaSP = item["GiaSP"].toString();
+                          var soLuong = item["SoLuong"];
                           anhPreview = '/${item["HinhAnhVariant"]}';
 
                           return Column(
@@ -296,7 +294,7 @@ class _CartScreenState extends State<CartScreen> {
                                                 style: TextStyle(fontSize: 12),
                                               ),
                                               Text(
-                                                GiaSP.toVND(),
+                                                giaSP.toVND(),
                                                 style: const TextStyle(
                                                   color: Color(0xFF3c81c6),
                                                   fontWeight: FontWeight.bold,
@@ -325,7 +323,7 @@ class _CartScreenState extends State<CartScreen> {
                                             children: [
                                               GestureDetector(
                                                 onTap: () {
-                                                  if (SoLuong == 1) {
+                                                  if (soLuong == 1) {
                                                     showDialog(
                                                       context: context,
                                                       builder: (context) => AlertDialog(
@@ -364,8 +362,8 @@ class _CartScreenState extends State<CartScreen> {
                                                     );
                                                     return;
                                                   }
-                                                  if (SoLuong == 0 ||
-                                                      SoLuong < 0) {
+                                                  if (soLuong == 0 ||
+                                                      soLuong < 0) {
                                                     return;
                                                   }
                                                   authService
@@ -398,8 +396,7 @@ class _CartScreenState extends State<CartScreen> {
                                                   textAlign: TextAlign.center,
                                                   controller:
                                                       TextEditingController(
-                                                        text:
-                                                            SoLuong.toString(),
+                                                        text: soLuong.toString(),
                                                       ),
                                                   decoration:
                                                       const InputDecoration(
@@ -413,7 +410,7 @@ class _CartScreenState extends State<CartScreen> {
                                                       TextInputType.number,
                                                   onSubmitted: (value) {
                                                     if (value.isEmpty) {
-                                                      int tempSoLuong = SoLuong;
+                                                      int tempSoLuong = soLuong;
                                                       print(tempSoLuong);
                                                       showDialog(
                                                         context: context,
@@ -427,12 +424,9 @@ class _CartScreenState extends State<CartScreen> {
                                                           actions: [
                                                             TextButton(
                                                               onPressed: () {
-                                                                Navigator.pop(
-                                                                  context,
-                                                                );
+                                                                Navigator.pop(context,);
                                                                 setState(() {
-                                                                  SoLuong =
-                                                                      tempSoLuong;
+                                                                  soLuong = tempSoLuong;
                                                                 });
                                                               },
                                                               child: Text(

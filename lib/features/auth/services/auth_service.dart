@@ -171,7 +171,7 @@ class AuthServices {
   }
 
   // Chuyển giỏ hàng sang đơn hàng và xoá đơn hàng cũ
-  Future<void> moveCartToOrders(String uid, String phuongThucThanhToan, String hinhThucGiaoHang, String imagePreview, String MaDiaChi) async {
+  Future<void> moveCartToOrders(String uid, String phuongThucThanhToan, String hinhThucGiaoHang, String imagePreview, String maDiaChi) async {
     final firestore = FirebaseFirestore.instance;
     final cartRef = firestore.collection('cart').doc(uid).collection('SanPham');
     final orderRef = firestore.collection('orders');
@@ -196,7 +196,7 @@ class AuthServices {
       "HinhThucGiaoHang": hinhThucGiaoHang,
       "AnhDonHang" : imagePreview,
       "NgayDatHang": FieldValue.serverTimestamp(),
-      "MaDiaChi": MaDiaChi,
+      "MaDiaChi": maDiaChi,
       "TrangThai": "Đang xử lý",
     };
 
@@ -219,34 +219,34 @@ class AuthServices {
     await batch.commit();
   }
 
-  // Đăng nhập với GG
-  Future<UserCredential?> signInWithGoogle() async {
-    try {
-      // B1: Gọi hộp thoại chọn tài khoản Google
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    // Đăng nhập với GG
+    Future<UserCredential?> signInWithGoogle() async {
+      try {
+        // B1: Gọi hộp thoại chọn tài khoản Google
+        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      if (googleUser == null) return null; // Người dùng ấn Cancel
+        if (googleUser == null) return null; // Người dùng ấn Cancel
 
-      // B2: Lấy token xác thực
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        // B2: Lấy token xác thực
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-      // B3: Tạo credential cho Firebase
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+        // B3: Tạo credential cho Firebase
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
 
-      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-      final user = userCredential.user;
+        final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+        final user = userCredential.user;
 
-      registerUser(googleUser.email, user!.uid, googleUser.displayName!, "Google");
-      // B4: Đăng nhập vào Firebase
-      return await FirebaseAuth.instance.signInWithCredential(credential);
-    } catch (e) {
-      print('Lỗi đăng nhập Google: $e');
-      return null;
+        registerUser(googleUser.email, user!.uid, googleUser.displayName!, "Google");
+        // B4: Đăng nhập vào Firebase
+        return await FirebaseAuth.instance.signInWithCredential(credential);
+      } catch (e) {
+        print('Lỗi đăng nhập Google: $e');
+        return null;
+      }
     }
-  }
 
   // Đăng xứt khỏi GG
   Future<void> signOutGoogle() async {
@@ -326,13 +326,13 @@ class AuthServices {
 
   // Đăng ký vào DB Local
   Future<void> registerUser(String email, String maTaiKhoan, String tenKH, String loginMethod) async {
-    final url = Uri.parse(baseUri + '/register');
+    final url = Uri.parse('$baseUri/register');
 
     try {
       final response = await http.post(
         url,
         headers: {
-          'Content-Type': 'application/json', // Rất quan trọng
+          'Content-Type': 'application/json',
         },
         body: jsonEncode({
           'email': email,

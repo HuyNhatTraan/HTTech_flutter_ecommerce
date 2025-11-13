@@ -27,7 +27,7 @@ class _ProductDescriptionState extends State<ProductDescription> {
     });
     try {
       String route = "/productDescription";
-      final url = Uri.parse(baseUri + route + '/' + widget.maSanPham);
+      final url = Uri.parse('$baseUri$route/${widget.maSanPham}');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -99,7 +99,7 @@ class _ProductDescriptionState extends State<ProductDescription> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start, // Căn chỉnh nội dung của các cột từ trên xuống
                       children: [
-                        Text(product["TenThongSo"] + ': ' + product["NoiDungThongSo"], maxLines: 2,),
+                        Text('${product["TenThongSo"]}: ${product["NoiDungThongSo"]}', maxLines: 2,),
                       ],
                     ),
                   );

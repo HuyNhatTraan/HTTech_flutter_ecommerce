@@ -24,7 +24,7 @@ class _ProductCarouselState extends State<ProductCarousel> {
   Future<void> fetchProductsImages() async {
     try {
       String route = "/productCarousel";
-      final url = Uri.parse(baseUri + route + "/" + widget.maSanPham);
+      final url = Uri.parse("$baseUri$route/${widget.maSanPham}");
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -101,7 +101,7 @@ class _ProductCarouselState extends State<ProductCarousel> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         image: DecorationImage(
-                          image: NetworkImage(baseUri + '/' + entry.value["ImgUrl"]),
+                          image: NetworkImage('$baseUri/${entry.value["ImgUrl"]}'),
                           fit: BoxFit.cover,
                         ),
                         border: Border.all(

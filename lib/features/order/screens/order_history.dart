@@ -377,7 +377,7 @@ class _AccountOrderHistoryState extends State<AccountOrderHistory> {
                                         border: Border.all(color: Colors.grey[400]!, width: .5),
                                         image: DecorationImage(
                                             image: NetworkImage(
-                                                globals.baseUri + '/' + data["HinhAnhVariant"]
+                                                '${globals.baseUri}/${data["HinhAnhVariant"]}'
                                             ),
                                         )
                                       ),

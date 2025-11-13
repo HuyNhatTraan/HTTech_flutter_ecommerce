@@ -238,13 +238,13 @@ class _DanhMucSPBrandState extends State<DanhMucSPBrand> {
               height: 200,
               width: double.infinity,
               fit: BoxFit.cover,
-              image: NetworkImage(baseUri + '/' + widget.bannerThuongHieu),
+              image: NetworkImage('$baseUri/${widget.bannerThuongHieu}'),
             ),
             SizedBox(height: 10),
             Padding(
               padding: EdgeInsets.all(15),
               child: Text(
-                'Thương hiệu ' + widget.tenThuongHieu,
+                'Thương hiệu ${widget.tenThuongHieu}',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),

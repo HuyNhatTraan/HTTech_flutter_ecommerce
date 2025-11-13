@@ -110,7 +110,7 @@ class _CacThuongHieuPPState extends State<CacThuongHieuPP> {
                       },
                     ),
                   );
-                  print('Đã ấn ' + product["TenThuongHieu"]);
+                  print('Đã ấn thương hiệu ${product["TenThuongHieu"]}');
                 },
                 child: Container(
                   padding: EdgeInsets.all(5),

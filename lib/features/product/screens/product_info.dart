@@ -40,7 +40,7 @@ class _ProductInfoState extends State<ProductInfo> {
     });
     try {
       String route = "/productInfo";
-      final url = Uri.parse(baseUri + route + "/" + widget.maSanPham);
+      final url = Uri.parse("$baseUri$route/${widget.maSanPham}");
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -442,7 +442,7 @@ class _ProductInfoState extends State<ProductInfo> {
                                                   size: 18,
                                                 ),
                                                 Text(
-                                                  'Giảm ' + giamGia.toVND(),
+                                                  'Giảm ${giamGia.toVND()}',
                                                   style: TextStyle(
                                                     color: Color(0xFF3c81c6),
                                                     fontSize: 12,

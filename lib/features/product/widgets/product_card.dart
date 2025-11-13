@@ -40,13 +40,13 @@ class _ProductCardState extends State<ProductCard> {
 
     Uri url;
     if (maDanhMuc != null) {
-      final urlCustom = Uri.parse(globals.baseUri + route + '/' + maDanhMuc);
+      final urlCustom = Uri.parse('${globals.baseUri}$route/$maDanhMuc');
       url = urlCustom;
     } else if (maThuongHieu != null) {
-      final urlCustom = Uri.parse(globals.baseUri + route + '/' + maThuongHieu);
+      final urlCustom = Uri.parse('${globals.baseUri}$route/$maThuongHieu');
       url = urlCustom;
     } else if (tenSanPham != null) {
-      final urlCustom = Uri.parse(globals.baseUri + route + '/' + tenSanPham);
+      final urlCustom = Uri.parse('${globals.baseUri}$route/$tenSanPham');
       url = urlCustom;
     } else {
       final urlCustom = Uri.parse(globals.baseUri + route);

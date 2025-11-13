@@ -15,6 +15,7 @@ class AccountMain extends StatefulWidget {
 
 class _AccountMainState extends State<AccountMain> {
 
+  @override
   void initState() {
     super.initState();
     checkCurrentUser();
@@ -24,12 +25,10 @@ class _AccountMainState extends State<AccountMain> {
     final User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      // Người dùng đã đăng nhập
       print('Người dùng đã đăng nhập!');
       print('User ID: ${user.uid}');
       print('Email: ${user.email}');
     } else {
-      // Người dùng chưa đăng nhập
       print('Không có người dùng nào đang đăng nhập.');
     }
   }
@@ -67,7 +66,7 @@ class _AccountMainState extends State<AccountMain> {
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: NetworkImage(
-                            globals.baseUri + '/'+ 'assets/account/images/bannerAccount.png',
+                            '${globals.baseUri}/assets/account/images/bannerAccount.png',
                           ),
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(

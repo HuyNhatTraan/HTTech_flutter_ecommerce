@@ -188,7 +188,7 @@ class _CheckoutMuaNgayState extends State<CheckoutMuaNgay> {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            item['HoVaTen'] + ' | ' + item['SDT'],
+                                            '${item['HoVaTen']} | ${item['SDT']}',
                                             style: const TextStyle(
                                               fontSize: 14,
                                             ),
@@ -242,7 +242,7 @@ class _CheckoutMuaNgayState extends State<CheckoutMuaNgay> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                print('Đã ấn ' + widget.maSP);
+                                print('Đã ấn ${widget.maSP}');
                                 Navigator.push(
                                   context,
                                   PageRouteBuilder(
@@ -296,7 +296,7 @@ class _CheckoutMuaNgayState extends State<CheckoutMuaNgay> {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
-                                  print('Đã ấn ' + widget.maSP);
+                                  print('Đã ấn ${widget.maSP}');
                                   Navigator.push(
                                     context,
                                     PageRouteBuilder(
@@ -352,7 +352,7 @@ class _CheckoutMuaNgayState extends State<CheckoutMuaNgay> {
                                     spacing: 5,
                                     children: [
                                       Text(
-                                        widget.tenSP ?? "",
+                                        widget.tenSP,
                                         maxLines: 3,
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,

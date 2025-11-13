@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -188,6 +187,7 @@ class _AccountEditAddressState extends State<AccountEditAddress> {
                           await Future.delayed(Duration(seconds: 1));
                           EasyLoading.showSuccess('Thành công ùi',maskType: EasyLoadingMaskType.clear);
                           await Future.delayed(Duration(milliseconds: 500));
+
                           Navigator.pop(context);
                         } catch (e) {
                           EasyLoading.showError('Có lỗi xảy ra: $e');

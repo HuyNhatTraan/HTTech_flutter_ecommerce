@@ -20,7 +20,7 @@ class _SettingVersionsAppState extends State<SettingVersionsApp> {
   Future<void> getNamePhone() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    print("Check:" + androidInfo.toString());
+    print("Check: ${androidInfo.toString()}");
     setState(() {
       phoneModel = androidInfo.model.toString();
       phoneAdrVer = androidInfo.version.release.toString();

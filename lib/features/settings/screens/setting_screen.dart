@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hehehehe/features/account/screens/account_address.dart';
@@ -350,36 +351,26 @@ class _SettingScreenState extends State<SettingScreen> {
                   if (user != null) ... [
                     GestureDetector(
                       onTap: () async {
+                        EasyLoading.show(status: 'Đợi tý nhen...', maskType: EasyLoadingMaskType.black,);
                         try {
                           await FirebaseAuth.instance.signOut();
                           await GoogleSignIn().signOut();
                           await Future.delayed(
-                            const Duration(milliseconds: 500),
+                            const Duration(milliseconds: 1000),
                           );
+                          EasyLoading.showSuccess('Đăng xuất thành công',maskType: EasyLoadingMaskType.clear);
 
-                          Fluttertoast.showToast(
-                            msg: "Đăng xuất thành công.",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 2,
-                            backgroundColor: Color(0xFF3a81c4),
-                            textColor: Colors.white,
-                            fontSize: 16.0,
-                          );
                           await Future.delayed(
-                            const Duration(milliseconds: 500),
+                            const Duration(milliseconds: 700),
                           );
+                          EasyLoading.dismiss();
                           Navigator.pop(context);
                         } catch (e) {
-                          Fluttertoast.showToast(
-                            msg: e.toString(),
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 2,
-                            backgroundColor: Color(0xFF3a81c4),
-                            textColor: Colors.white,
-                            fontSize: 16.0,
+                          EasyLoading.showError(e.toString(),maskType: EasyLoadingMaskType.clear);
+                          await Future.delayed(
+                            const Duration(milliseconds: 1000),
                           );
+                          EasyLoading.dismiss();
                         }
                       },
                       child: Container(

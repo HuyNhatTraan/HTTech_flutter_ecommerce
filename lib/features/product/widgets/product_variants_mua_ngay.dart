@@ -13,8 +13,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../auth/services/auth_service.dart';
 
 class ProductVariantsMuaNgay extends StatefulWidget {
-  final maSanPham;
-  final route;
+  final String maSanPham;
+  final String route;
   final String tenSanPham;
   const ProductVariantsMuaNgay({
     super.key,
@@ -45,7 +45,7 @@ class _ProductVariantsMuaNgay extends State<ProductVariantsMuaNgay> {
     });
     try {
       final url = Uri.parse(
-        globals.baseUri + widget.route + "/" + widget.maSanPham,
+        "${globals.baseUri}${widget.route}/${widget.maSanPham}",
       );
       final response = await http.get(url);
 
@@ -145,7 +145,7 @@ class _ProductVariantsMuaNgay extends State<ProductVariantsMuaNgay> {
                             Expanded(
                               child: Row(
                                 children: [
-                                  Expanded(child: Text('*Chọn màu sắc: ' + _selectedThuocTinhSP, maxLines: 2,))
+                                  Expanded(child: Text('*Chọn màu sắc: $_selectedThuocTinhSP', maxLines: 2,))
                                 ],
                               ),
                             ),
@@ -392,7 +392,7 @@ class _ProductVariantsMuaNgay extends State<ProductVariantsMuaNgay> {
                                         context,
                                         animation,
                                         secondaryAnimation,
-                                        ) => CheckoutMuaNgay(anhPreview: '/' + _selectedVariantImgUrl, maSP: widget.maSanPham, maVariantSP: _selectedVariant, tenSP: widget.tenSanPham, giaSP: _currentTempPrices, thuocTinhSP: _selectedThuocTinhSP, soLuong: _currentQuantities, danhSachSanPham: danhSachSanPham),
+                                        ) => CheckoutMuaNgay(anhPreview: '/$_selectedVariantImgUrl', maSP: widget.maSanPham, maVariantSP: _selectedVariant, tenSP: widget.tenSanPham, giaSP: _currentTempPrices, thuocTinhSP: _selectedThuocTinhSP, soLuong: _currentQuantities, danhSachSanPham: danhSachSanPham),
                                     transitionsBuilder:
                                         (
                                         context,

@@ -236,7 +236,7 @@ class _DanhMucSanPhamProductsState extends State<DanhMucSanPhamProducts> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image(
-              image: NetworkImage(baseUri + '/' + widget.bannerDanhMuc),
+              image: NetworkImage('$baseUri/${widget.bannerDanhMuc}'),
               height: 200,
               fit: BoxFit.cover,
               width: double.infinity,
@@ -244,7 +244,7 @@ class _DanhMucSanPhamProductsState extends State<DanhMucSanPhamProducts> {
             Padding(
               padding: EdgeInsets.only(top: 15, left: 15, right: 15),
               child: Text(
-                'Danh mục ' + widget.tenDanhMuc,
+                'Danh mục ${widget.tenDanhMuc}',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),

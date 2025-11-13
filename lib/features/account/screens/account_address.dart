@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hehehehe/features/account/screens/account_edit_address.dart';
 import 'package:hehehehe/features/account/screens/account_new_address.dart';
 
@@ -37,7 +36,10 @@ class _AccountAddressState extends State<AccountAddress> {
             icon: Icon(Icons.keyboard_backspace_outlined),
           ),
         ),
-        title: Text('Danh sách địa chỉ', style: TextStyle(fontWeight: FontWeight.w900)),
+        title: Text(
+          'Danh sách địa chỉ',
+          style: TextStyle(fontWeight: FontWeight.w900),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -102,14 +104,42 @@ class _AccountAddressState extends State<AccountAddress> {
                               Navigator.push(
                                 context,
                                 PageRouteBuilder(
-                                  transitionDuration: const Duration(milliseconds: 300),
-                                  pageBuilder: (context, animation, secondaryAnimation) =>
-                                      AccountEditAddress(docID: docID, name: item['HoVaTen'], sdt: item['SDT'], diaChi: item['Address'], ghiChu: item['Notes']),
-                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                    final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
-                                        .chain(CurveTween(curve: Curves.easeInOutSine));
-                                    return SlideTransition(position: animation.drive(tween), child: child);
-                                  },
+                                  transitionDuration: const Duration(
+                                    milliseconds: 300,
+                                  ),
+                                  pageBuilder:
+                                      (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                      ) => AccountEditAddress(
+                                        docID: docID,
+                                        name: item['HoVaTen'],
+                                        sdt: item['SDT'],
+                                        diaChi: item['Address'],
+                                        ghiChu: item['Notes'],
+                                      ),
+                                  transitionsBuilder:
+                                      (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child,
+                                      ) {
+                                        final tween =
+                                            Tween(
+                                              begin: const Offset(1, 0),
+                                              end: Offset.zero,
+                                            ).chain(
+                                              CurveTween(
+                                                curve: Curves.easeInOutSine,
+                                              ),
+                                            );
+                                        return SlideTransition(
+                                          position: animation.drive(tween),
+                                          child: child,
+                                        );
+                                      },
                                 ),
                               );
                             },
@@ -127,12 +157,12 @@ class _AccountAddressState extends State<AccountAddress> {
                                 padding: EdgeInsetsGeometry.all(0),
                                 width: double.infinity,
                                 child: Row(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         spacing: 3,
                                         children: [
                                           Row(
@@ -160,18 +190,23 @@ class _AccountAddressState extends State<AccountAddress> {
                                               ),
                                             ],
                                           ),
-                                          Text(item['Address'], style: TextStyle(color: Color(0xFF1d1e1f)),),
+                                          Text(
+                                            item['Address'],
+                                            style: TextStyle(
+                                              color: Color(0xFF1d1e1f),
+                                            ),
+                                          ),
                                           Text('Note: ${item['Notes']}'),
                                         ],
                                       ),
                                     ),
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        Icon(
-                                          Icons.chevron_right_outlined,
-                                        ),
+                                        Icon(Icons.chevron_right_outlined),
                                       ],
                                     ),
                                   ],
@@ -188,16 +223,12 @@ class _AccountAddressState extends State<AccountAddress> {
               ),
               ElevatedButton(
                 style: ButtonStyle(
-                  surfaceTintColor: WidgetStatePropertyAll(
-                    Color(0xFF3c81c6),
-                  ),
-                  overlayColor: WidgetStatePropertyAll(
-                    Colors.transparent,
-                  ),
+                  surfaceTintColor: WidgetStatePropertyAll(Color(0xFF3c81c6)),
+                  overlayColor: WidgetStatePropertyAll(Colors.transparent),
                   shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(color: Colors.grey)
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(color: Colors.grey),
                     ),
                   ),
                   elevation: WidgetStatePropertyAll(0),
@@ -209,24 +240,31 @@ class _AccountAddressState extends State<AccountAddress> {
                       transitionDuration: const Duration(milliseconds: 300),
                       pageBuilder: (context, animation, secondaryAnimation) =>
                           AccountNewAddress(),
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                        final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
-                            .chain(CurveTween(curve: Curves.easeInOutSine));
-                        return SlideTransition(position: animation.drive(tween), child: child);
-                      },
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            final tween = Tween(
+                              begin: const Offset(1, 0),
+                              end: Offset.zero,
+                            ).chain(CurveTween(curve: Curves.easeInOutSine));
+                            return SlideTransition(
+                              position: animation.drive(tween),
+                              child: child,
+                            );
+                          },
                     ),
                   );
                 },
                 child: Container(
-                    padding: EdgeInsets.all(5),
-                    width: double.infinity,
-                    child: Text('Thêm địa chỉ ngay',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xFF3c81c6),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
+                  padding: EdgeInsets.all(5),
+                  width: double.infinity,
+                  child: Text(
+                    'Thêm địa chỉ ngay',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF3c81c6),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ],

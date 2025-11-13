@@ -665,8 +665,7 @@ class _ToolsState extends State<Tools> {
                         builder: (context, snapshot) {
                           final user = snapshot.data;
 
-                          if (user == null)
-                            return SizedBox(); // Ẩn khi chưa đăng nhập
+                          if (user == null) return SizedBox(); // Ẩn khi chưa đăng nhập
 
                           return Column(
                             children: [

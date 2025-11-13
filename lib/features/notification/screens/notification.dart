@@ -254,6 +254,7 @@ class _ThongBaoState extends State<ThongBao> {
                 final user = userSnapshot.data;
                 if (user == null) {
                   return Container(
+                    padding: EdgeInsets.all(0),
                     width: double.infinity,
                     height: 150,
                     child: Column(

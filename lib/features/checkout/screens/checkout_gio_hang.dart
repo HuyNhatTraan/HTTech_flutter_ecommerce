@@ -171,7 +171,7 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            item['HoVaTen'] + ' | ' + item['SDT'],
+                                            '${item['HoVaTen']} | ${item['SDT']}',
                                             style: const TextStyle(
                                               fontSize: 14,
                                             ),
@@ -313,7 +313,7 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                                       children: [
                                         GestureDetector(
                                           onTap: () {
-                                            print('Đã ấn ' + item["MaSP"]);
+                                            print('Đã ấn ${item["MaSP"]}');
                                             Navigator.push(
                                               context,
                                               PageRouteBuilder(
@@ -367,7 +367,7 @@ class _CheckoutGioHangState extends State<CheckoutGioHang> {
                                         Expanded(
                                           child: GestureDetector(
                                             onTap: () {
-                                              print('Đã ấn ' + item["MaSP"]);
+                                              print('Đã ấn ${item["MaSP"]}');
                                               Navigator.push(
                                                 context,
                                                 PageRouteBuilder(

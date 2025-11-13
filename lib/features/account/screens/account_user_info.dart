@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hehehehe/features/account/screens/account_edit_user_info.dart';
 import 'package:hehehehe/features/auth/services/auth_service.dart';
 import 'package:hehehehe/globals.dart' as globals;
@@ -50,7 +49,7 @@ class _AccountUserInfoState extends State<AccountUserInfo> {
 
             final currentUser = FirebaseAuth.instance.currentUser;
             final String tempAvatarUrl = userData['AvatarUrl'];
-            final String AvatarUrl = tempAvatarUrl.startsWith('http')
+            final String avatarUrl = tempAvatarUrl.startsWith('http')
                 ? tempAvatarUrl
                 : '${globals.baseUri}/$tempAvatarUrl';
             return Column(
@@ -93,7 +92,7 @@ class _AccountUserInfoState extends State<AccountUserInfo> {
                                 width: 2,
                               ),
                               image: DecorationImage(
-                                image: NetworkImage(AvatarUrl),
+                                image: NetworkImage(avatarUrl),
                                 fit: BoxFit.cover,
                               ),
                             ),

@@ -110,7 +110,7 @@ class _DanhMucSanPhamFullWidgetState extends State<DanhMucSanPhamFullWidget> {
                       },
                     ),
                   );
-                  print('Đã ấn ' + product["TenDanhMuc"]);
+                  print('Đã ấn ${product["TenDanhMuc"]}');
                 },
                 child: Container(
                   padding: EdgeInsets.all(5),
@@ -121,7 +121,7 @@ class _DanhMucSanPhamFullWidgetState extends State<DanhMucSanPhamFullWidget> {
                         child: Stack(
                           children: [
                             CachedNetworkImage(
-                              imageUrl: "${baseUri}/${product["HinhAnhDanhMuc"]}",
+                              imageUrl: "$baseUri/${product["HinhAnhDanhMuc"]}",
                               imageBuilder: (context, imageProvider) => Container(
                                 height: 180,
                                 decoration: BoxDecoration(

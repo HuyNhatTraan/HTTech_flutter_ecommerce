@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart' show EasyLoading, EasyLoadingMaskType;
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hehehehe/features/account/screens/account_support.dart';
 import 'package:hehehehe/features/auth/screens/register_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
