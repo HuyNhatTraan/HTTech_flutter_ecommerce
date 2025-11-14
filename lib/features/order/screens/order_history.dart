@@ -401,7 +401,7 @@ class _AccountOrderHistoryState extends State<AccountOrderHistory> {
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                            '${data["GiaSP"].toString().toVND()}',
+                                            data["GiaSP"].toString().toVND(),
                                             style: const TextStyle(
                                                 color: Color(0xFF3C81C6),
                                                 fontWeight: FontWeight.w700),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hehehehe/features/account/screens/account_new_address.dart';
 import 'package:hehehehe/features/auth/screens/login_screen.dart';
 import 'package:hehehehe/features/auth/services/auth_service.dart';
 import 'package:hehehehe/features/checkout/screens/checkout_success.dart';
@@ -43,6 +45,8 @@ class _CheckoutMuaNgayState extends State<CheckoutMuaNgay> {
   String? _selectedThanhToan = 'COD';
   String? _selectedGiaoHang = 'Hoả tốc';
   String? selectedDocIDAddress;
+
+  bool isHaveAddress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -87,10 +91,9 @@ class _CheckoutMuaNgayState extends State<CheckoutMuaNgay> {
                     }
 
                     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(20),
-                          height: 200,
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             spacing: 3,
@@ -115,6 +118,7 @@ class _CheckoutMuaNgayState extends State<CheckoutMuaNgay> {
                     }
 
                     final items = snapshot.data!.docs;
+                    isHaveAddress = true;
 
                     return Padding(
                       padding: const EdgeInsets.all(10),
@@ -217,6 +221,55 @@ class _CheckoutMuaNgayState extends State<CheckoutMuaNgay> {
                       ),
                     );
                   },
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      surfaceTintColor: WidgetStatePropertyAll(Color(0xFF3c81c6)),
+                      overlayColor: WidgetStatePropertyAll(Colors.transparent),
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(color: Colors.grey),
+                        ),
+                      ),
+                      elevation: WidgetStatePropertyAll(0),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 300),
+                          pageBuilder: (context, animation, secondaryAnimation) =>
+                              AccountNewAddress(),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            final tween = Tween(
+                              begin: const Offset(1, 0),
+                              end: Offset.zero,
+                            ).chain(CurveTween(curve: Curves.easeInOutSine));
+                            return SlideTransition(
+                              position: animation.drive(tween),
+                              child: child,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      width: double.infinity,
+                      child: Text(
+                        'Thêm địa chỉ ngay',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF3c81c6),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsetsGeometry.only(left: 15, right: 15, top: 5, bottom: 5),
@@ -437,15 +490,26 @@ class _CheckoutMuaNgayState extends State<CheckoutMuaNgay> {
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
-                  onPressed: () {
-                    // Fix this thingy
+                  onPressed: () async {
+                    EasyLoading.show(status: 'Đợi tý nhen...', maskType: EasyLoadingMaskType.black);
+                    await Future.delayed(Duration(seconds: 1));
+
+                    if (isHaveAddress == false) {
+                      EasyLoading.showError('Vui lòng thêm / chọn địa chỉ', maskType: EasyLoadingMaskType.black);
+                      return;
+                    }
                     authService.addOrderForUser(user!.uid, _selectedThanhToan.toString(), _selectedGiaoHang.toString(), widget.anhPreview, selectedDocIDAddress.toString(), widget.danhSachSanPham);
+                    EasyLoading.showSuccess('Thành công ùi!');
+                    await Future.delayed(Duration(seconds: 1));
+                    EasyLoading.dismiss();
+                    Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => CheckoutSuccess(),
                       ),
                     );
+
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFD2F5FC),
@@ -736,34 +800,36 @@ class _CheckoutMuaNgayState extends State<CheckoutMuaNgay> {
                             'Thanh toán an toàn & bảo mật. Dễ dàng và nhanh chóng.',
                             style: TextStyle(fontSize: 12),
                           ),
-                          Row(
-                            spacing: 3,
-                            children: [
-                              Image(
-                                image: NetworkImage(
-                                  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/960px-Visa_Inc._logo.svg.png',
+                          SizedBox(
+                            child: Row(
+                              spacing: 3,
+                              children: [
+                                Image(
+                                  image: AssetImage(
+                                    'assets/Visa_Inc._logo.svg.png',
+                                  ),
+                                  width: 40,
                                 ),
-                                width: 40,
-                              ),
-                              Image(
-                                image: NetworkImage(
-                                  'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/MasterCard_early_1990s_logo.svg/250px-MasterCard_early_1990s_logo.svg.png',
+                                Image(
+                                  image: AssetImage(
+                                    'assets/MasterCard_early_1990s_logo.svg.png',
+                                  ),
+                                  width: 40,
                                 ),
-                                width: 40,
-                              ),
-                              Image(
-                                image: NetworkImage(
-                                  'https://camo.githubusercontent.com/b624142eb1373b5f2b06067da2427c6386d90d17519aee75ad69d2b8baefee59/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7461736b6d616e616765726561676c6f623132332f696d6167652f75706c6f61642f76313634313937303939352f5669657451522e34366137386362625f7574777a7a682e706e67',
+                                Image(
+                                  image: AssetImage(
+                                    'assets/VietQR.png',
+                                  ),
+                                  width: 40,
                                 ),
-                                width: 40,
-                              ),
-                              Image(
-                                image: NetworkImage(
-                                  'https://e7.pngegg.com/pngimages/157/1005/png-clipart-ucb-logo-jcb-co-ltd-logo-payment-credit-card-card-vetor-text-service-thumbnail.png',
+                                Image(
+                                  image: AssetImage(
+                                    'assets/png-clipart-ucb-logo-jcb-co-ltd-logo-payment-credit-card-card-vetor-text-service-thumbnail.png',
+                                  ),
+                                  width: 40,
                                 ),
-                                width: 40,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),

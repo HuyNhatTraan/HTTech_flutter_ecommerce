@@ -69,7 +69,7 @@ class _CartScreenState extends State<CartScreen> {
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  print('Trạng thái giỏ hàng' + isEmptyCart.toString());
+                  print('Trạng thái giỏ hàng $isEmptyCart');
                   isEmptyCart = true;
                   return Center(
                     child: Column(
@@ -172,7 +172,7 @@ class _CartScreenState extends State<CartScreen> {
                                   children: [
                                     GestureDetector(
                                       onTap: () {
-                                        print('Đã ấn ' + item["MaSP"]);
+                                        print('Đã ấn ${item["MaSP"]}');
                                         Navigator.push(
                                           context,
                                           PageRouteBuilder(
@@ -227,7 +227,7 @@ class _CartScreenState extends State<CartScreen> {
                                     Expanded(
                                       child: GestureDetector(
                                         onTap: () {
-                                          print('Đã ấn ' + item["MaSP"]);
+                                          print('Đã ấn ${item["MaSP"]}');
                                           Navigator.push(
                                             context,
                                             PageRouteBuilder(
@@ -567,7 +567,7 @@ class _CartScreenState extends State<CartScreen> {
                 if (isEmptyCart == true)
                   const Text(
                     '0 đ',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF3c81c6),
@@ -585,7 +585,7 @@ class _CartScreenState extends State<CartScreen> {
                 const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () {
-                    print('Trạng thái Cart: ' + isEmptyCart.toString());
+                    print('Trạng thái Cart: $isEmptyCart');
                     if (isEmptyCart == false) {
                       Navigator.push(
                         context,
@@ -623,7 +623,6 @@ class _CartScreenState extends State<CartScreen> {
                         fontSize: 16.0,
                       );
                     }
-                    ;
                   },
 
                   style: ElevatedButton.styleFrom(

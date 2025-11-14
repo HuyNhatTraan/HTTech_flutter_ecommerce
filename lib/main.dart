@@ -129,7 +129,7 @@ class _HomePage extends State<HomePage> {
     FlutterNativeSplash.remove();
   }
 
-  int _curentCartNum = 0;
+  int _currentCartNum = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -215,7 +215,7 @@ class _HomePage extends State<HomePage> {
                   final user = snapshot.data;
 
                   if (user == null) {
-                    _curentCartNum = 0;
+                    _currentCartNum = 0;
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -254,7 +254,7 @@ class _HomePage extends State<HomePage> {
                                   shape: BoxShape.circle,
                                 ),
                                 child: Text(
-                                  _curentCartNum > 99 ? '99+' : _curentCartNum.toString(),
+                                  _currentCartNum > 99 ? '99+' : _currentCartNum.toString(),
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
@@ -278,7 +278,7 @@ class _HomePage extends State<HomePage> {
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        _curentCartNum = 0;
+                        _currentCartNum = 0;
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -317,10 +317,10 @@ class _HomePage extends State<HomePage> {
                                       shape: BoxShape.circle,
                                     ),
                                     child: Text(
-                                      _curentCartNum > 99 ? '99+' : _curentCartNum.toString(),
+                                      _currentCartNum > 99 ? '99+' : _currentCartNum.toString(),
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: _curentCartNum > 99 ? 10 : 12,
+                                        fontSize: _currentCartNum > 99 ? 10 : 12,
                                         fontWeight: FontWeight.bold,
                                       ),
                                       textAlign: TextAlign.center,
@@ -340,7 +340,7 @@ class _HomePage extends State<HomePage> {
                         tempCartNum += int.tryParse(item['SoLuong'].toString()) ?? 0;
                       }
 
-                      _curentCartNum = tempCartNum;
+                      _currentCartNum = tempCartNum;
 
                       return GestureDetector(
                         onTap: () {
@@ -380,10 +380,10 @@ class _HomePage extends State<HomePage> {
                                     shape: BoxShape.circle,
                                   ),
                                   child: Text(
-                                    _curentCartNum > 99 ? '99+' : _curentCartNum.toString(),
+                                    _currentCartNum > 99 ? '99+' : _currentCartNum.toString(),
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: _curentCartNum > 99 ? 10 : 12,
+                                      fontSize: _currentCartNum > 99 ? 10 : 12,
                                       fontWeight: FontWeight.bold,
                                     ),
                                     textAlign: TextAlign.center,
