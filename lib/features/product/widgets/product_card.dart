@@ -12,6 +12,7 @@ class ProductCard extends StatefulWidget {
   final String? maDanhMuc;
   final String? maThuongHieu;
   final String? tenSanPham;
+  final String? sort;
 
   const ProductCard({
     super.key,
@@ -19,6 +20,7 @@ class ProductCard extends StatefulWidget {
     this.maDanhMuc,
     this.maThuongHieu,
     this.tenSanPham,
+    this.sort,
   });
 
   @override
@@ -32,10 +34,10 @@ class _ProductCardState extends State<ProductCard> {
   @override
   void initState() {
     super.initState();
-    fetchProducts(widget.route, widget.maDanhMuc, widget.maThuongHieu, widget.tenSanPham);
+    fetchProducts(widget.route, widget.maDanhMuc, widget.maThuongHieu, widget.tenSanPham, widget.sort);
   }
 
-  Future<void> fetchProducts(String route, String? maDanhMuc, String? maThuongHieu, String? tenSanPham) async {
+  Future<void> fetchProducts(String route, String? maDanhMuc, String? maThuongHieu, String? tenSanPham, String? sort) async {
     setState(() => _isLoading = true);
 
     Uri url;
@@ -46,7 +48,7 @@ class _ProductCardState extends State<ProductCard> {
       final urlCustom = Uri.parse('${globals.baseUri}$route/$maThuongHieu');
       url = urlCustom;
     } else if (tenSanPham != null) {
-      final urlCustom = Uri.parse('${globals.baseUri}$route/$tenSanPham');
+      final urlCustom = Uri.parse('${globals.baseUri}$route?search=$tenSanPham&sort=$sort');
       url = urlCustom;
     } else {
       final urlCustom = Uri.parse(globals.baseUri + route);

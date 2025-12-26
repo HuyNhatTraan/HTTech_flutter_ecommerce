@@ -674,7 +674,8 @@ class _ToolsState extends State<Tools> {
                                 onTap: () async {
                                   try {
                                     await FirebaseAuth.instance.signOut();
-                                    await GoogleSignIn().signOut();
+                                    final googleSignIn = GoogleSignIn.instance;
+                                    await googleSignIn.signOut();
                                     await Future.delayed(
                                       const Duration(milliseconds: 500),
                                     );

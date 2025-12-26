@@ -354,7 +354,8 @@ class _SettingScreenState extends State<SettingScreen> {
                         EasyLoading.show(status: 'Đợi tý nhen...', maskType: EasyLoadingMaskType.black,);
                         try {
                           await FirebaseAuth.instance.signOut();
-                          await GoogleSignIn().signOut();
+                          final googleSignIn = GoogleSignIn.instance;
+                          await googleSignIn.signOut();
                           await Future.delayed(
                             const Duration(milliseconds: 1000),
                           );

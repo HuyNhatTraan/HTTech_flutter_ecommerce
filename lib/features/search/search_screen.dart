@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hehehehe/features/cart/screens/cart_screen.dart';
 import 'package:hehehehe/features/product/widgets/product_card.dart';
+import 'package:hehehehe/features/search/widgets/search_filter_bar.dart';
 
 class SearchScreen extends StatefulWidget {
   final String searchQuery;
@@ -22,9 +23,15 @@ class _SearchScreenState extends State<SearchScreen> {
     _currentQuery = widget.searchQuery; // khởi tạo từ tham số truyền vào
   }
 
+  String sort = '';
+
   @override
   Widget build(BuildContext context) {
     int _curentCartNum = 0;
+
+    Color colorSortUnselect = const Color(0xFF9f9f9f); // Màu xám nhạt (cho cái chưa chọn)
+    Color colorSortSelected = const Color(0xFF3980c3);
+
     return Scaffold(
       backgroundColor: Color(0xFFf6f6f6),
       appBar: AppBar(
@@ -261,13 +268,23 @@ class _SearchScreenState extends State<SearchScreen> {
           SizedBox(width: 15)
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
+      body: CustomScrollView(
+        slivers: <Widget>[
+          // const SearchFilterBar(),
+          SliverAppBar(
+            surfaceTintColor: Color(0xFFf5f5f5),
+            automaticallyImplyLeading: false,
+            floating: false,
+            pinned: true,
+            snap: false,
+            flexibleSpace: Container(
+              height: double.infinity,
               padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
               decoration: BoxDecoration(
-                border: Border(top: BorderSide(color: Color(0xFF9e9e9e)), bottom: BorderSide(color: Color(0xFF9e9e9e))),
+                border: Border(
+                  top: BorderSide(color: Color(0xFF9e9e9e)),
+                  bottom: BorderSide(color: Color(0xFF9e9e9e)),
+                ),
                 color: Colors.white,
               ),
               //width: double.infinity,
@@ -276,19 +293,19 @@ class _SearchScreenState extends State<SearchScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Fluttertoast.showToast(
-                          msg: "Tính năng này đang được xây dựng",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Color(0xFFc6e7ff),
-                          textColor: Color(0xFF3c81c6),
-                          fontSize: 16.0
-                      );
+                      setState(() {
+                        sort = '';
+                      });
                     },
                     child: Container(
                       padding: EdgeInsets.all(10),
-                      child: Text('Liên quan', style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.bold)),
+                      child: Text(
+                        'Liên quan',
+                        style: TextStyle(
+                          color: sort == '' ? colorSortSelected : colorSortUnselect,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -301,19 +318,19 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Fluttertoast.showToast(
-                          msg: "Tính năng này đang được xây dựng",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Color(0xFFc6e7ff),
-                          textColor: Color(0xFF3c81c6),
-                          fontSize: 16.0
-                      );
+                      setState(() {
+                        sort = 'newest';
+                      });
                     },
                     child: Container(
                       padding: EdgeInsets.all(10),
-                      child: Text('Mới nhất', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+                      child: Text(
+                        'Mới nhất',
+                        style: TextStyle(
+                          color: sort == 'newest' ? colorSortSelected : colorSortUnselect,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -326,27 +343,23 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Fluttertoast.showToast(
-                          msg: "Tính năng này đang được xây dựng",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Color(0xFFc6e7ff),
-                          textColor: Color(0xFF3c81c6),
-                          fontSize: 16.0
-                      );
+                      setState(() {
+                        sort = 'highest';
+                      });
                     },
                     child: Container(
                       padding: EdgeInsets.all(10),
                       child: Row(
                         spacing: 5,
                         children: [
-                          Icon(
-                            Icons.north_outlined,
-                            color: Colors.grey,
-                            size: 16,
+                          Icon(Icons.north_outlined, color: sort == 'highest' ? colorSortSelected : colorSortUnselect, size: 16),
+                          Text(
+                            'Giá',
+                            style: TextStyle(
+                              color: sort == 'highest' ? colorSortSelected : colorSortUnselect,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          Text('Giá', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -354,45 +367,26 @@ class _SearchScreenState extends State<SearchScreen> {
                 ],
               ),
             ),
-            Row(
+          ),
+          SliverToBoxAdapter(
+            child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 15, right: 15, left: 15),
-                  child: Row(
-                    children: [
-                      const Text(
-                        'Kết quả cho: ',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        "' $_currentQuery ' ",
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF3c81c6),
-                        ),
-                      ),
-                    ],
-                  ),
+                ProductCard(
+                  key: ValueKey("$_currentQuery$sort"),
+                  route: '/productSearch',
+                  tenSanPham: _currentQuery,
+                  sort: sort,
                 ),
+                const SizedBox(height: 40),
+                const Center(
+                  child: Text('---------- Có thể bạn sẽ thích ----------'),
+                ),
+                ProductCard(route: '/products'),
               ],
             ),
-            ProductCard(
-              key: ValueKey(_currentQuery),
-              route: '/products',
-              tenSanPham: _currentQuery,
-            ),
-            const SizedBox(height: 40),
-            const Center(
-              child: Text('---------- Có thể bạn sẽ thích ----------'),
-            ),
-            ProductCard(route: '/products'),
-          ],
-        ),
-      ),
+          )
+        ],
+      )
     );
   }
 }

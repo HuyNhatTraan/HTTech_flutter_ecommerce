@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hehehehe/env.dart';
 import 'package:hehehehe/globals.dart';
 import 'package:http/http.dart' as http;
 
@@ -220,39 +222,94 @@ class AuthServices {
   }
 
     // Đăng nhập với GG
-    Future<UserCredential?> signInWithGoogle() async {
-      try {
-        // B1: Gọi hộp thoại chọn tài khoản Google
-        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    // Future<UserCredential?> signInWithGoogle() async {
+    //   try {
+    //     // B1: Gọi hộp thoại chọn tài khoản Google
+    //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    //
+    //     if (googleUser == null) return null; // Người dùng ấn Cancel
+    //
+    //     // B2: Lấy token xác thực
+    //     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    //
+    //     // B3: Tạo credential cho Firebase
+    //     final credential = GoogleAuthProvider.credential(
+    //       accessToken: googleAuth.accessToken,
+    //       idToken: googleAuth.idToken,
+    //     );
+    //
+    //     final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+    //     final user = userCredential.user;
+    //
+    //     registerUser(googleUser.email, user!.uid, googleUser.displayName!, "Google");
+    //     // B4: Đăng nhập vào Firebase
+    //     return await FirebaseAuth.instance.signInWithCredential(credential);
+    //   } catch (e) {
+    //     print('Lỗi đăng nhập Google: $e');
+    //     return null;
+    //   }
+    // }
 
-        if (googleUser == null) return null; // Người dùng ấn Cancel
+  Future<UserCredential?> signInWithGoogle() async {
+    try {
+      // B0: Khởi tạo (Quan trọng với bản 7.x)
+      // Lưu ý: Tốt nhất nên gọi dòng này ở hàm main() hoặc initState() của màn hình Login.
+      // Nếu gọi ở đây, nó vẫn chạy nhưng mỗi lần bấm nút lại init lại thì không tối ưu lắm.
+      await GoogleSignIn.instance.initialize();
 
-        // B2: Lấy token xác thực
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      // B1: Gọi hộp thoại chọn tài khoản Google
+      // Thay vì signIn(), bản 7.x dùng authenticate() cho luồng đăng nhập rõ ràng.
+      // Lưu ý: authenticate() chỉ hỗ trợ Mobile (Android/iOS).
+      // Nếu bạn làm Web, phải dùng renderButton (xem note bên dưới).
+      final GoogleSignInAccount? googleUser = await GoogleSignIn.instance.authenticate();
 
-        // B3: Tạo credential cho Firebase
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
+      // Nếu authenticate thành công, nó trả về googleUser.
+      // Nếu user hủy, bản 7.x thường sẽ ném ra Exception code 'canceled' chứ không trả null đơn thuần.
+      // Nhưng để an toàn ta vẫn check null.
+      if (googleUser == null) return null;
 
-        final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-        final user = userCredential.user;
+      // B2: Lấy token xác thực
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-        registerUser(googleUser.email, user!.uid, googleUser.displayName!, "Google");
-        // B4: Đăng nhập vào Firebase
-        return await FirebaseAuth.instance.signInWithCredential(credential);
-      } catch (e) {
-        print('Lỗi đăng nhập Google: $e');
+      // B3: Tạo credential cho Firebase
+      final credential = GoogleAuthProvider.credential(
+        // accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // B4: Đăng nhập vào Firebase
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final user = userCredential.user;
+
+      if (user != null) {
+        // Logic lưu user của riêng bạn
+        registerUser(googleUser.email, user.uid, googleUser.displayName ?? "No Name", "Google");
+      }
+
+      return userCredential;
+
+    } on GoogleSignInException catch (e) {
+      // Bản 7.x quản lý lỗi chặt chẽ hơn.
+      // Nếu người dùng hủy đăng nhập, nó sẽ vào đây với code canceled.
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        print('Người dùng đã hủy đăng nhập');
         return null;
       }
+      print('Lỗi Google Sign-In Exception: $e');
+      return null;
+    } catch (e) {
+      print('Lỗi hệ thống khác: $e');
+      return null;
     }
+  }
+
 
   // Đăng xứt khỏi GG
   Future<void> signOutGoogle() async {
+    final googleSignIn = GoogleSignIn.instance;
     try {
       // Đăng xuất khỏi Google Sign-In
-      await GoogleSignIn().signOut();
+      await googleSignIn.signOut();
 
       // Đăng xuất khỏi Firebase
       await FirebaseAuth.instance.signOut();
