@@ -238,12 +238,12 @@ class _ProductInfoState extends State<ProductInfo> {
 
                   final items = snapshot.data!.docs;
 
-                  int _tempCartNum = 0;
+                  int tempCartNum = 0;
                   for (var item in items) {
-                    _tempCartNum += int.tryParse(item['SoLuong'].toString()) ?? 0;
+                    tempCartNum += int.tryParse(item['SoLuong'].toString()) ?? 0;
                   }
 
-                  _curentCartNum = _tempCartNum;
+                  _curentCartNum = tempCartNum;
 
                   return GestureDetector(
                     onTap: () {

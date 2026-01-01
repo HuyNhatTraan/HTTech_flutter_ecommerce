@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 import 'package:hehehehe/features/auth/services/auth_service.dart';
-import 'package:hehehehe/features/cart/screens/cart_screen.dart';
 import 'package:hehehehe/features/cart/widgets/cart_button_widget.dart';
 import 'package:hehehehe/globals.dart' as globals;
 
@@ -18,7 +17,7 @@ class _AccountOrderHistoryState extends State<AccountOrderHistory> {
   final User? user = FirebaseAuth.instance.currentUser;
   final AuthServices authService = AuthServices();
 
-  int _curentCartNum = 0;
+  final int _curentCartNum = 0;
 
   @override
   Widget build(BuildContext context) {

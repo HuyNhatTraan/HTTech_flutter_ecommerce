@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'env.dart';
 import 'features/cart/widgets/cart_button_widget.dart';
 import 'globals.dart' as globals;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -11,11 +11,12 @@ import 'package:hehehehe/features/home/screens/home_screen.dart';
 import 'package:hehehehe/features/category/screens/category_screen.dart';
 import 'package:hehehehe/features/notification/screens/notification.dart';
 import 'package:hehehehe/features/account/screens/account_main.dart';
-import 'package:hehehehe/features/cart/screens/cart_screen.dart';
 import 'package:hehehehe/features/search/search_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+
+import 'globals.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -43,6 +44,7 @@ void main() async {
   );
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  await Globals.init();
   runApp(const MyApp());
 }
 

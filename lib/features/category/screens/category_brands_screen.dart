@@ -1,7 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hehehehe/features/cart/screens/cart_screen.dart';
 import 'package:hehehehe/features/cart/widgets/cart_button_widget.dart';
 import 'package:hehehehe/globals.dart';
 import 'package:hehehehe/features/product/widgets/product_card.dart';
@@ -30,7 +27,7 @@ class _DanhMucSPBrandState extends State<DanhMucSPBrand> {
 
   @override
   Widget build(BuildContext context) {
-    int _curentCartNum = 0;
+    int curentCartNum = 0;
     return Scaffold(
       appBar: AppBar(
         title: Text(

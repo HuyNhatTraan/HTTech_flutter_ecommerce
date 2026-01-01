@@ -5,13 +5,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hehehehe/env.dart';
 import 'package:hehehehe/globals.dart';
 import 'package:http/http.dart' as http;
 
 class AuthServices {
   // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;
+
+  // Lấy IP Server
+  Future<String> getIPServer() async {
+    final doc = await FirebaseFirestore.instance
+        .collection('IP')
+        .doc('IP_SERVER')
+        .get();
+
+    if (!doc.exists) return '';
+
+    final data = doc.data() as Map<String, dynamic>;
+    return data['IPv4'];
+  }
 
   // Lấy thông tin người dùng
   Future<Map<String, dynamic>?> getUser(String uid) async {
@@ -261,15 +273,10 @@ class AuthServices {
       // Thay vì signIn(), bản 7.x dùng authenticate() cho luồng đăng nhập rõ ràng.
       // Lưu ý: authenticate() chỉ hỗ trợ Mobile (Android/iOS).
       // Nếu bạn làm Web, phải dùng renderButton (xem note bên dưới).
-      final GoogleSignInAccount? googleUser = await GoogleSignIn.instance.authenticate();
-
-      // Nếu authenticate thành công, nó trả về googleUser.
-      // Nếu user hủy, bản 7.x thường sẽ ném ra Exception code 'canceled' chứ không trả null đơn thuần.
-      // Nhưng để an toàn ta vẫn check null.
-      if (googleUser == null) return null;
+      final GoogleSignInAccount googleUser = await GoogleSignIn.instance.authenticate();
 
       // B2: Lấy token xác thực
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
       // B3: Tạo credential cho Firebase
       final credential = GoogleAuthProvider.credential(

@@ -1,11 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hehehehe/features/cart/screens/cart_screen.dart';
 import 'package:hehehehe/features/cart/widgets/cart_button_widget.dart';
 import 'package:hehehehe/features/product/widgets/product_card.dart';
-import 'package:hehehehe/features/search/widgets/search_filter_bar.dart';
 
 class SearchScreen extends StatefulWidget {
   final String searchQuery;
@@ -28,7 +23,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    int _curentCartNum = 0;
+    int curentCartNum = 0;
 
     Color colorSortUnselect = const Color(0xFF9f9f9f); // Màu xám nhạt (cho cái chưa chọn)
     Color colorSortSelected = const Color(0xFF3980c3);
