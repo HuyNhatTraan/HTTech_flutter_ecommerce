@@ -1,11 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hehehehe/globals.dart' as globals;
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 import 'package:hehehehe/features/product/screens/product_info.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:dio/dio.dart';
 
 class ProductCard extends StatefulWidget {
   final String route;
@@ -56,12 +55,10 @@ class _ProductCardState extends State<ProductCard> {
     }
 
     try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        setState(() {
-          _products = json.decode(response.body);
-        });
-      }
+      final Dio dio = Dio();
+
+      final response = await dio.get(url.toString());
+      _products = response.data;
     } catch (e) {
       debugPrint("Lỗi tải sản phẩm: $e");
     } finally {

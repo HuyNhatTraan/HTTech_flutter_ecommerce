@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'env.dart';
 import 'features/cart/widgets/cart_button_widget.dart';
 import 'globals.dart' as globals;
@@ -45,7 +46,7 @@ void main() async {
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   await Globals.init();
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+
       theme: ThemeData(
         textTheme: GoogleFonts.beVietnamProTextTheme(),
         colorScheme: ColorScheme.light(),
